@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -15,9 +15,23 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="border-b border-border bg-surface/80 backdrop-blur sticky top-0 z-50">
+    <header
+      className={`sticky top-0 z-50 border-b transition-all duration-300 ${
+        scrolled
+          ? "border-border bg-surface/90 backdrop-blur-md shadow-[0_8px_30px_-15px_rgba(0,0,0,0.6)]"
+          : "border-transparent bg-surface/40 backdrop-blur-sm"
+      }`}
+    >
       <div className="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 min-w-0" onClick={() => setOpen(false)}>
           <Image src="/brand/logo.png" alt="Diamond Clean Detail" width={36} height={36} className="h-9 w-9 shrink-0" />
@@ -31,7 +45,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-muted hover:text-foreground transition-colors"
+              className="link-underline text-muted hover:text-foreground transition-colors"
             >
               {link.label}
             </Link>

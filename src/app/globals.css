@@ -29,9 +29,39 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
+  position: relative;
+}
+
+/* Ambient background: soft radial glows + fine grain, fixed so it reads as
+   one continuous atmosphere behind all sections rather than a flat fill. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 15% -10%, rgba(216, 219, 224, 0.08), transparent 60%),
+    radial-gradient(50rem 35rem at 110% 10%, rgba(216, 219, 224, 0.05), transparent 60%),
+    radial-gradient(40rem 30rem at 50% 120%, rgba(216, 219, 224, 0.04), transparent 60%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 .chrome-text {
@@ -49,10 +79,71 @@ body {
 }
 
 .chrome-btn {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(180deg, var(--chrome-1) 0%, var(--chrome-3) 55%, var(--chrome-2) 100%);
   color: var(--accent-foreground);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .chrome-btn:hover {
   background: linear-gradient(180deg, #ffffff 0%, var(--chrome-1) 55%, var(--chrome-3) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -8px rgba(216, 219, 224, 0.35);
+}
+
+.chrome-btn:active {
+  transform: translateY(0);
+}
+
+.chrome-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+
+.chrome-btn:hover::after {
+  transform: translateX(120%);
+}
+
+/* Card lift used across service/testimonial/gallery grids */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-4px);
+  border-color: var(--muted);
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+}
+
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 1px;
+  background: var(--foreground);
+  transition: width 0.25s ease;
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

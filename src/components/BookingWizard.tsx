@@ -123,7 +123,7 @@ export default function BookingWizard({
   return (
     <div>
       {/* Progress */}
-      <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2">
+      <div className="no-scrollbar flex items-center gap-1 mb-8 overflow-x-auto">
         {steps.map((label, i) => {
           const n = i + 1;
           const active = n === step;

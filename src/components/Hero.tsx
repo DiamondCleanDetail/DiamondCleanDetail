@@ -1,0 +1,82 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+
+export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.55;
+    }
+  }, []);
+
+  return (
+    <section className="relative overflow-hidden min-h-[85vh] flex items-center">
+      {/* Background video */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 h-full w-full object-cover"
+        src="/video/hero.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
+      {/* Dark scrim for legibility + fade into page background at the edges */}
+      <div className="absolute inset-0 bg-black/65" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-background" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
+
+      <div className="relative mx-auto max-w-6xl px-6 py-24 text-center w-full">
+        <motion.span
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] as const }}
+          className="inline-block text-xs uppercase tracking-[0.2em] text-muted mb-4"
+        >
+          ✦ A Cut Above Every Car Wash
+        </motion.span>
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] as const }}
+          className="text-4xl sm:text-5xl font-bold tracking-tight"
+        >
+          Your Car, <span className="chrome-text">Detailed Right.</span>
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.12, ease: [0.2, 0.8, 0.2, 1] as const }}
+          className="mt-4 text-muted max-w-xl mx-auto"
+        >
+          Premium mobile detailing, paint protection, and ceramic coatings.
+          See your options, visualize the results, and book online in
+          minutes.
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.24, ease: [0.2, 0.8, 0.2, 1] as const }}
+          className="mt-8 flex justify-center gap-4"
+        >
+          <Link
+            href="/booking"
+            className="chrome-btn transition-colors px-6 py-3 rounded-lg font-semibold"
+          >
+            Book a Detail
+          </Link>
+          <Link
+            href="/services"
+            className="border border-border/80 bg-black/20 backdrop-blur-sm hover:border-muted transition-colors px-6 py-3 rounded-lg font-medium"
+          >
+            View Services
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
