@@ -1,10 +1,14 @@
 import DiamondDivider from "@/components/DiamondDivider";
+import SocialLinks from "@/components/SocialLinks";
 import { serviceArea } from "@/data/serviceArea";
 
 export default function Footer() {
   return (
     <footer className="border-t border-border mt-auto">
       <DiamondDivider />
+      <div className="mx-auto max-w-6xl px-6 pb-6">
+        <SocialLinks />
+      </div>
       <div className="mx-auto max-w-6xl px-6 pb-6 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-muted">
         <a href={`tel:${serviceArea.phoneHref}`} className="hover:text-foreground transition-colors">
           {serviceArea.phone}
