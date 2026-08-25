@@ -2,40 +2,26 @@
 
 import { useState } from "react";
 import Image from "next/image";
-
-type Shade = {
-  label: string;
-  vlt: number; // visible light transmission %, lower = darker
-};
-
-const shades: Shade[] = [
-  { label: "5%", vlt: 5 },
-  { label: "15%", vlt: 15 },
-  { label: "20%", vlt: 20 },
-  { label: "35%", vlt: 35 },
-  { label: "50%", vlt: 50 },
-];
-
-// Positioned as % of the image box, tuned to the side-profile BMW E30 photo.
-const windowZones = [
-  { clipPath: "polygon(29.5% 51.6%, 32.5% 44%, 44% 42.4%, 44% 51.6%)" }, // rear quarter + door window
-  { clipPath: "polygon(44% 42.4%, 56.5% 42.4%, 56.5% 51.6%, 44% 51.6%)" }, // front door window
-  { clipPath: "polygon(56.5% 39.6%, 60.5% 51.6%, 56.5% 51.6%)" }, // windshield
-];
+import { AnimatePresence, motion } from "framer-motion";
+import { tintLevels } from "@/data/tintLevels";
 
 export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: boolean }) {
-  const [shade, setShade] = useState<Shade>(shades[2]);
+  const [level, setLevel] = useState(tintLevels[2]); // default 20%
   const [isTesla, setIsTesla] = useState(false);
 
-  // Darker glass = higher overlay opacity.
-  const overlayOpacity = 0.08 + (1 - shade.vlt / 100) * 0.72;
+  const image = isTesla ? level.teslaImage : level.image;
 
   return (
     <div className="bg-surface border border-border rounded-xl p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h3 className="font-semibold">Preview Your Tint</h3>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+        <div>
+          <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
+            Step 1
+          </span>
+          <h3 className="font-semibold">Choose Your Tint Level</h3>
+        </div>
         {hasTeslaVariant && (
-          <div className="flex bg-surface-2 border border-border rounded-full p-1 text-xs">
+          <div className="flex bg-surface-2 border border-border rounded-full p-1 text-xs shrink-0">
             <button
               type="button"
               onClick={() => setIsTesla(false)}
@@ -58,56 +44,54 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
         )}
       </div>
 
-      <div className="relative rounded-lg overflow-hidden bg-surface-2">
-        {isTesla ? (
-          <div className="aspect-video flex items-center justify-center text-sm text-muted px-6 text-center">
-            Tesla reference photo coming soon — pricing/booking already
-            account for Tesla glass.
-          </div>
-        ) : (
-          <div className="relative aspect-video">
-            <Image
-              src="/vehicles/bmw-e30.jpg"
-              alt="BMW E30 tint preview"
-              fill
-              className="object-cover"
-              priority
-            />
-            {windowZones.map((zone, i) => (
-              <div
-                key={i}
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  clipPath: zone.clipPath,
-                  backgroundColor: "#000000",
-                  opacity: overlayOpacity,
-                }}
-              />
-            ))}
-          </div>
-        )}
+      {/* Level tabs — full-width strip, matches the reference layout */}
+      <div className="grid grid-cols-5 gap-2 mb-6">
+        {tintLevels.map((l) => (
+          <button
+            type="button"
+            key={l.value}
+            onClick={() => setLevel(l)}
+            className={`rounded-lg py-3 text-sm font-semibold transition-colors border ${
+              level.value === l.value
+                ? "chrome-btn border-transparent"
+                : "bg-surface-2 border-border text-muted hover:text-foreground"
+            }`}
+          >
+            {l.label}
+          </button>
+        ))}
       </div>
 
-      <div className="mt-5">
-        <p className="text-xs text-muted mb-2">
-          Shade (VLT — lower % is darker)
-        </p>
-        <div className="grid grid-cols-5 gap-2">
-          {shades.map((s) => (
-            <button
-              type="button"
-              key={s.label}
-              onClick={() => setShade(s)}
-              className={`rounded-lg border px-2 py-2 text-sm font-medium transition-colors ${
-                shade.label === s.label
-                  ? "border-accent bg-accent/10"
-                  : "border-border bg-surface-2 text-muted hover:text-foreground"
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
+      {/* Preview */}
+      <div className="relative rounded-lg overflow-hidden bg-surface-2">
+        <span
+          aria-hidden
+          className="pointer-events-none select-none absolute left-3 bottom-2 sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2 z-0 text-6xl sm:text-8xl font-black text-foreground/10 leading-none"
+        >
+          {level.label}
+        </span>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${isTesla ? "tesla" : "standard"}-${level.value}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="relative aspect-video"
+          >
+            {image ? (
+              <Image src={image} alt={`${level.label} tint preview`} fill className="object-cover" />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-center px-6">
+                <p className="text-sm text-muted">
+                  {isTesla ? "Tesla" : "Standard vehicle"} preview at{" "}
+                  <span className="text-foreground font-medium">{level.label}</span> coming soon.
+                </p>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
