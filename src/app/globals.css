@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  --background: #08090a;
+  --surface: #121315;
+  --surface-2: #1a1c1f;
+  --foreground: #f5f6f7;
+  --muted: #9a9ca2;
+  --border: #26282c;
+  --accent: #d8dbe0;
+  --accent-hover: #eef0f2;
+  --accent-foreground: #0a0a0b;
+  --chrome-1: #eceef0;
+  --chrome-2: #8b8e94;
+  --chrome-3: #d8dbe0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.chrome-text {
+  background: linear-gradient(
+    115deg,
+    var(--chrome-2) 0%,
+    var(--chrome-1) 25%,
+    var(--chrome-2) 45%,
+    var(--chrome-1) 65%,
+    var(--chrome-3) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.chrome-btn {
+  background: linear-gradient(180deg, var(--chrome-1) 0%, var(--chrome-3) 55%, var(--chrome-2) 100%);
+  color: var(--accent-foreground);
+}
+
+.chrome-btn:hover {
+  background: linear-gradient(180deg, #ffffff 0%, var(--chrome-1) 55%, var(--chrome-3) 100%);
+}
