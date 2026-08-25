@@ -3,10 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { catalog } from "@/data/catalog";
+import ServicesDropdown from "@/components/ServicesDropdown";
+
+function hrefFor(slug: string) {
+  return slug === "window-tinting" ? "/window-tinting" : `/services/${slug}`;
+}
 
 const links = [
-  { href: "/services", label: "Services" },
-  { href: "/window-tinting", label: "Window Tint" },
   { href: "/our-work", label: "Our Work" },
   { href: "/booking", label: "Book Now" },
   { href: "/shop", label: "Shop" },
@@ -15,6 +19,7 @@ const links = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -41,6 +46,7 @@ export default function Navbar() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm shrink-0">
+          <ServicesDropdown />
           {links.map((link) => (
             <Link
               key={link.href}
@@ -66,13 +72,44 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <nav className="md:hidden border-t border-border bg-surface px-6 py-4 flex flex-col gap-4 text-sm">
+        <nav className="md:hidden border-t border-border bg-surface px-6 py-4 flex flex-col gap-1 text-sm">
+          <button
+            type="button"
+            onClick={() => setServicesOpen((v) => !v)}
+            className="flex items-center justify-between py-2 text-muted hover:text-foreground transition-colors"
+            aria-expanded={servicesOpen}
+          >
+            Services
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              className={`transition-transform duration-200 ${servicesOpen ? "rotate-180" : ""}`}
+            >
+              <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          {servicesOpen && (
+            <div className="pl-3 flex flex-col gap-1 pb-2 border-l border-border ml-1">
+              {catalog.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={hrefFor(c.slug)}
+                  onClick={() => setOpen(false)}
+                  className="py-1.5 text-sm text-muted hover:text-foreground transition-colors"
+                >
+                  {c.name}
+                </Link>
+              ))}
+            </div>
+          )}
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="text-muted hover:text-foreground transition-colors"
+              className="py-2 text-muted hover:text-foreground transition-colors"
             >
               {link.label}
             </Link>
