@@ -16,23 +16,23 @@ export default async function ServiceCategoryPage({
   if (!category) notFound();
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
+    <div className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
       <Link href="/services" className="text-sm text-muted hover:text-foreground transition-colors">
         &larr; All Services
       </Link>
 
-      <h1 className="text-3xl font-bold mt-3 mb-2">{category.name}</h1>
-      <p className="text-muted max-w-2xl mb-10">{category.description}</p>
+      <h1 className="text-2xl sm:text-3xl font-bold mt-3 mb-2">{category.name}</h1>
+      <p className="text-sm sm:text-base text-muted max-w-2xl mb-6 sm:mb-10">{category.description}</p>
 
       {category.visualizer === "ppf" && (
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-10">
           <PPFVisualizer />
         </div>
       )}
 
-      <div className="grid gap-5">
+      <div className="grid gap-4 sm:gap-5">
         {category.packages.map((pkg) => (
-          <div key={pkg.slug} className="bg-surface border border-border rounded-xl p-6">
+          <div key={pkg.slug} className="bg-surface border border-border rounded-xl p-5 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold">{pkg.name}</h2>

@@ -32,7 +32,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
 
   return (
     <div className="bg-surface border border-border rounded-xl p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <h3 className="font-semibold">Preview Your Tint</h3>
         {hasTeslaVariant && (
           <div className="flex bg-surface-2 border border-border rounded-full p-1 text-xs">

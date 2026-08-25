@@ -14,7 +14,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden min-h-[85vh] flex items-center">
+    <section className="relative overflow-hidden min-h-[70vh] sm:min-h-[85vh] flex items-center">
       {/* Background video */}
       <video
         ref={videoRef}
@@ -30,12 +30,12 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-background" />
       <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
 
-      <div className="relative mx-auto max-w-6xl px-6 py-24 text-center w-full">
+      <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-24 text-center w-full">
         <motion.span
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] as const }}
-          className="inline-block text-xs uppercase tracking-[0.2em] text-muted mb-4"
+          className="inline-block text-[10px] sm:text-xs uppercase tracking-[0.2em] text-muted mb-3 sm:mb-4"
         >
           ✦ A Cut Above Every Car Wash
         </motion.span>
@@ -51,7 +51,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: [0.2, 0.8, 0.2, 1] as const }}
-          className="mt-4 text-muted max-w-xl mx-auto"
+          className="mt-3 sm:mt-4 text-sm sm:text-base text-muted max-w-xl mx-auto text-balance"
         >
           Premium mobile detailing, paint protection, and ceramic coatings.
           See your options, visualize the results, and book online in
@@ -61,7 +61,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.24, ease: [0.2, 0.8, 0.2, 1] as const }}
-          className="mt-8 flex justify-center gap-4"
+          className="mt-6 sm:mt-8 flex justify-center gap-3 sm:gap-4"
         >
           <Link
             href="/booking"

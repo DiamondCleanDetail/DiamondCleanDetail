@@ -5,16 +5,16 @@ import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 export default function ServicesPage() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
+    <div className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
       <FadeIn>
-        <h1 className="text-3xl font-bold mb-2">Services</h1>
-        <p className="text-muted mb-10 max-w-2xl">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Services</h1>
+        <p className="text-sm sm:text-base text-muted mb-6 sm:mb-10 max-w-2xl">
           Every service we offer, with real packages and pricing. Pick a
           category to compare options and book online.
         </p>
       </FadeIn>
 
-      <StaggerGrid className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {catalog.map((category) => {
           const startingPackage = category.packages[0];
           return (

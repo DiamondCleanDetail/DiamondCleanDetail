@@ -8,9 +8,9 @@ export default async function BookingPage({
   const pkg = typeof params.package === "string" ? params.package : undefined;
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="text-3xl font-bold mb-2">Book a Detail</h1>
-      <p className="text-muted mb-8">
+    <div className="mx-auto max-w-3xl px-6 py-10 sm:py-16">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2">Book a Detail</h1>
+      <p className="text-sm sm:text-base text-muted mb-6 sm:mb-8">
         Choose your service, compare packages, pick a time, and book — all
         online.
       </p>

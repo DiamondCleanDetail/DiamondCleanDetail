@@ -57,7 +57,7 @@ export default function Navbar() {
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={open}
-          className="md:hidden shrink-0 w-9 h-9 flex flex-col items-center justify-center gap-1.5 border border-border rounded-lg"
+          className="md:hidden shrink-0 w-11 h-11 flex flex-col items-center justify-center gap-1.5 border border-border rounded-lg"
         >
           <span className={`block h-0.5 w-5 bg-foreground transition-transform ${open ? "translate-y-2 rotate-45" : ""}`} />
           <span className={`block h-0.5 w-5 bg-foreground transition-opacity ${open ? "opacity-0" : ""}`} />

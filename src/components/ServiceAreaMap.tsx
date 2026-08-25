@@ -2,9 +2,9 @@ import { serviceArea } from "@/data/serviceArea";
 
 export default function ServiceAreaMap() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
-      <h2 className="text-2xl font-semibold mb-2">Service Area</h2>
-      <p className="text-muted mb-6 text-sm">
+    <section className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-2">Service Area</h2>
+      <p className="text-muted mb-4 sm:mb-6 text-sm">
         Mobile detailing within {serviceArea.radiusMiles} miles of{" "}
         {serviceArea.baseCity}.
       </p>

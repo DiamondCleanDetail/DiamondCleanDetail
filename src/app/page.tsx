@@ -17,45 +17,45 @@ export default function Home() {
     <div>
       <Hero />
 
-      <section className="mx-auto max-w-6xl px-6 pb-24">
+      <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">
         <FadeIn>
           <Link
             href="/window-tinting"
-            className="card-lift group relative overflow-hidden flex flex-col sm:flex-row items-center justify-between gap-6 bg-surface border border-border rounded-2xl px-8 py-10"
+            className="card-lift group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-6 bg-surface border border-border rounded-2xl px-6 py-7 sm:px-8 sm:py-10"
           >
             <div>
-              <span className="text-xs uppercase tracking-widest text-muted">
+              <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
                 Interactive Preview
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold mt-2">
+              <h2 className="text-xl sm:text-3xl font-bold mt-2">
                 Window Tinting — <span className="chrome-text">See It Before You Book</span>
               </h2>
-              <p className="text-muted mt-2 max-w-lg">
+              <p className="text-sm sm:text-base text-muted mt-2 max-w-lg">
                 Preview real tint shades on an actual vehicle, then book the
                 darkness that fits you. Tesla pricing handled separately.
               </p>
             </div>
-            <span className="chrome-btn shrink-0 px-6 py-3 rounded-lg font-semibold whitespace-nowrap">
+            <span className="chrome-btn shrink-0 px-6 py-3 rounded-lg font-semibold whitespace-nowrap text-sm sm:text-base">
               Preview Tints &rarr;
             </span>
           </Link>
         </FadeIn>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-24">
+      <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">
         <FadeIn>
-          <h2 className="text-2xl font-semibold mb-6">Popular Services</h2>
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Popular Services</h2>
         </FadeIn>
-        <StaggerGrid className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StaggerGrid className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {featuredCategories.map((category) => (
             <StaggerItem key={category.slug}>
               <Link
                 href={`/services/${category.slug}`}
-                className="card-lift block h-full bg-surface border border-border rounded-xl p-5"
+                className="card-lift block h-full bg-surface border border-border rounded-xl p-4 sm:p-5"
               >
-                <h3 className="font-medium">{category.name}</h3>
-                <p className="text-sm text-muted mt-2">{category.summary}</p>
-                <p className="mt-4 font-semibold chrome-text">
+                <h3 className="font-medium text-sm sm:text-base">{category.name}</h3>
+                <p className="hidden sm:block text-sm text-muted mt-2">{category.summary}</p>
+                <p className="mt-3 sm:mt-4 font-semibold chrome-text text-sm sm:text-base">
                   {priceLabel(category.packages[0], "sedan")}
                 </p>
               </Link>

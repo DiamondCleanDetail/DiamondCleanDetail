@@ -122,8 +122,21 @@ export default function BookingWizard({
 
   return (
     <div>
-      {/* Progress */}
-      <div className="no-scrollbar flex items-center gap-1 mb-8 overflow-x-auto">
+      {/* Progress — compact on mobile, full stepper from sm up */}
+      <div className="sm:hidden mb-6">
+        <div className="flex items-baseline justify-between mb-2">
+          <span className="text-sm font-medium">{steps[step - 1]}</span>
+          <span className="text-xs text-muted">Step {step} of {steps.length}</span>
+        </div>
+        <div className="h-1 rounded-full bg-surface-2 overflow-hidden">
+          <div
+            className="h-full bg-accent transition-all duration-300"
+            style={{ width: `${(step / steps.length) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      <div className="no-scrollbar hidden sm:flex items-center gap-1 mb-8 overflow-x-auto">
         {steps.map((label, i) => {
           const n = i + 1;
           const active = n === step;
@@ -156,16 +169,16 @@ export default function BookingWizard({
 
       {/* Step 1: Service */}
       {step === 1 && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {catalog.map((c) => (
             <button
               type="button"
               key={c.slug}
               onClick={() => selectCategory(c.slug)}
-              className="text-left bg-surface border border-border rounded-xl p-5 hover:border-muted transition-colors"
+              className="text-left bg-surface border border-border rounded-xl p-4 sm:p-5 hover:border-muted transition-colors"
             >
-              <h3 className="font-semibold">{c.name}</h3>
-              <p className="text-sm text-muted mt-1">{c.summary}</p>
+              <h3 className="font-semibold text-sm sm:text-base">{c.name}</h3>
+              <p className="hidden sm:block text-sm text-muted mt-1">{c.summary}</p>
             </button>
           ))}
         </div>
@@ -323,30 +336,30 @@ export default function BookingWizard({
 
       {/* Step 6: Pay */}
       {step === 6 && (
-        <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
-          <div className="bg-surface-2 rounded-lg p-4 space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted">Service</span>
-              <span>{category.name} — {pkg.name}</span>
+        <div className="bg-surface border border-border rounded-xl p-5 sm:p-6 space-y-4">
+          <div className="bg-surface-2 rounded-lg p-4 space-y-2 text-sm">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
+              <span className="text-muted shrink-0">Service</span>
+              <span className="sm:text-right">{category.name} — {pkg.name}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted">Vehicle</span>
-              <span>{vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
+              <span className="text-muted shrink-0">Vehicle</span>
+              <span className="sm:text-right">{vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted">Date & Time</span>
-              <span>{date || "—"} at {time || "—"}</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
+              <span className="text-muted shrink-0">Date &amp; Time</span>
+              <span className="sm:text-right">{date || "—"} at {time || "—"}</span>
             </div>
-            <div className="flex justify-between pt-2 border-t border-border mt-2">
-              <span className="text-muted">Total</span>
-              <span className="font-semibold">
+            <div className="flex justify-between gap-4 pt-2 border-t border-border">
+              <span className="text-muted shrink-0">Total</span>
+              <span className="font-semibold text-right">
                 {isQuote ? "Priced after assessment" : `$${price}`}
               </span>
             </div>
             {!isQuote && deposit > 0 && (
-              <div className="flex justify-between">
-                <span className="text-muted">Deposit due now</span>
-                <span className="font-semibold chrome-text">${deposit}</span>
+              <div className="flex justify-between gap-4">
+                <span className="text-muted shrink-0">Deposit due now</span>
+                <span className="font-semibold chrome-text text-right">${deposit}</span>
               </div>
             )}
           </div>
