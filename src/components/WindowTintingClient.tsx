@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getCategory, priceForSize, Package, VehicleSize } from "@/data/catalog";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
-import { coTintLaw, isRoadLegalInColorado } from "@/data/tintLaw";
+import { isRoadLegalInColorado } from "@/data/tintLaw";
 import ServiceHero from "@/components/ServiceHero";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintCoverageSelector from "@/components/TintCoverageSelector";
@@ -92,36 +92,6 @@ export default function WindowTintingClient() {
             isTesla={isTesla}
             setIsTesla={setIsTesla}
           />
-        </section>
-
-        {/* Colorado tint law */}
-        <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
-          <div className="bg-neutral-50 border-2 border-neutral-300 rounded-xl p-6 sm:p-8">
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <h2 className="text-lg sm:text-xl font-semibold text-neutral-900">Colorado Tint Law</h2>
-              <span
-                className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full ${
-                  level.value === 0 || isRoadLegalInColorado(level.value)
-                    ? "bg-green-100 text-green-800"
-                    : "bg-amber-100 text-amber-800"
-                }`}
-              >
-                {level.label} tint —{" "}
-                {level.value === 0 || isRoadLegalInColorado(level.value)
-                  ? "Road legal in CO"
-                  : "Not road legal in CO"}
-              </span>
-            </div>
-            <ul className="mt-4 space-y-2">
-              {coTintLaw.rules.map((r) => (
-                <li key={r.area} className="text-sm text-neutral-600 flex gap-2">
-                  <span className="font-medium text-neutral-900 shrink-0">{r.area}:</span>
-                  {r.rule}
-                </li>
-              ))}
-            </ul>
-            <p className="text-xs text-neutral-500 mt-4 leading-relaxed">{coTintLaw.note}</p>
-          </div>
         </section>
 
         <section className="w-full pb-6 sm:pb-10">
