@@ -14,6 +14,17 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">
         <FadeIn>
+          <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-center mb-6 sm:mb-10">
+            Services We <span className="chrome-text">Offer</span>
+          </h2>
+        </FadeIn>
+        <FadeIn delay={0.1}>
+          <ServiceMosaic />
+        </FadeIn>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">
+        <FadeIn>
           <Link
             href="/window-tinting"
             className="card-lift group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-6 bg-surface border border-border rounded-2xl px-6 py-7 sm:px-8 sm:py-10"
@@ -34,17 +45,6 @@ export default function Home() {
               Preview Tints &rarr;
             </span>
           </Link>
-        </FadeIn>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">
-        <FadeIn>
-          <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-center mb-6 sm:mb-10">
-            Services We <span className="chrome-text">Offer</span>
-          </h2>
-        </FadeIn>
-        <FadeIn delay={0.1}>
-          <ServiceMosaic />
         </FadeIn>
       </section>
 
