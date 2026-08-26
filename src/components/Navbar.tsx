@@ -3,12 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { catalog } from "@/data/catalog";
+import { navGroups } from "@/data/navGroups";
 import ServicesDropdown from "@/components/ServicesDropdown";
-
-function hrefFor(slug: string) {
-  return slug === "window-tinting" ? "/window-tinting" : `/services/${slug}`;
-}
 
 const links = [
   { href: "/our-work", label: "Our Work" },
@@ -92,14 +88,14 @@ export default function Navbar() {
           </button>
           {servicesOpen && (
             <div className="pl-3 flex flex-col gap-1 pb-2 border-l border-border ml-1">
-              {catalog.map((c) => (
+              {navGroups.map((g) => (
                 <Link
-                  key={c.slug}
-                  href={hrefFor(c.slug)}
+                  key={g.href}
+                  href={g.href}
                   onClick={() => setOpen(false)}
                   className="py-1.5 text-sm text-muted hover:text-foreground transition-colors"
                 >
-                  {c.name}
+                  {g.label}
                 </Link>
               ))}
             </div>

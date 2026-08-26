@@ -3,11 +3,7 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { catalog } from "@/data/catalog";
-
-function hrefFor(slug: string) {
-  return slug === "window-tinting" ? "/window-tinting" : `/services/${slug}`;
-}
+import { navGroups } from "@/data/navGroups";
 
 export default function ServicesDropdown() {
   const [open, setOpen] = useState(false);
@@ -49,20 +45,19 @@ export default function ServicesDropdown() {
             transition={{ duration: 0.18, ease: [0.2, 0.8, 0.2, 1] }}
             className="absolute left-1/2 -translate-x-1/2 top-full pt-3 z-50"
           >
-            <div className="w-[560px] max-w-[80vw] bg-surface border border-border rounded-xl shadow-[0_20px_50px_-20px_rgba(0,0,0,0.7)] p-4 grid grid-cols-2 gap-1">
-              {catalog.map((c) => (
+            <div className="w-64 bg-surface border border-border rounded-xl shadow-[0_20px_50px_-20px_rgba(0,0,0,0.7)] p-2">
+              {navGroups.map((g) => (
                 <Link
-                  key={c.slug}
-                  href={hrefFor(c.slug)}
-                  className="rounded-lg px-3 py-2.5 hover:bg-surface-2 transition-colors"
+                  key={g.href}
+                  href={g.href}
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-foreground hover:bg-surface-2 transition-colors"
                 >
-                  <p className="text-sm font-medium text-foreground">{c.name}</p>
-                  <p className="text-xs text-muted mt-0.5 line-clamp-1">{c.summary}</p>
+                  {g.label}
                 </Link>
               ))}
               <Link
                 href="/services"
-                className="col-span-2 mt-1 pt-3 border-t border-border text-center text-sm font-medium chrome-text"
+                className="block mt-1 pt-3 border-t border-border text-center text-sm font-medium chrome-text py-2"
               >
                 View All Services &rarr;
               </Link>
