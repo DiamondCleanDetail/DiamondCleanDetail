@@ -20,7 +20,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
             Preview how each shade looks before you book.
           </p>
           {hasTeslaVariant && (
-            <div className="inline-flex bg-neutral-100 border border-neutral-200 rounded-full p-1 text-xs mt-5">
+            <div className="inline-flex bg-neutral-100 border-2 border-neutral-300 rounded-full p-1 text-xs mt-5">
               <button
                 type="button"
                 onClick={() => setIsTesla(false)}
@@ -49,7 +49,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
 
         <div className="mx-auto max-w-6xl px-6">
           {/* Level tabs */}
-          <div className="relative flex w-full rounded-full border border-neutral-200 bg-neutral-100 p-1">
+          <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1">
             {tintLevels.map((l) => {
               const isActive = l.value === level.value;
               return (

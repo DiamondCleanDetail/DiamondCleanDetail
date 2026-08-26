@@ -26,7 +26,7 @@ export default function TintCoverageSelector() {
       <div className="mx-auto max-w-6xl px-6">
         {/* Vehicle size tabs */}
         <p className="text-xs text-neutral-500 mb-2">Vehicle Size</p>
-        <div className="relative flex w-full rounded-full border border-neutral-200 bg-neutral-100 p-1 mb-6">
+        <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1 mb-6">
           {(Object.keys(vehicleSizeLabels) as VehicleSize[]).map((size) => {
             const isActive = vehicleSize === size;
             return (
@@ -57,7 +57,7 @@ export default function TintCoverageSelector() {
 
         {/* Coverage package tabs */}
         <p className="text-xs text-neutral-500 mb-2">Coverage</p>
-        <div className="relative flex w-full rounded-full border border-neutral-200 bg-neutral-100 p-1">
+        <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1">
           {category.packages.map((p) => {
             const isActive = pkg.slug === p.slug;
             return (
