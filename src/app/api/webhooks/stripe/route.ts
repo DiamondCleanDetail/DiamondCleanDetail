@@ -29,15 +29,17 @@ export async function POST(req: NextRequest) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const bookingId = session.metadata?.booking_id;
+    const groupId = session.metadata?.group_id;
 
-    if (bookingId && session.payment_status === "paid") {
+    if (session.payment_status === "paid") {
       const db = supabaseAdmin();
-      const { error } = await db
-        .from("bookings")
-        .update({ status: "paid" })
-        .eq("id", bookingId)
-        .eq("status", "pending");
+      const query = groupId
+        ? db.from("bookings").update({ status: "paid" }).eq("group_id", groupId).eq("status", "pending")
+        : bookingId
+          ? db.from("bookings").update({ status: "paid" }).eq("id", bookingId).eq("status", "pending")
+          : null;
 
+      const { error } = query ? await query : { error: null };
       if (error) {
         console.error("Webhook failed to mark booking paid:", error.message);
       }

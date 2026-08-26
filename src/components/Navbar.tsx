@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { navGroups } from "@/data/navGroups";
 import ServicesDropdown from "@/components/ServicesDropdown";
+import CartIcon from "@/components/CartIcon";
 
 const links = [
   { href: "/our-work", label: "Our Work" },
@@ -52,6 +53,8 @@ export default function Navbar() {
             </Link>
           ))}
         </nav>
+
+        <CartIcon />
 
         <button
           type="button"

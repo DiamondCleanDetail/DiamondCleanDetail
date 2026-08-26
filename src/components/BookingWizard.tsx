@@ -15,6 +15,7 @@ import PPFVisualizer from "@/components/PPFVisualizer";
 import VehiclePicker from "@/components/VehiclePicker";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes, type FilmType } from "@/data/filmTypes";
+import { todayIso, isWeekend, availableSlotsFor, type BookedRange } from "@/lib/scheduling";
 
 const steps = [
   "Service",
@@ -25,38 +26,6 @@ const steps = [
   "Pay",
   "Confirmation",
 ];
-
-const timeSlots = ["9:00 AM", "10:30 AM", "12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM"];
-const CLOSING_MINUTES = 18 * 60; // 6:00 PM — matches serviceArea.ts business hours.
-
-function parseTimeToMinutes(time: string): number {
-  const m = time.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if (!m) return 0;
-  let hour = parseInt(m[1], 10);
-  const minute = parseInt(m[2], 10);
-  const meridiem = m[3].toUpperCase();
-  if (meridiem === "PM" && hour !== 12) hour += 12;
-  if (meridiem === "AM" && hour === 12) hour = 0;
-  return hour * 60 + minute;
-}
-
-function rangesOverlap(aStart: number, aEnd: number, bStart: number, bEnd: number) {
-  return aStart < bEnd && bStart < aEnd;
-}
-
-function todayIso(): string {
-  const now = new Date();
-  const offset = now.getTimezoneOffset();
-  return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
-}
-
-function isWeekend(dateStr: string): boolean {
-  if (!dateStr) return false;
-  const day = new Date(`${dateStr}T00:00:00`).getDay();
-  return day === 0 || day === 6;
-}
-
-type BookedRange = { time: string; durationMinutes: number };
 
 type Draft = {
   step: number;
@@ -216,19 +185,10 @@ export default function BookingWizard({
 
   const duration = pkg.durationMinutes ?? 60;
   const weekend = isWeekend(date);
-  const availableSlots = useMemo(() => {
-    if (weekend) return [];
-    return timeSlots.filter((slot) => {
-      const start = parseTimeToMinutes(slot);
-      const end = start + duration;
-      if (end > CLOSING_MINUTES) return false;
-      return !bookedRanges.some((b) => {
-        const bStart = parseTimeToMinutes(b.time);
-        const bEnd = bStart + b.durationMinutes;
-        return rangesOverlap(start, end, bStart, bEnd);
-      });
-    });
-  }, [bookedRanges, duration, weekend]);
+  const availableSlots = useMemo(
+    () => availableSlotsFor(duration, bookedRanges, weekend),
+    [bookedRanges, duration, weekend]
+  );
 
   const price = priceForSize(pkg, vehicleSize);
   const isQuote = pkg.pricing.type === "quote";

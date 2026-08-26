@@ -33,3 +33,17 @@ create index if not exists bookings_status_idx on bookings (status);
 -- This keeps customer data (name/phone/email) inaccessible to the public
 -- anon key entirely.
 alter table bookings enable row level security;
+
+-- Migration: multi-service cart checkout support.
+-- Run this in the Supabase dashboard: SQL Editor > New query > paste > Run.
+--
+-- group_id links multiple bookings created from one cart checkout together
+-- (one row per service, all sharing one vehicle/date/time/contact and one
+-- Stripe Checkout Session). stripe_session_id was previously unique per
+-- booking, but a multi-item cart checkout shares one session id across all
+-- of its rows, so that constraint is relaxed to a plain (non-unique) index.
+alter table bookings add column if not exists group_id uuid;
+create index if not exists bookings_group_id_idx on bookings (group_id);
+
+alter table bookings drop constraint if exists bookings_stripe_session_id_key;
+create index if not exists bookings_stripe_session_id_idx on bookings (stripe_session_id);
