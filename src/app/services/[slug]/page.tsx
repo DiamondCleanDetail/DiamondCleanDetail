@@ -175,9 +175,14 @@ export default async function ServiceCategoryPage({
           <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Packages &amp; Pricing</h2>
         </FadeIn>
         <div className="grid gap-4 sm:gap-5">
-          {category.packages.map((pkg) => (
+          {category.packages.map((pkg, i) => (
+            <div key={pkg.slug}>
+              {pkg.group && pkg.group !== category.packages[i - 1]?.group && (
+                <h3 className="text-sm font-semibold uppercase tracking-widest text-muted mb-3 mt-2 first:mt-0">
+                  {pkg.group}
+                </h3>
+              )}
             <div
-              key={pkg.slug}
               className={`relative bg-surface border rounded-xl p-5 sm:p-6 ${
                 pkg.featured ? "border-accent" : "border-border"
               }`}
@@ -219,6 +224,7 @@ export default async function ServiceCategoryPage({
                   </Link>
                 </div>
               </div>
+            </div>
             </div>
           ))}
         </div>

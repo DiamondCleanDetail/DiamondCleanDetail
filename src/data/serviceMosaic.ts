@@ -16,7 +16,7 @@ export const serviceMosaic: MosaicTile[] = [
   { title: "See Our Work", href: "/our-work", image: "/work/morgan-1.webp", col: 3, row: "span" },
   { title: "Paint Correction", href: "/services/paint-correction", image: "/mosaic/paint-correction.jpg", col: 4, row: "1" },
   { title: "Fleet Services", href: "/services/fleet-detailing", image: "/mosaic/fleet-detailing.jpg", col: 4, row: "2" },
-  { title: "Wheel Coatings", href: "/services/wheel-ceramic-coating", image: "/mosaic/wheel-ceramic-coating.jpg", col: 5, row: "1" },
+  { title: "Wheel Coatings", href: "/services/ceramic-coating", image: "/mosaic/wheel-ceramic-coating.jpg", col: 5, row: "1" },
   { title: "Leather Restoration", href: "/services/leather-restoration", image: "/mosaic/leather-restoration.jpg", col: 5, row: "2" },
   { title: "Schedule Online", href: "/booking", image: "/mosaic/schedule-online.jpg", col: 6, row: "span" },
 ];

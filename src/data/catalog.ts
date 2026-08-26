@@ -21,6 +21,10 @@ export type Package = {
   depositPercent?: number;
   /** Shows a "Most Popular" badge and highlighted border on the package card. */
   featured?: boolean;
+  /** Groups packages under a subheading on the pricing list, e.g. "Wheel Coating" —
+   * for categories (like Ceramic Coating) that bundle a few related package sets
+   * on one page. Ungrouped packages render first, under no subheading. */
+  group?: string;
 };
 
 export type Benefit = { title: string; description: string };
@@ -193,28 +197,29 @@ export const catalog: ServiceCategory[] = [
     shortName: "Ceramic Coating",
     summary: "Long-term paint protection with a durable hydrophobic finish.",
     description:
-      "Professional-grade ceramic coating bonds to your paint for years of protection, deep gloss, and easier washing. Paint correction is included on prep before every coating.",
+      "Professional-grade ceramic coating bonds to your paint for years of protection, deep gloss, and easier washing. Paint correction is included on prep before every coating. Dedicated wheel and glass coatings are available too.",
     tagline: "A years-long shield with a mirror finish.",
     heroImage: "/services/ceramic-coating-hero.jpg",
     beforeAfter: {
       before: "/services/ceramic-coating-before.jpg",
       after: "/services/ceramic-coating-after.jpg",
     },
-    processMedia: [],
+    processMedia: [
+      { type: "video", src: "/video/wheel-ceramic-coating.mp4", caption: "Wheel ceramic coating in action" },
+    ],
     valueProp:
-      "Ceramic coating is a liquid polymer that chemically bonds to your paint, forming a hard, glossy, hydrophobic layer that outlasts any wax by years, not weeks. It also protects wheels and glass — see the related services below for wheel- and glass-specific coatings.",
+      "Ceramic coating is a liquid polymer that chemically bonds to a surface, forming a hard, glossy, hydrophobic layer that outlasts any wax by years, not weeks. Beyond paint, we offer dedicated coatings for wheels — where brake dust and heat cycles do the most damage — and for glass, where a hydrophobic layer makes rain bead and roll off instead of smearing.",
     benefits: [
-      { title: "Years of protection", description: "Bonds to the clear coat instead of sitting on top, so it doesn't wash or wear off in weeks." },
+      { title: "Years of protection", description: "Bonds to the surface instead of sitting on top, so it doesn't wash or wear off in weeks." },
       { title: "Deep, wet-look gloss", description: "A coated finish reads noticeably glossier and deeper than wax or sealant alone." },
       { title: "Easier to keep clean", description: "The hydrophobic surface sheds water, dirt, and grime, so regular washes take less effort." },
     ],
     process: [
-      { title: "Paint correction & prep", description: "Included on every package — coatings look and bond best over corrected paint." },
-      { title: "Panel wipe-down", description: "An isopropyl wipe removes any oils before coating so nothing is trapped underneath." },
-      { title: "Coating application", description: "The ceramic coating is applied panel by panel and leveled by hand." },
-      { title: "Cure time", description: "The coating cures for 24-48 hours before the vehicle should get wet." },
+      { title: "Paint correction & prep", description: "Included on every paint package — coatings look and bond best over corrected paint." },
+      { title: "Decontamination", description: "Paint, wheels, or glass are deep-cleaned to remove embedded grime before anything is applied." },
+      { title: "Coating application", description: "The ceramic coating is applied by hand and leveled evenly across the surface." },
+      { title: "Cure time", description: "Coatings cure for 24-48 hours before the vehicle should get wet." },
     ],
-    relatedSlugs: ["wheel-ceramic-coating", "glass-ceramic-coating"],
     packages: [
       {
         slug: "1-year-coating",
@@ -251,6 +256,33 @@ export const catalog: ServiceCategory[] = [
         pricing: { type: "fixed", byVehicleSize: { sedan: 1200, suv: 1350, truck: 1450 } },
         durationMinutes: 600,
         depositPercent: 25,
+      },
+      {
+        slug: "wheel-coating",
+        name: "4-Wheel Ceramic Coating",
+        tagline: "Set of 4 wheels & calipers — brake dust wipes off in seconds.",
+        features: ["Deep wheel decontamination", "Ceramic coating on all 4 wheels", "Caliper coating included"],
+        pricing: { type: "fixed", byVehicleSize: { sedan: 150, suv: 175, truck: 200 } },
+        durationMinutes: 120,
+        group: "Wheel Coating",
+      },
+      {
+        slug: "windshield-only",
+        name: "Windshield Only",
+        tagline: "Just the front glass — rain beads and rolls off instead of smearing.",
+        features: ["Glass decontamination", "Ceramic coating on windshield"],
+        pricing: { type: "fixed", byVehicleSize: { sedan: 75, suv: 75, truck: 75 } },
+        durationMinutes: 45,
+        group: "Glass Coating",
+      },
+      {
+        slug: "all-glass",
+        name: "All Glass",
+        tagline: "Windshield, windows & mirrors.",
+        features: ["Glass decontamination", "Ceramic coating on all glass & mirrors"],
+        pricing: { type: "fixed", byVehicleSize: { sedan: 150, suv: 175, truck: 190 } },
+        durationMinutes: 90,
+        group: "Glass Coating",
       },
     ],
   },
@@ -374,76 +406,6 @@ export const catalog: ServiceCategory[] = [
         features: ["Top-of-windshield strip", "Reduces sun glare"],
         pricing: { type: "fixed", byVehicleSize: { sedan: 50, suv: 50, truck: 50 } },
         durationMinutes: 30,
-      },
-    ],
-  },
-  {
-    slug: "wheel-ceramic-coating",
-    name: "Wheel Ceramic Coating",
-    shortName: "Wheel Coating",
-    summary: "Keep brake dust and grime from baking onto your wheels.",
-    description:
-      "A dedicated ceramic coating for wheels and calipers, making brake dust wipe off in seconds and keeping wheels looking freshly detailed for months.",
-    tagline: "Brake dust that wipes off in seconds.",
-    heroVideo: "/video/wheel-ceramic-coating.mp4",
-    valueProp:
-      "Wheels take more abuse than any other part of the vehicle — baked-on brake dust, road grime, and constant heat cycles. A dedicated wheel ceramic coating makes that grime sit on top of the surface instead of bonding to it, so a quick rinse is all it takes to keep them looking freshly detailed.",
-    benefits: [
-      { title: "Brake dust wipes off", description: "Coated wheels release baked-on dust with a rinse instead of a scrub brush." },
-      { title: "Heat resistant", description: "Formulated to hold up to the heat cycles wheels and calipers go through." },
-      { title: "Keeps that just-detailed look", description: "Wheels stay glossy for months between full details." },
-    ],
-    process: [
-      { title: "Wheel decontamination", description: "Wheels are deep-cleaned to remove embedded brake dust before coating." },
-      { title: "Caliper prep", description: "Calipers are cleaned and dressed to match." },
-      { title: "Coating application", description: "Ceramic coating is applied and cured on all 4 wheels and calipers." },
-    ],
-    packages: [
-      {
-        slug: "wheel-coating",
-        name: "4-Wheel Ceramic Coating",
-        tagline: "Set of 4 wheels & calipers.",
-        features: ["Deep wheel decontamination", "Ceramic coating on all 4 wheels", "Caliper coating included"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 150, suv: 175, truck: 200 } },
-        durationMinutes: 120,
-      },
-    ],
-  },
-  {
-    slug: "glass-ceramic-coating",
-    name: "Glass Ceramic Coating",
-    shortName: "Glass Coating",
-    summary: "Rain-repelling glass coating for better visibility.",
-    description:
-      "A hydrophobic ceramic coating applied to your windshield and windows so rain beads and rolls off, improving visibility and easing winter ice removal.",
-    tagline: "Rain that rolls off instead of smearing.",
-    valueProp:
-      "A hydrophobic ceramic coating on your glass makes water bead up and roll away at speed instead of smearing across the windshield. It also makes ice and frost easier to scrape off in winter, and helps keep glass cleaner between washes.",
-    benefits: [
-      { title: "Better visibility in rain", description: "Water beads and rolls off the windshield instead of smearing under the wipers." },
-      { title: "Easier winter mornings", description: "Ice and frost release more easily from coated glass." },
-      { title: "Stays cleaner longer", description: "Road grime and bugs have a harder time bonding to coated glass." },
-    ],
-    process: [
-      { title: "Glass decontamination", description: "Glass is polished and decontaminated to remove old wiper residue and grime." },
-      { title: "Coating application", description: "Ceramic coating is applied and buffed to a clear, streak-free finish." },
-    ],
-    packages: [
-      {
-        slug: "windshield-only",
-        name: "Windshield Only",
-        tagline: "Just the front glass.",
-        features: ["Glass decontamination", "Ceramic coating on windshield"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 75, suv: 75, truck: 75 } },
-        durationMinutes: 45,
-      },
-      {
-        slug: "all-glass",
-        name: "All Glass",
-        tagline: "Windshield, windows & mirrors.",
-        features: ["Glass decontamination", "Ceramic coating on all glass & mirrors"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 150, suv: 175, truck: 190 } },
-        durationMinutes: 90,
       },
     ],
   },
