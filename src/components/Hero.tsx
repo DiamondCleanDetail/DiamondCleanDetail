@@ -15,24 +15,33 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden min-h-[70vh] sm:min-h-[85vh] flex items-center">
-      {/* Background video */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 h-full w-full object-cover"
-        src="/video/hero.mp4"
-        poster="/video/hero-poster.jpg"
-        autoPlay
-        loop
-        muted
-        playsInline
-      />
-      {/* Dark scrim for legibility + fade into page background at the edges */}
-      <div className="absolute inset-0 bg-black/65" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-background" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
-      {/* Stronger fade right at the bottom edge so the video dissolves into
-          the page instead of cutting off hard. */}
-      <div className="absolute inset-x-0 bottom-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent" />
+      {/* Video + its scrim layers fade out together as one unit toward the
+          bottom, revealing the page's own background underneath — this
+          guarantees a seamless dissolve regardless of what's in the last
+          frame of video, instead of relying on a second overlay trying to
+          color-match the page background. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          maskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 92%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 92%)",
+        }}
+      >
+        <video
+          ref={videoRef}
+          className="absolute inset-0 h-full w-full object-cover"
+          src="/video/hero.mp4"
+          poster="/video/hero-poster.jpg"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+        {/* Dark scrim for legibility */}
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
+      </div>
 
       <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-24 text-center w-full">
         <motion.span
