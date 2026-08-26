@@ -11,6 +11,7 @@ import {
 } from "@/data/catalog";
 import TintVisualizer from "@/components/TintVisualizer";
 import PPFVisualizer from "@/components/PPFVisualizer";
+import VehiclePicker from "@/components/VehiclePicker";
 import { tintLevels } from "@/data/tintLevels";
 
 const steps = [
@@ -118,8 +119,9 @@ export default function BookingWizard({
   }
 
   const canGoNext = () => {
+    if (step === 3) return Boolean(vehicleInfo);
     if (step === 4) return Boolean(date && time);
-    if (step === 5) return Boolean(name && phone && vehicleInfo);
+    if (step === 5) return Boolean(name && phone);
     return true;
   };
 
@@ -247,25 +249,15 @@ export default function BookingWizard({
         <div className="bg-surface border border-border rounded-xl p-6">
           <p className="text-sm text-muted mb-4">
             {pkg.pricing.type === "fixed"
-              ? "Pricing depends on vehicle size."
-              : "Vehicle size helps us prepare, even though this service is priced separately."}
+              ? "Tell us your vehicle and we'll figure out pricing automatically."
+              : "Vehicle info helps us prepare, even though this service is priced separately."}
           </p>
-          <div className="grid grid-cols-3 gap-3">
-            {(Object.keys(vehicleSizeLabels) as VehicleSize[]).map((size) => (
-              <button
-                type="button"
-                key={size}
-                onClick={() => setVehicleSize(size)}
-                className={`rounded-lg border px-3 py-3 text-sm font-medium transition-colors ${
-                  vehicleSize === size
-                    ? "border-accent bg-accent/10 text-foreground"
-                    : "border-border bg-surface-2 text-muted hover:text-foreground"
-                }`}
-              >
-                {vehicleSizeLabels[size]}
-              </button>
-            ))}
-          </div>
+          <VehiclePicker
+            vehicleSize={vehicleSize}
+            setVehicleSize={setVehicleSize}
+            vehicleInfo={vehicleInfo}
+            setVehicleInfo={setVehicleInfo}
+          />
         </div>
       )}
 
@@ -335,17 +327,18 @@ export default function BookingWizard({
               />
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Vehicle (Year / Make / Model)
-            </label>
-            <input
-              type="text"
-              value={vehicleInfo}
-              onChange={(e) => setVehicleInfo(e.target.value)}
-              placeholder="2020 Honda Civic"
-              className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm placeholder:text-muted"
-            />
+          <div className="flex items-center justify-between gap-4 bg-surface-2 border border-border rounded-lg px-3 py-2.5">
+            <div>
+              <p className="text-xs uppercase tracking-widest text-muted">Vehicle</p>
+              <p className="text-sm mt-0.5">{vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setStep(3)}
+              className="text-xs text-muted hover:text-foreground transition-colors underline underline-offset-4 shrink-0"
+            >
+              Change
+            </button>
           </div>
         </div>
       )}
