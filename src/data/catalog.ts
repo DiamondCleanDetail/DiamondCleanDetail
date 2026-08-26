@@ -241,6 +241,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "Choose your coverage and see exactly which panels get protected. Partial-front covers the most impact-prone areas; full-body wraps the entire vehicle in self-healing film.",
     tagline: "Invisible armor for the panels that take the hits.",
+    heroImage: "/services/ppf-hero.jpg",
     valueProp:
       "Paint Protection Film is a clear, self-healing urethane film applied directly over your paint. It absorbs rock chips, road debris, and light scratches that would otherwise damage the clear coat — and minor scuffs in the film itself heal with heat, so it stays looking new.",
     benefits: [
