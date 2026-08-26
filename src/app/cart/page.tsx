@@ -15,6 +15,7 @@ export default function CartPage() {
   const [time, setTime] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [bookedRanges, setBookedRanges] = useState<BookedRange[]>([]);
@@ -76,6 +77,7 @@ export default function CartPage() {
           vehicleInfo,
           name,
           phone,
+          email: email || undefined,
           date,
           time,
         }),
@@ -209,6 +211,19 @@ export default function CartPage() {
               className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm placeholder:text-muted"
             />
           </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Email <span className="text-muted font-normal">(optional)</span>
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="jane@example.com"
+            className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm placeholder:text-muted"
+          />
+          <p className="text-xs text-muted mt-1">We&apos;ll send your confirmation and receipt here.</p>
         </div>
       </div>
 

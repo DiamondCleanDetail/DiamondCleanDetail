@@ -40,6 +40,7 @@ type Draft = {
   time: string;
   name: string;
   phone: string;
+  email: string;
 };
 
 const DRAFT_KEY = "dcd-booking-draft";
@@ -97,6 +98,7 @@ export default function BookingWizard({
   const [time, setTime] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [vehicleInfo, setVehicleInfo] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -134,6 +136,7 @@ export default function BookingWizard({
         setTime(existingDraft.time);
         setName(existingDraft.name);
         setPhone(existingDraft.phone);
+        setEmail(existingDraft.email ?? "");
         setVehicleInfo(existingDraft.vehicleInfo);
         // Skip persisting this render's stale pre-resume values — the
         // setState calls above trigger another render/effect pass, which
@@ -155,13 +158,14 @@ export default function BookingWizard({
       time,
       name,
       phone,
+      email,
     };
     try {
       sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draftToSave));
     } catch {
       // sessionStorage unavailable (private browsing, etc.) — non-fatal.
     }
-  }, [step, categorySlug, pkg, vehicleSize, vehicleInfo, tintLevel, isTesla, filmType, date, time, name, phone]);
+  }, [step, categorySlug, pkg, vehicleSize, vehicleInfo, tintLevel, isTesla, filmType, date, time, name, phone, email]);
 
   // Real availability, sourced from actual bookings for the selected date.
   useEffect(() => {
@@ -224,6 +228,7 @@ export default function BookingWizard({
           vehicleInfo: `${vehicleInfo}${tintNote}`,
           name,
           phone,
+          email: email || undefined,
           date,
           time,
         }),
@@ -455,6 +460,19 @@ export default function BookingWizard({
                 className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm placeholder:text-muted"
               />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Email <span className="text-muted font-normal">(optional)</span>
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="jane@example.com"
+              className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm placeholder:text-muted"
+            />
+            <p className="text-xs text-muted mt-1">We&apos;ll send your confirmation and receipt here.</p>
           </div>
           <div className="flex items-center justify-between gap-4 bg-surface-2 border border-border rounded-lg px-3 py-2.5">
             <div>

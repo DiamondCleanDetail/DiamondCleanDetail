@@ -12,6 +12,7 @@ type CheckoutBody = {
   vehicleInfo: string;
   name: string;
   phone: string;
+  email?: string;
   date: string;
   time: string;
 };
@@ -54,6 +55,7 @@ export async function POST(req: NextRequest) {
       vehicle_info: body.vehicleInfo,
       customer_name: body.name,
       customer_phone: body.phone,
+      customer_email: body.email || null,
       booking_date: body.date,
       booking_time: body.time,
       price_cents: Math.round(price * 100),
@@ -73,6 +75,7 @@ export async function POST(req: NextRequest) {
     vehicle_info: r.vehicle_info,
     customer_name: r.customer_name,
     customer_phone: r.customer_phone,
+    customer_email: r.customer_email,
     booking_date: r.booking_date,
     booking_time: r.booking_time,
     price_cents: r.price_cents,
