@@ -37,6 +37,8 @@ export type ServiceCategory = {
   tagline: string;
   /** Path under /public/video for this page's hero background, e.g. "/video/mobile-detailing.mp4". */
   heroVideo?: string;
+  /** Optional explainer image shown beside the "What It Is" copy, e.g. "/services/ceramic-coating-diagram.jpg". */
+  valuePropImage?: string;
   /** "What is this service" explainer paragraph. */
   valueProp: string;
   benefits: Benefit[];
@@ -174,6 +176,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "Professional-grade ceramic coating bonds to your paint for years of protection, deep gloss, and easier washing. Paint correction is included on prep before every coating.",
     tagline: "A years-long shield with a mirror finish.",
+    valuePropImage: "/services/ceramic-coating-diagram.jpg",
     valueProp:
       "Ceramic coating is a liquid polymer that chemically bonds to your paint, forming a hard, glossy, hydrophobic layer that outlasts any wax by years, not weeks. It also protects wheels and glass — see the related services below for wheel- and glass-specific coatings.",
     benefits: [
