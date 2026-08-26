@@ -135,6 +135,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "Multi-stage machine polishing that removes swirl marks, light scratches, and oxidation to restore paint clarity and gloss before a ceramic coating or on its own.",
     tagline: "Restore the paint underneath the swirls.",
+    heroVideo: "/video/paint-correction.mp4",
     valueProp:
       "Every vehicle picks up fine swirl marks and light scratches from years of washing. Paint correction uses machine polishers and cutting/finishing compounds to level out that top layer of clear coat, bringing back true clarity and gloss before any wax, sealant, or ceramic coating goes on.",
     benefits: [
@@ -372,6 +373,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "A dedicated ceramic coating for wheels and calipers, making brake dust wipe off in seconds and keeping wheels looking freshly detailed for months.",
     tagline: "Brake dust that wipes off in seconds.",
+    heroVideo: "/video/wheel-ceramic-coating.mp4",
     valueProp:
       "Wheels take more abuse than any other part of the vehicle — baked-on brake dust, road grime, and constant heat cycles. A dedicated wheel ceramic coating makes that grime sit on top of the surface instead of bonding to it, so a quick rinse is all it takes to keep them looking freshly detailed.",
     benefits: [
@@ -472,6 +474,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "Deep cleaning, conditioning, and restoration for leather seats and trim — from routine conditioning to repairing cracks and fading.",
     tagline: "Bring tired leather back to life.",
+    heroVideo: "/video/leather-restoration.mp4",
     valueProp:
       "Leather seats dry out, crack, and fade over years of sun exposure and use. Routine cleaning and conditioning keeps healthy leather supple and protected, while full restoration repairs cracking, fading, and staining on leather that's already showing its age.",
     benefits: [
@@ -549,6 +552,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "Volume pricing and recurring scheduling for companies with multiple vehicles — rideshare, rental, delivery, and corporate fleets.",
     tagline: "Volume detailing for businesses that run on their vehicles.",
+    heroImage: "/services/fleet-hero.jpg",
     valueProp:
       "Rideshare, rental, delivery, and corporate fleets all depend on vehicles that look and feel clean. We build a recurring detailing schedule around your fleet size and usage, with volume-based pricing and a single invoice instead of per-vehicle billing.",
     benefits: [
