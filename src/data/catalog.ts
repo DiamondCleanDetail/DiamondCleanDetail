@@ -84,14 +84,14 @@ export const catalog: ServiceCategory[] = [
     ],
     relatedSlugs: ["paint-correction", "scratch-removal", "leather-restoration"],
     galleryImages: [
-      { src: "/work/jose-3.webp", caption: "Full Detail — Land Rover Discovery Sport" },
-      { src: "/work/jose-2.webp", caption: "Interior Detail — Land Rover Discovery Sport" },
-      { src: "/work/jose-1.webp", caption: "Full Detail — Land Rover Discovery Sport" },
-      { src: "/work/morgan-1.webp", caption: "Full Detail — Blue SUV" },
-      { src: "/work/morgan-2.webp", caption: "Interior Detail — Blue SUV" },
+      { src: "/work/jose-3.webp", caption: "The Diamond Detail — Land Rover Discovery Sport" },
+      { src: "/work/jose-2.webp", caption: "The Diamond Detail — Land Rover Discovery Sport" },
+      { src: "/work/jose-1.webp", caption: "The Diamond Detail — Land Rover Discovery Sport" },
+      { src: "/work/morgan-1.webp", caption: "The Diamond Detail Plus — Blue SUV" },
+      { src: "/work/morgan-2.webp", caption: "The Diamond Detail Plus — Blue SUV" },
       { src: "/work/sport-bike.jpg", caption: "Mobile Detail — Sport Bike" },
       { src: "/work/harley-bagger.jpg", caption: "Motorcycle Detail — Harley-Davidson Bagger" },
-      { src: "/work/lexus-rx-1.webp", caption: "Full Detail — Lexus RX" },
+      { src: "/work/lexus-rx-1.webp", caption: "The Diamond Detail Pro — Lexus RX" },
     ],
     packages: [
       {

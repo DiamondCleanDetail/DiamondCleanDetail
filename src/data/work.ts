@@ -14,32 +14,32 @@ export type WorkItem = {
 export const workItems: WorkItem[] = [
   {
     slug: "bmw-x5-pro-detail",
-    title: "Diamond Clean Pro Detail — BMW X5",
+    title: "The Diamond Detail Pro — BMW X5",
     images: ["/work/bmw-x5-1.webp"],
   },
   {
     slug: "velar-full-detail",
-    title: "Full Detail — Range Rover Velar",
+    title: "The Diamond Detail Plus — Range Rover Velar",
     images: ["/work/velar-1.webp", "/work/velar-2.webp", "/work/velar-3.webp"],
   },
   {
     slug: "acura-mdx-interior",
-    title: "Interior Detail — Acura MDX",
+    title: "Clean & Condition — Acura MDX",
     images: ["/work/acura-mdx-1.webp", "/work/acura-mdx-2.webp"],
   },
   {
     slug: "porsche-cayenne-wash",
-    title: "Foam Bath & Hand Wash — Porsche Cayenne",
+    title: "The Diamond Detail — Porsche Cayenne",
     images: ["/work/porsche-cayenne-1.webp"],
   },
   {
     slug: "jeep-wrangler-detail",
-    title: "Exterior Detail — Jeep Wrangler",
+    title: "The Diamond Detail — Jeep Wrangler",
     images: ["/work/jeep-wrangler-1.webp"],
   },
   {
     slug: "jose-discovery-sport",
-    title: "Full Detail — Land Rover Discovery Sport",
+    title: "The Diamond Detail — Land Rover Discovery Sport",
     images: ["/work/jose-3.webp", "/work/jose-2.webp", "/work/jose-1.webp"],
     testimonial: {
       name: "Jose Villatoro",
@@ -49,7 +49,7 @@ export const workItems: WorkItem[] = [
   },
   {
     slug: "morgan-suv",
-    title: "Full Detail — Blue SUV",
+    title: "The Diamond Detail Plus — Blue SUV",
     images: ["/work/morgan-1.webp", "/work/morgan-2.webp"],
     testimonial: {
       name: "Morgan Priddy",
@@ -73,12 +73,12 @@ export const workItems: WorkItem[] = [
   },
   {
     slug: "lexus-rx-detail",
-    title: "Full Detail — Lexus RX",
+    title: "The Diamond Detail Pro — Lexus RX",
     images: ["/work/lexus-rx-1.webp"],
   },
   {
     slug: "francs-1",
-    title: "Full Detail",
+    title: "The Diamond Detail",
     images: [],
     testimonial: {
       name: "Francs",
