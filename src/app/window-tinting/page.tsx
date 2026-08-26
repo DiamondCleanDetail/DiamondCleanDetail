@@ -11,6 +11,7 @@ import TintCoverageSelector from "@/components/TintCoverageSelector";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
+import ServiceGallery from "@/components/ServiceGallery";
 
 const category = getCategory("window-tinting")!;
 
@@ -129,6 +130,11 @@ export default function WindowTintingPage() {
             pricing is quoted separately from standard vehicle pricing above.
             Toggle &ldquo;Tesla&rdquo; in the preview to see how it&apos;s handled.
           </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center text-neutral-900">From Recent Jobs</h2>
+          <ServiceGallery images={category.galleryImages} light />
         </section>
       </div>
     </div>

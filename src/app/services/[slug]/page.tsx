@@ -5,6 +5,7 @@ import { catalog, getCategory, priceLabel } from "@/data/catalog";
 import PPFVisualizer from "@/components/PPFVisualizer";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import ProcessSlideshow from "@/components/ProcessSlideshow";
+import ServiceGallery from "@/components/ServiceGallery";
 import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
@@ -249,6 +250,14 @@ export default async function ServiceCategoryPage({
               Book Now
             </Link>
           </div>
+        </FadeIn>
+      </section>
+
+      {/* Gallery — past jobs of this service type */}
+      <section className="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
+        <FadeIn>
+          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">From Recent Jobs</h2>
+          <ServiceGallery images={category.galleryImages} />
         </FadeIn>
       </section>
     </div>

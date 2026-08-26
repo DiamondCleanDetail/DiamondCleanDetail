@@ -45,6 +45,8 @@ export type ServiceCategory = {
   beforeAfter?: { before: string | null; after: string | null; beforeLabel?: string; afterLabel?: string };
   /** Slideshow of application/process photos or video (e.g. applying ceramic coating, water beading on finished paint). Set to an empty array or omit to render a "coming soon" placeholder. */
   processMedia?: { type: "image" | "video"; src: string; caption?: string }[];
+  /** Horizontally scrollable gallery of past jobs of this service type, shown below the final booking CTA. Omit or leave empty to render a "coming soon" placeholder. */
+  galleryImages?: { src: string; caption: string }[];
   /** "What is this service" explainer paragraph. */
   valueProp: string;
   benefits: Benefit[];
@@ -81,6 +83,16 @@ export const catalog: ServiceCategory[] = [
       { title: "Final walkthrough", description: "We review the vehicle with you before we leave to make sure every detail is covered." },
     ],
     relatedSlugs: ["paint-correction", "scratch-removal", "leather-restoration"],
+    galleryImages: [
+      { src: "/work/jose-3.webp", caption: "Full Detail — Land Rover Discovery Sport" },
+      { src: "/work/jose-2.webp", caption: "Interior Detail — Land Rover Discovery Sport" },
+      { src: "/work/jose-1.webp", caption: "Full Detail — Land Rover Discovery Sport" },
+      { src: "/work/morgan-1.webp", caption: "Full Detail — Blue SUV" },
+      { src: "/work/morgan-2.webp", caption: "Interior Detail — Blue SUV" },
+      { src: "/work/sport-bike.jpg", caption: "Mobile Detail — Sport Bike" },
+      { src: "/work/harley-bagger.jpg", caption: "Motorcycle Detail — Harley-Davidson Bagger" },
+      { src: "/work/lexus-rx.jpg", caption: "Full Detail — Lexus RX" },
+    ],
     packages: [
       {
         slug: "the-diamond-detail",
