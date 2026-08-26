@@ -2,6 +2,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
 import { getCategory } from "@/data/catalog";
+import ClearBookingDraft from "@/components/ClearBookingDraft";
 
 export default async function BookingSuccessPage({
   searchParams,
@@ -48,6 +49,7 @@ export default async function BookingSuccessPage({
 
   return (
     <div className="mx-auto max-w-xl px-6 py-24 text-center">
+      <ClearBookingDraft />
       <div className="bg-surface border border-border rounded-xl p-8">
         <h1 className="text-2xl font-bold mb-2">
           {isQuote ? "Quote Requested" : booking.status === "paid" ? "Booking Confirmed" : "Booking Received"}

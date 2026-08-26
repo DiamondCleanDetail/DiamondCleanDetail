@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   catalog,
   getCategory,
@@ -108,46 +108,71 @@ export default function BookingWizard({
     startCategory.packages.find((p) => p.slug === initialPackage) ?? startCategory.packages[0];
   const hasValidInitialSelection = Boolean(initialCategory && getCategory(initialCategory));
 
-  // Resume an in-progress booking (e.g. after canceling out of Stripe) only
-  // when it matches what this page load was asked to start — otherwise a
-  // stale draft for a different service could bleed into a fresh booking.
-  const existingDraft = loadDraft();
-  const draft =
-    existingDraft &&
-    existingDraft.categorySlug === startCategory.slug &&
-    existingDraft.packageSlug === startPackage.slug
-      ? existingDraft
-      : null;
-
-  const [step, setStep] = useState(draft?.step ?? (hasValidInitialSelection ? 3 : 1));
-  const [categorySlug, setCategorySlug] = useState(draft?.categorySlug ?? startCategory.slug);
-  const [pkg, setPkg] = useState<Package>(() =>
-    draft ? resolvePackage(draft.categorySlug, draft.packageSlug) : startPackage
-  );
-  const [vehicleSize, setVehicleSize] = useState<VehicleSize>(draft?.vehicleSize ?? "sedan");
+  // State starts from SSR-safe defaults only — sessionStorage isn't
+  // available on the server, so reading it here would make the client's
+  // first render diverge from the server-rendered HTML (a hydration
+  // mismatch). Any saved draft is applied after mount instead, below.
+  const [step, setStep] = useState(hasValidInitialSelection ? 3 : 1);
+  const [categorySlug, setCategorySlug] = useState(startCategory.slug);
+  const [pkg, setPkg] = useState<Package>(startPackage);
+  const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
   const [tintLevel, setTintLevel] = useState(() => {
-    const value = draft?.tintLevelValue ?? (initialTint ? Number(initialTint) : 35);
+    const value = initialTint ? Number(initialTint) : 35;
     return tintLevels.find((l) => l.value === value) ?? tintLevels.find((l) => l.value === 35)!;
   });
-  const [isTesla, setIsTesla] = useState(draft?.isTesla ?? initialTesla ?? false);
-  const [filmType, setFilmType] = useState<FilmType>(() => {
-    const slug = draft?.filmSlug ?? initialFilm;
-    return filmTypes.find((f) => f.slug === slug) ?? filmTypes[1];
-  });
-  const [date, setDate] = useState(draft?.date ?? "");
-  const [time, setTime] = useState(draft?.time ?? "");
-  const [name, setName] = useState(draft?.name ?? "");
-  const [phone, setPhone] = useState(draft?.phone ?? "");
-  const [vehicleInfo, setVehicleInfo] = useState(draft?.vehicleInfo ?? "");
+  const [isTesla, setIsTesla] = useState(initialTesla ?? false);
+  const [filmType, setFilmType] = useState<FilmType>(
+    () => filmTypes.find((f) => f.slug === initialFilm) ?? filmTypes[1]
+  );
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [vehicleInfo, setVehicleInfo] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [bookedRanges, setBookedRanges] = useState<BookedRange[]>([]);
 
   const category = getCategory(categorySlug)!;
+  const hasResumedRef = useRef(false);
 
-  // Persist the in-progress booking so canceling out of Stripe (or an
-  // accidental reload) doesn't throw away everything the customer entered.
+  // Resume an in-progress booking (e.g. after canceling out of Stripe) once
+  // the component has mounted on the client, but only when the saved draft
+  // matches what this page load was asked to start — otherwise a stale
+  // draft for a different service could bleed into a fresh booking. This is
+  // combined with the persist-on-change effect below (rather than kept as
+  // two separate effects) so the very first commit can't write this
+  // render's pre-resume defaults over the draft before the resume applies.
   useEffect(() => {
+    if (!hasResumedRef.current) {
+      hasResumedRef.current = true;
+      const existingDraft = loadDraft();
+      if (
+        existingDraft &&
+        existingDraft.categorySlug === startCategory.slug &&
+        existingDraft.packageSlug === startPackage.slug
+      ) {
+        setStep(existingDraft.step);
+        setVehicleSize(existingDraft.vehicleSize);
+        setPkg(resolvePackage(existingDraft.categorySlug, existingDraft.packageSlug));
+        setTintLevel(
+          tintLevels.find((l) => l.value === existingDraft.tintLevelValue) ??
+            tintLevels.find((l) => l.value === 35)!
+        );
+        setIsTesla(existingDraft.isTesla);
+        setFilmType(filmTypes.find((f) => f.slug === existingDraft.filmSlug) ?? filmTypes[1]);
+        setDate(existingDraft.date);
+        setTime(existingDraft.time);
+        setName(existingDraft.name);
+        setPhone(existingDraft.phone);
+        setVehicleInfo(existingDraft.vehicleInfo);
+        // Skip persisting this render's stale pre-resume values — the
+        // setState calls above trigger another render/effect pass, which
+        // will persist the correctly-resumed state instead.
+        return;
+      }
+    }
+
     const draftToSave: Draft = {
       step,
       categorySlug,
@@ -245,11 +270,9 @@ export default function BookingWizard({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Something went wrong. Please try again.");
-      try {
-        sessionStorage.removeItem(DRAFT_KEY);
-      } catch {
-        // non-fatal
-      }
+      // Don't clear the draft here — for paid bookings this redirects to
+      // Stripe first, and the customer may still cancel out of that. The
+      // draft is cleared once they actually reach /booking/success instead.
       window.location.href = data.redirectUrl;
     } catch (e) {
       setSubmitError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
