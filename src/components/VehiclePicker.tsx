@@ -36,6 +36,9 @@ export default function VehiclePicker({
   function handleMakeChange(nextMake: string) {
     setMake(nextMake);
     setModel("");
+    // Clear the derived vehicle info so a stale make/model can't reach
+    // checkout while a new model is still being chosen.
+    setVehicleInfo("");
   }
 
   function handleYearChange(nextYear: string) {

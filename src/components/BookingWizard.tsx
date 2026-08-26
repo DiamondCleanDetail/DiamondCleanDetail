@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   catalog,
   getCategory,
@@ -10,9 +10,11 @@ import {
   priceForSize,
 } from "@/data/catalog";
 import TintVisualizer from "@/components/TintVisualizer";
+import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import PPFVisualizer from "@/components/PPFVisualizer";
 import VehiclePicker from "@/components/VehiclePicker";
 import { tintLevels } from "@/data/tintLevels";
+import { filmTypes, type FilmType } from "@/data/filmTypes";
 
 const steps = [
   "Service",
@@ -25,57 +27,185 @@ const steps = [
 ];
 
 const timeSlots = ["9:00 AM", "10:30 AM", "12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM"];
+const CLOSING_MINUTES = 18 * 60; // 6:00 PM — matches serviceArea.ts business hours.
 
-function hashString(value: string): number {
-  let hash = 0;
-  for (let i = 0; i < value.length; i++) {
-    hash = (hash << 5) - hash + value.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash);
+function parseTimeToMinutes(time: string): number {
+  const m = time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return 0;
+  let hour = parseInt(m[1], 10);
+  const minute = parseInt(m[2], 10);
+  const meridiem = m[3].toUpperCase();
+  if (meridiem === "PM" && hour !== 12) hour += 12;
+  if (meridiem === "AM" && hour === 12) hour = 0;
+  return hour * 60 + minute;
 }
 
-function bookedSlotsForDate(date: string): Set<string> {
-  if (!date) return new Set();
-  const seed = hashString(date);
-  const booked = new Set<string>();
-  const count = seed % 3;
-  for (let i = 0; i < count; i++) {
-    booked.add(timeSlots[(seed + i * 7) % timeSlots.length]);
+function rangesOverlap(aStart: number, aEnd: number, bStart: number, bEnd: number) {
+  return aStart < bEnd && bStart < aEnd;
+}
+
+function todayIso(): string {
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
+}
+
+function isWeekend(dateStr: string): boolean {
+  if (!dateStr) return false;
+  const day = new Date(`${dateStr}T00:00:00`).getDay();
+  return day === 0 || day === 6;
+}
+
+type BookedRange = { time: string; durationMinutes: number };
+
+type Draft = {
+  step: number;
+  categorySlug: string;
+  packageSlug: string;
+  vehicleSize: VehicleSize;
+  vehicleInfo: string;
+  tintLevelValue: number;
+  isTesla: boolean;
+  filmSlug: string;
+  date: string;
+  time: string;
+  name: string;
+  phone: string;
+};
+
+const DRAFT_KEY = "dcd-booking-draft";
+
+function loadDraft(): Draft | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as Draft) : null;
+  } catch {
+    return null;
   }
-  return booked;
+}
+
+function resolvePackage(categorySlug: string, packageSlug: string): Package {
+  const category = getCategory(categorySlug) ?? catalog[0];
+  return category.packages.find((p) => p.slug === packageSlug) ?? category.packages[0];
 }
 
 export default function BookingWizard({
   initialCategory,
   initialPackage,
+  initialTint,
+  initialFilm,
+  initialTesla,
 }: {
   initialCategory?: string;
   initialPackage?: string;
+  initialTint?: string;
+  initialFilm?: string;
+  initialTesla?: boolean;
 }) {
   const startCategory = getCategory(initialCategory ?? "") ?? catalog[0];
   const startPackage =
     startCategory.packages.find((p) => p.slug === initialPackage) ?? startCategory.packages[0];
+  const hasValidInitialSelection = Boolean(initialCategory && getCategory(initialCategory));
 
-  const [step, setStep] = useState(1);
-  const [categorySlug, setCategorySlug] = useState(startCategory.slug);
-  const [pkg, setPkg] = useState<Package>(startPackage);
-  const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
-  const [tintLevel, setTintLevel] = useState(tintLevels.find((l) => l.value === 35)!);
-  const [isTesla, setIsTesla] = useState(false);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [vehicleInfo, setVehicleInfo] = useState("");
+  // Resume an in-progress booking (e.g. after canceling out of Stripe) only
+  // when it matches what this page load was asked to start — otherwise a
+  // stale draft for a different service could bleed into a fresh booking.
+  const existingDraft = loadDraft();
+  const draft =
+    existingDraft &&
+    existingDraft.categorySlug === startCategory.slug &&
+    existingDraft.packageSlug === startPackage.slug
+      ? existingDraft
+      : null;
+
+  const [step, setStep] = useState(draft?.step ?? (hasValidInitialSelection ? 3 : 1));
+  const [categorySlug, setCategorySlug] = useState(draft?.categorySlug ?? startCategory.slug);
+  const [pkg, setPkg] = useState<Package>(() =>
+    draft ? resolvePackage(draft.categorySlug, draft.packageSlug) : startPackage
+  );
+  const [vehicleSize, setVehicleSize] = useState<VehicleSize>(draft?.vehicleSize ?? "sedan");
+  const [tintLevel, setTintLevel] = useState(() => {
+    const value = draft?.tintLevelValue ?? (initialTint ? Number(initialTint) : 35);
+    return tintLevels.find((l) => l.value === value) ?? tintLevels.find((l) => l.value === 35)!;
+  });
+  const [isTesla, setIsTesla] = useState(draft?.isTesla ?? initialTesla ?? false);
+  const [filmType, setFilmType] = useState<FilmType>(() => {
+    const slug = draft?.filmSlug ?? initialFilm;
+    return filmTypes.find((f) => f.slug === slug) ?? filmTypes[1];
+  });
+  const [date, setDate] = useState(draft?.date ?? "");
+  const [time, setTime] = useState(draft?.time ?? "");
+  const [name, setName] = useState(draft?.name ?? "");
+  const [phone, setPhone] = useState(draft?.phone ?? "");
+  const [vehicleInfo, setVehicleInfo] = useState(draft?.vehicleInfo ?? "");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [bookedRanges, setBookedRanges] = useState<BookedRange[]>([]);
 
   const category = getCategory(categorySlug)!;
-  const booked = useMemo(() => bookedSlotsForDate(date), [date]);
-  const availableSlots = timeSlots.filter((slot) => !booked.has(slot));
 
-  const price = pkg.pricing.type === "fixed" ? priceForSize(pkg, vehicleSize) : priceForSize(pkg, vehicleSize);
+  // Persist the in-progress booking so canceling out of Stripe (or an
+  // accidental reload) doesn't throw away everything the customer entered.
+  useEffect(() => {
+    const draftToSave: Draft = {
+      step,
+      categorySlug,
+      packageSlug: pkg.slug,
+      vehicleSize,
+      vehicleInfo,
+      tintLevelValue: tintLevel.value,
+      isTesla,
+      filmSlug: filmType.slug,
+      date,
+      time,
+      name,
+      phone,
+    };
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draftToSave));
+    } catch {
+      // sessionStorage unavailable (private browsing, etc.) — non-fatal.
+    }
+  }, [step, categorySlug, pkg, vehicleSize, vehicleInfo, tintLevel, isTesla, filmType, date, time, name, phone]);
+
+  // Real availability, sourced from actual bookings for the selected date.
+  useEffect(() => {
+    if (!date) {
+      setBookedRanges([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/booking/availability?date=${date}`)
+      .then((res) => (res.ok ? res.json() : { bookedRanges: [] }))
+      .then((data) => {
+        if (!cancelled) setBookedRanges(data.bookedRanges ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setBookedRanges([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [date]);
+
+  const duration = pkg.durationMinutes ?? 60;
+  const weekend = isWeekend(date);
+  const availableSlots = useMemo(() => {
+    if (weekend) return [];
+    return timeSlots.filter((slot) => {
+      const start = parseTimeToMinutes(slot);
+      const end = start + duration;
+      if (end > CLOSING_MINUTES) return false;
+      return !bookedRanges.some((b) => {
+        const bStart = parseTimeToMinutes(b.time);
+        const bEnd = bStart + b.durationMinutes;
+        return rangesOverlap(start, end, bStart, bEnd);
+      });
+    });
+  }, [bookedRanges, duration, weekend]);
+
+  const price = priceForSize(pkg, vehicleSize);
   const isQuote = pkg.pricing.type === "quote";
   const deposit = price && pkg.depositPercent ? Math.round((price * pkg.depositPercent) / 100) : 0;
 
@@ -95,6 +225,10 @@ export default function BookingWizard({
     setSubmitting(true);
     setSubmitError(null);
     try {
+      const tintNote =
+        category.visualizer === "tint"
+          ? ` — ${tintLevel.label} tint, ${filmType.name}${isTesla ? ", Tesla (confirm pricing)" : ""}`
+          : "";
       const res = await fetch("/api/booking/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -102,7 +236,7 @@ export default function BookingWizard({
           serviceSlug: category.slug,
           packageSlug: pkg.slug,
           vehicleSize,
-          vehicleInfo,
+          vehicleInfo: `${vehicleInfo}${tintNote}`,
           name,
           phone,
           date,
@@ -111,6 +245,11 @@ export default function BookingWizard({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Something went wrong. Please try again.");
+      try {
+        sessionStorage.removeItem(DRAFT_KEY);
+      } catch {
+        // non-fatal
+      }
       window.location.href = data.redirectUrl;
     } catch (e) {
       setSubmitError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
@@ -193,7 +332,7 @@ export default function BookingWizard({
       {step === 2 && (
         <div>
           {category.visualizer === "tint" && (
-            <div className="mb-6">
+            <div className="mb-6 bg-white rounded-2xl overflow-hidden">
               <TintVisualizer
                 hasTeslaVariant={category.hasTeslaVariant}
                 level={tintLevel}
@@ -201,6 +340,7 @@ export default function BookingWizard({
                 isTesla={isTesla}
                 setIsTesla={setIsTesla}
               />
+              <TintFilmTypeSelector filmType={filmType} setFilmType={setFilmType} />
             </div>
           )}
           {category.visualizer === "ppf" && (
@@ -269,19 +409,25 @@ export default function BookingWizard({
             <input
               type="date"
               value={date}
+              min={todayIso()}
               onChange={(e) => {
                 setDate(e.target.value);
                 setTime("");
               }}
               className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm"
             />
+            {weekend && (
+              <p className="text-xs text-red-400 mt-1">
+                We&apos;re closed Saturdays and Sundays — please pick a weekday.
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Time</label>
             <select
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              disabled={!date}
+              disabled={!date || weekend}
               className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm disabled:text-muted disabled:cursor-not-allowed"
             >
               <option value="" disabled>
@@ -293,9 +439,9 @@ export default function BookingWizard({
                 </option>
               ))}
             </select>
-            {date && booked.size > 0 && (
+            {date && !weekend && availableSlots.length === 0 && (
               <p className="text-xs text-muted mt-1">
-                {booked.size} slot{booked.size > 1 ? "s" : ""} already booked this day.
+                No times left that day for this service&apos;s length — try another date.
               </p>
             )}
           </div>
@@ -351,6 +497,15 @@ export default function BookingWizard({
               <span className="text-muted shrink-0">Service</span>
               <span className="sm:text-right">{category.name} — {pkg.name}</span>
             </div>
+            {category.visualizer === "tint" && (
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
+                <span className="text-muted shrink-0">Tint &amp; Film</span>
+                <span className="sm:text-right">
+                  {tintLevel.label} &middot; {filmType.name}
+                  {isTesla ? " · Tesla" : ""}
+                </span>
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
               <span className="text-muted shrink-0">Vehicle</span>
               <span className="sm:text-right">{vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})</span>
@@ -372,6 +527,12 @@ export default function BookingWizard({
               </div>
             )}
           </div>
+          {isTesla && category.hasTeslaVariant && (
+            <div className="rounded-lg border border-dashed border-border p-4 text-xs text-muted">
+              Tesla glass can require additional installation time — we&apos;ll
+              confirm with you before your appointment if that changes your total.
+            </div>
+          )}
           {isQuote ? (
             <div className="rounded-lg border border-dashed border-border p-4 text-xs text-muted">
               No payment is required to request a quote — we&apos;ll follow up

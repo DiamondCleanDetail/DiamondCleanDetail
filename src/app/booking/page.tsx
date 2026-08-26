@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import BookingWizard from "@/components/BookingWizard";
+
+export const metadata: Metadata = {
+  title: "Book a Detail",
+  description: "Choose your service, compare packages, pick a time, and book online in minutes.",
+};
 
 export default async function BookingPage({
   searchParams,
@@ -6,6 +12,9 @@ export default async function BookingPage({
   const params = await searchParams;
   const service = typeof params.service === "string" ? params.service : undefined;
   const pkg = typeof params.package === "string" ? params.package : undefined;
+  const tint = typeof params.tint === "string" ? params.tint : undefined;
+  const film = typeof params.film === "string" ? params.film : undefined;
+  const tesla = params.tesla === "1";
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10 sm:py-16">
@@ -14,7 +23,13 @@ export default async function BookingPage({
         Choose your service, compare packages, pick a time, and book — all
         online.
       </p>
-      <BookingWizard initialCategory={service} initialPackage={pkg} />
+      <BookingWizard
+        initialCategory={service}
+        initialPackage={pkg}
+        initialTint={tint}
+        initialFilm={film}
+        initialTesla={tesla}
+      />
     </div>
   );
 }

@@ -26,6 +26,9 @@ export async function POST(req: NextRequest) {
   if (!body.name || !body.phone || !body.vehicleInfo || !body.date || !body.time) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
+  if (!["sedan", "suv", "truck"].includes(body.vehicleSize)) {
+    return NextResponse.json({ error: "Invalid vehicle size." }, { status: 400 });
+  }
 
   const isQuote = pkg.pricing.type === "quote";
   const price =
@@ -59,7 +62,8 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error || !booking) {
-    return NextResponse.json({ error: error?.message ?? "Could not save booking." }, { status: 500 });
+    console.error("Failed to create booking:", error?.message);
+    return NextResponse.json({ error: "Could not save booking. Please try again." }, { status: 500 });
   }
 
   // Quote-only or $0 services skip Stripe entirely.
