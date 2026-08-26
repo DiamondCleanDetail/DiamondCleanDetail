@@ -114,7 +114,7 @@ export default async function ServiceCategoryPage({
               }`}
             >
               {pkg.featured && (
-                <span className="absolute -top-3 left-5 chrome-btn text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                <span className="absolute -top-3 left-5 chrome-chip text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
                   Most Popular
                 </span>
               )}

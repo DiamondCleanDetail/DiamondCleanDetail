@@ -212,7 +212,7 @@ export default function BookingWizard({
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">{p.name}</h3>
                       {p.featured && (
-                        <span className="chrome-btn text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full">
+                        <span className="chrome-chip text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full">
                           Popular
                         </span>
                       )}

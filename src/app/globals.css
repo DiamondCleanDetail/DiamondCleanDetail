@@ -109,6 +109,14 @@ body::after {
   transform: translateX(120%);
 }
 
+/* Static chrome badge (e.g. "Most Popular") — deliberately has no position
+   or overflow rules of its own, unlike .chrome-btn, so it never fights with
+   Tailwind's positioning utilities (absolute, etc.) applied alongside it. */
+.chrome-chip {
+  background: linear-gradient(180deg, var(--chrome-1) 0%, var(--chrome-3) 55%, var(--chrome-2) 100%);
+  color: var(--accent-foreground);
+}
+
 /* Card lift used across service/testimonial/gallery grids */
 .card-lift {
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
