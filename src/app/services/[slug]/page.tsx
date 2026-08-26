@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { catalog, getCategory, priceLabel } from "@/data/catalog";
 import PPFVisualizer from "@/components/PPFVisualizer";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import ProcessSlideshow from "@/components/ProcessSlideshow";
 import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
@@ -88,6 +89,16 @@ export default async function ServiceCategoryPage({
           <FadeIn>
             <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">What It Is</span>
             <p className="text-lg sm:text-xl mt-3 leading-relaxed">{category.valueProp}</p>
+          </FadeIn>
+        </section>
+      )}
+
+      {/* Process slideshow — application photos/video, opt-in per category */}
+      {category.processMedia !== undefined && (
+        <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
+          <FadeIn>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">See It Applied</h2>
+            <ProcessSlideshow items={category.processMedia} />
           </FadeIn>
         </section>
       )}

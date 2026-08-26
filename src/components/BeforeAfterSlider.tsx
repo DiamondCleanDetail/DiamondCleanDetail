@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 
 export default function BeforeAfterSlider({
@@ -15,8 +15,8 @@ export default function BeforeAfterSlider({
   afterLabel?: string;
 }) {
   const [pos, setPos] = useState(50); // percent, 0 = all "before", 100 = all "after"
-  const [dragging, setDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
 
   const updateFromClientX = useCallback((clientX: number) => {
     const el = containerRef.current;
@@ -25,6 +25,28 @@ export default function BeforeAfterSlider({
     const pct = ((clientX - rect.left) / rect.width) * 100;
     setPos(Math.min(100, Math.max(0, pct)));
   }, []);
+
+  useEffect(() => {
+    function onMove(e: MouseEvent) {
+      if (draggingRef.current) updateFromClientX(e.clientX);
+    }
+    function onTouchMoveWindow(e: TouchEvent) {
+      if (draggingRef.current) updateFromClientX(e.touches[0].clientX);
+    }
+    function onUp() {
+      draggingRef.current = false;
+    }
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("touchmove", onTouchMoveWindow);
+    window.addEventListener("touchend", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("touchmove", onTouchMoveWindow);
+      window.removeEventListener("touchend", onUp);
+    };
+  }, [updateFromClientX]);
 
   if (!before || !after) {
     return (
@@ -41,20 +63,13 @@ export default function BeforeAfterSlider({
       ref={containerRef}
       className="relative aspect-square w-full max-w-[380px] mx-auto rounded-xl overflow-hidden select-none cursor-ew-resize bg-surface-2"
       onMouseDown={(e) => {
-        setDragging(true);
+        draggingRef.current = true;
         updateFromClientX(e.clientX);
       }}
-      onMouseMove={(e) => {
-        if (dragging) updateFromClientX(e.clientX);
-      }}
-      onMouseUp={() => setDragging(false)}
-      onMouseLeave={() => setDragging(false)}
       onTouchStart={(e) => {
-        setDragging(true);
+        draggingRef.current = true;
         updateFromClientX(e.touches[0].clientX);
       }}
-      onTouchMove={(e) => updateFromClientX(e.touches[0].clientX)}
-      onTouchEnd={() => setDragging(false)}
     >
       {/* After (coated) — full base layer */}
       <Image src={after} alt={afterLabel} fill className="object-cover pointer-events-none" />
