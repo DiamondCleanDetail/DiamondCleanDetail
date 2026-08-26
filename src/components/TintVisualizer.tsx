@@ -77,7 +77,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
         <div className="relative mt-10 sm:mt-14 aspect-[3054/955] w-full">
           <span
             aria-hidden
-            className="pointer-events-none select-none absolute -bottom-4 left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 z-0 text-7xl sm:text-9xl font-black text-foreground/10 leading-none"
+            className="pointer-events-none select-none absolute bottom-[68%] right-[10%] z-0 text-7xl sm:text-9xl font-black text-foreground/10 leading-none"
           >
             {level.label}
           </span>
