@@ -50,12 +50,12 @@ export default async function ServiceCategoryPage({
         <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
           <FadeIn>
             <div className="grid sm:grid-cols-2 gap-6 sm:gap-10 items-center">
-              <div className="relative aspect-square sm:aspect-[4/3] rounded-xl overflow-hidden bg-surface-2">
+              <div className="relative aspect-square w-full max-w-[320px] sm:max-w-[380px] mx-auto rounded-xl overflow-hidden bg-surface-2">
                 <Image
                   src={category.valuePropImage}
                   alt={`How ${category.name} works`}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <div>
