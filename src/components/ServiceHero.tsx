@@ -27,6 +27,7 @@ export default function ServiceHero({
   }, []);
 
   const hasMedia = Boolean(video || image);
+  const poster = video ? video.replace(/\.mp4$/, "-poster.jpg") : undefined;
 
   return (
     <section className="relative overflow-hidden min-h-[55vh] sm:min-h-[65vh] flex items-end sm:items-center">
@@ -35,6 +36,7 @@ export default function ServiceHero({
           ref={videoRef}
           className="absolute inset-0 h-full w-full object-cover"
           src={video}
+          poster={poster}
           autoPlay
           loop
           muted
