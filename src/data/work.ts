@@ -1,8 +1,10 @@
 export type WorkItem = {
   slug: string;
   title: string;
-  // Path under /public/work once real photos are added, e.g. "/work/jose-1.jpg".
-  image: string | null;
+  /** Photos from a single job, all shown in one card. Paths under
+   * /public/work, e.g. "/work/jose-1.webp". An empty array renders a
+   * "photo coming soon" placeholder. */
+  images: string[];
   testimonial?: {
     name: string;
     quote: string;
@@ -11,9 +13,34 @@ export type WorkItem = {
 
 export const workItems: WorkItem[] = [
   {
-    slug: "jose-1",
+    slug: "bmw-x5-pro-detail",
+    title: "Diamond Clean Pro Detail — BMW X5",
+    images: ["/work/bmw-x5-1.webp"],
+  },
+  {
+    slug: "velar-full-detail",
+    title: "Full Detail — Range Rover Velar",
+    images: ["/work/velar-1.webp", "/work/velar-2.webp", "/work/velar-3.webp"],
+  },
+  {
+    slug: "acura-mdx-interior",
+    title: "Interior Detail — Acura MDX",
+    images: ["/work/acura-mdx-1.webp", "/work/acura-mdx-2.webp"],
+  },
+  {
+    slug: "porsche-cayenne-wash",
+    title: "Foam Bath & Hand Wash — Porsche Cayenne",
+    images: ["/work/porsche-cayenne-1.webp"],
+  },
+  {
+    slug: "jeep-wrangler-detail",
+    title: "Exterior Detail — Jeep Wrangler",
+    images: ["/work/jeep-wrangler-1.webp"],
+  },
+  {
+    slug: "jose-discovery-sport",
     title: "Full Detail — Land Rover Discovery Sport",
-    image: "/work/jose-3.webp",
+    images: ["/work/jose-3.webp", "/work/jose-2.webp", "/work/jose-1.webp"],
     testimonial: {
       name: "Jose Villatoro",
       quote:
@@ -21,19 +48,9 @@ export const workItems: WorkItem[] = [
     },
   },
   {
-    slug: "jose-2",
-    title: "Interior Detail — Land Rover Discovery Sport",
-    image: "/work/jose-2.webp",
-  },
-  {
-    slug: "jose-3",
-    title: "Full Detail — Land Rover Discovery Sport",
-    image: "/work/jose-1.webp",
-  },
-  {
-    slug: "morgan-1",
+    slug: "morgan-suv",
     title: "Full Detail — Blue SUV",
-    image: "/work/morgan-1.webp",
+    images: ["/work/morgan-1.webp", "/work/morgan-2.webp"],
     testimonial: {
       name: "Morgan Priddy",
       quote:
@@ -41,14 +58,9 @@ export const workItems: WorkItem[] = [
     },
   },
   {
-    slug: "morgan-2",
-    title: "Interior Detail — Blue SUV",
-    image: "/work/morgan-2.webp",
-  },
-  {
     slug: "sport-bike-detail",
     title: "Mobile Detail — Sport Bike",
-    image: "/work/sport-bike.jpg",
+    images: ["/work/sport-bike.jpg"],
     testimonial: {
       name: "Leroy Estrada",
       quote: "Excellent work! Came to my apartment and detailed my Aprilia. 10/10",
@@ -57,17 +69,17 @@ export const workItems: WorkItem[] = [
   {
     slug: "harley-bagger-detail",
     title: "Motorcycle Detail — Harley-Davidson Bagger",
-    image: "/work/harley-bagger.jpg",
+    images: ["/work/harley-bagger.jpg"],
   },
   {
     slug: "lexus-rx-detail",
     title: "Full Detail — Lexus RX",
-    image: "/work/lexus-rx.jpg",
+    images: ["/work/lexus-rx-1.webp"],
   },
   {
     slug: "francs-1",
     title: "Full Detail",
-    image: null,
+    images: [],
     testimonial: {
       name: "Francs",
       quote:
