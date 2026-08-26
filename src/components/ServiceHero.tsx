@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
@@ -9,11 +10,13 @@ export default function ServiceHero({
   title,
   tagline,
   video,
+  image,
 }: {
   eyebrow: string;
   title: string;
   tagline: string;
   video?: string | null;
+  image?: string | null;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -23,19 +26,26 @@ export default function ServiceHero({
     }
   }, []);
 
+  const hasMedia = Boolean(video || image);
+
   return (
     <section className="relative overflow-hidden min-h-[55vh] sm:min-h-[65vh] flex items-end sm:items-center">
-      {video && (
+      {video ? (
+        <video
+          ref={videoRef}
+          className="absolute inset-0 h-full w-full object-cover"
+          src={video}
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      ) : image ? (
+        <Image src={image} alt="" fill priority className="object-cover" />
+      ) : null}
+
+      {hasMedia && (
         <>
-          <video
-            ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover"
-            src={video}
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
           <div className="absolute inset-0 bg-black/65" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-background" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />

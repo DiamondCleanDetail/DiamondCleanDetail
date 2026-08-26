@@ -31,10 +31,11 @@ export default async function ServiceCategoryPage({
         title={category.name}
         tagline={category.tagline}
         video={category.heroVideo}
+        image={category.heroImage}
       />
 
-      {/* Media placeholder — only shown until a hero video exists */}
-      {!category.heroVideo && (
+      {/* Media placeholder — only shown until a hero video or image exists */}
+      {!category.heroVideo && !category.heroImage && (
         <section className="mx-auto max-w-6xl px-6 pt-10 sm:pt-16 pb-10 sm:pb-16">
           <FadeIn>
             <div className="aspect-video sm:aspect-[21/9] rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
