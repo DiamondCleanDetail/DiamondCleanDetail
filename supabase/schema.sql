@@ -34,14 +34,15 @@ create index if not exists bookings_status_idx on bookings (status);
 -- anon key entirely.
 alter table bookings enable row level security;
 
--- Migration: multi-service cart checkout support.
+-- Migration: multi-service booking support.
 -- Run this in the Supabase dashboard: SQL Editor > New query > paste > Run.
 --
--- group_id links multiple bookings created from one cart checkout together
--- (one row per service, all sharing one vehicle/date/time/contact and one
--- Stripe Checkout Session). stripe_session_id was previously unique per
--- booking, but a multi-item cart checkout shares one session id across all
--- of its rows, so that constraint is relaxed to a plain (non-unique) index.
+-- group_id links multiple bookings created from one booking-wizard
+-- checkout together (one row per selected service, all sharing one
+-- vehicle/date/time/contact and one Stripe Checkout Session).
+-- stripe_session_id was previously unique per booking, but a multi-service
+-- checkout shares one session id across all of its rows, so that
+-- constraint is relaxed to a plain (non-unique) index.
 alter table bookings add column if not exists group_id uuid;
 create index if not exists bookings_group_id_idx on bookings (group_id);
 

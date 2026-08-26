@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Show, SignInButton, UserButton } from "@clerk/nextjs";
 import { navGroups } from "@/data/navGroups";
 import ServicesDropdown from "@/components/ServicesDropdown";
 
 const links = [
   { href: "/our-work", label: "Our Work" },
   { href: "/booking", label: "Book Now" },
-  { href: "/login", label: "Login" },
 ];
 
 export default function Navbar() {
@@ -51,6 +51,19 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button
+                type="button"
+                className="link-underline text-muted hover:text-foreground transition-colors"
+              >
+                Sign In
+              </button>
+            </SignInButton>
+          </Show>
+          <Show when="signed-in">
+            <UserButton />
+          </Show>
         </nav>
 
         <button
@@ -109,6 +122,22 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="py-2 text-left text-muted hover:text-foreground transition-colors"
+              >
+                Sign In
+              </button>
+            </SignInButton>
+          </Show>
+          <Show when="signed-in">
+            <div className="py-2 flex items-center gap-2 text-muted">
+              <UserButton /> <span className="text-sm">Account</span>
+            </div>
+          </Show>
         </nav>
       )}
     </header>

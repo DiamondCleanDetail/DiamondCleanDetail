@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import { SITE_ACCESS_COOKIE, hashPassphrase, isGateEnabled } from "@/lib/siteAccess";
 
-export async function proxy(req: NextRequest) {
+export const proxy = clerkMiddleware(async (_auth, req) => {
   if (!isGateEnabled()) return NextResponse.next();
 
   const { pathname } = req.nextUrl;
@@ -28,7 +29,7 @@ export async function proxy(req: NextRequest) {
   url.pathname = "/coming-soon";
   url.search = "";
   return NextResponse.redirect(url);
-}
+});
 
 export const config = {
   matcher: ["/((?!_next/static|_next/image).*)"],
