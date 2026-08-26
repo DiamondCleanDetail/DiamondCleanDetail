@@ -23,27 +23,25 @@ export default function PPFVisualizer() {
       </div>
 
       <div className="mx-auto max-w-5xl px-6">
-        <div className="rounded-2xl bg-surface/80 backdrop-blur-sm border border-border shadow-[0_30px_80px_-20px_rgba(0,0,0,0.55)] p-6 sm:p-10">
-          <div className="aspect-[21/9] rounded-xl border border-dashed border-border bg-surface-2/50 flex items-center justify-center">
-            <p className="text-sm text-muted">Coverage diagram coming soon</p>
-          </div>
+        <div className="aspect-[21/9] rounded-xl border border-dashed border-border/60 flex items-center justify-center drop-shadow-[0_20px_50px_rgba(0,0,0,0.45)]">
+          <p className="text-sm text-muted">Coverage diagram coming soon</p>
+        </div>
 
-          <div className="mt-6 sm:mt-8 grid grid-cols-3 gap-2 max-w-md mx-auto">
-            {options.map((opt) => (
-              <button
-                type="button"
-                key={opt.value}
-                onClick={() => setCoverage(opt.value)}
-                className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                  coverage === opt.value
-                    ? "border-accent bg-accent/10"
-                    : "border-border bg-surface-2 text-muted hover:text-foreground"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+        <div className="mt-8 sm:mt-10 grid grid-cols-3 gap-2 max-w-md mx-auto">
+          {options.map((opt) => (
+            <button
+              type="button"
+              key={opt.value}
+              onClick={() => setCoverage(opt.value)}
+              className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors shadow-[0_10px_25px_-10px_rgba(0,0,0,0.5)] ${
+                coverage === opt.value
+                  ? "border-accent bg-accent/10"
+                  : "border-border bg-surface-2 text-muted hover:text-foreground"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
       </div>
     </div>
