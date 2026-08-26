@@ -124,9 +124,6 @@ export default function PPFVisualizer({
                 Tier {packages.findIndex((p) => p.slug === pkg.slug) + 1} of {packages.length}
               </span>
               <h4 className="text-2xl sm:text-3xl font-bold tracking-tight mt-2">{pkg.name}</h4>
-              <p className="chrome-text text-xl sm:text-2xl font-semibold mt-2">
-                {override?.price ?? priceLabel(pkg, "sedan")}
-              </p>
               <p className="text-sm sm:text-base text-muted mt-3">{pkg.tagline}</p>
               <p className="text-xs sm:text-sm text-muted/80 mt-3 italic">
                 Coverage areas: {pkg.features.join(", ")}
@@ -134,14 +131,25 @@ export default function PPFVisualizer({
               {override?.note && (
                 <p className="text-xs text-muted/70 mt-3">{override.note}</p>
               )}
-              {showCta && (
-                <Link
-                  href={`/booking?service=${categorySlug}&package=${pkg.slug}`}
-                  className="chrome-btn inline-block mt-6 px-6 py-2.5 rounded-lg font-semibold text-sm"
-                >
-                  {pkg.pricing.type === "quote" ? "Request a Quote" : "Book This"}
-                </Link>
-              )}
+
+              <div className="mt-6 flex flex-wrap items-center gap-4 sm:gap-5 bg-surface-2 border border-border rounded-xl px-5 py-4">
+                <div>
+                  <p className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
+                    {override ? "Estimated Range" : "Starting From"}
+                  </p>
+                  <p className="chrome-text text-2xl sm:text-3xl font-bold leading-tight">
+                    {override?.price ?? priceLabel(pkg, "sedan").replace(/^From /, "")}
+                  </p>
+                </div>
+                {showCta && (
+                  <Link
+                    href={`/booking?service=${categorySlug}&package=${pkg.slug}`}
+                    className="chrome-btn ml-auto inline-block px-7 py-3.5 rounded-lg font-bold text-base whitespace-nowrap"
+                  >
+                    {pkg.pricing.type === "quote" ? "Get a Quote →" : "Book This →"}
+                  </Link>
+                )}
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>
