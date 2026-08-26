@@ -12,7 +12,7 @@ export default function Home() {
     <div>
       <Hero />
 
-      <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">
+      <section className="mx-auto max-w-6xl px-6 pt-12 sm:pt-20 pb-12 sm:pb-24">
         <FadeIn>
           <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-center mb-6 sm:mb-10">
             Services We <span className="chrome-text">Offer</span>

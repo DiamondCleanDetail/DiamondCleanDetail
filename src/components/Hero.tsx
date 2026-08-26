@@ -30,6 +30,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-black/65" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-background" />
       <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
+      {/* Stronger fade right at the bottom edge so the video dissolves into
+          the page instead of cutting off hard. */}
+      <div className="absolute inset-x-0 bottom-0 h-32 sm:h-48 bg-gradient-to-t from-background to-transparent" />
 
       <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-24 text-center w-full">
         <motion.span
