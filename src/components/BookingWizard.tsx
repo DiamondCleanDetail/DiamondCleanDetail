@@ -56,7 +56,13 @@ function loadDraft(): Draft | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = sessionStorage.getItem(DRAFT_KEY);
-    return raw ? (JSON.parse(raw) as Draft) : null;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    // Validate the shape before trusting it — an older version of this
+    // wizard (or a future one) may have written a differently-shaped
+    // draft under the same key, which would otherwise crash the page.
+    if (!parsed || !Array.isArray(parsed.selections)) return null;
+    return parsed as Draft;
   } catch {
     return null;
   }
