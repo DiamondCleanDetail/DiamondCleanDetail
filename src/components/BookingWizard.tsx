@@ -11,6 +11,7 @@ import {
 } from "@/data/catalog";
 import TintVisualizer from "@/components/TintVisualizer";
 import PPFVisualizer from "@/components/PPFVisualizer";
+import { tintLevels } from "@/data/tintLevels";
 
 const steps = [
   "Service",
@@ -59,6 +60,8 @@ export default function BookingWizard({
   const [categorySlug, setCategorySlug] = useState(startCategory.slug);
   const [pkg, setPkg] = useState<Package>(startPackage);
   const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
+  const [tintLevel, setTintLevel] = useState(tintLevels.find((l) => l.value === 35)!);
+  const [isTesla, setIsTesla] = useState(false);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [name, setName] = useState("");
@@ -189,7 +192,13 @@ export default function BookingWizard({
         <div>
           {category.visualizer === "tint" && (
             <div className="mb-6">
-              <TintVisualizer hasTeslaVariant={category.hasTeslaVariant} />
+              <TintVisualizer
+                hasTeslaVariant={category.hasTeslaVariant}
+                level={tintLevel}
+                setLevel={setTintLevel}
+                isTesla={isTesla}
+                setIsTesla={setIsTesla}
+              />
             </div>
           )}
           {category.visualizer === "ppf" && (

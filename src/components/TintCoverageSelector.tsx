@@ -1,23 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { getCategory, vehicleSizeLabels, VehicleSize, priceForSize } from "@/data/catalog";
+import { getCategory, vehicleSizeLabels, VehicleSize, priceForSize, Package } from "@/data/catalog";
 
 const category = getCategory("window-tinting")!;
 
-export default function TintCoverageSelector() {
-  const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
-  const [pkg, setPkg] = useState(category.packages[0]);
-
+export default function TintCoverageSelector({
+  vehicleSize,
+  setVehicleSize,
+  pkg,
+  setPkg,
+}: {
+  vehicleSize: VehicleSize;
+  setVehicleSize: (v: VehicleSize) => void;
+  pkg: Package;
+  setPkg: (p: Package) => void;
+}) {
   const price = priceForSize(pkg, vehicleSize);
 
   return (
     <div className="w-full py-14 sm:py-20">
       <div className="mx-auto max-w-3xl px-6 text-center mb-10">
         <span className="text-[10px] sm:text-xs uppercase tracking-widest text-neutral-500">Step 2</span>
-        <h3 className="font-semibold text-lg sm:text-xl text-neutral-900 mt-2">Choose Your Coverage</h3>
+        <h3 className="font-semibold text-lg sm:text-xl text-neutral-900 mt-1">Choose Your Coverage</h3>
         <p className="text-xs sm:text-sm text-neutral-500 mt-2">
           Pick your vehicle size and how much glass you want covered.
         </p>
@@ -105,12 +110,6 @@ export default function TintCoverageSelector() {
             </ul>
             <p className="text-xs text-neutral-500 mt-4 uppercase tracking-widest">Price for {vehicleSizeLabels[vehicleSize]}</p>
             <p className="text-2xl font-semibold chrome-text-dark">${price}</p>
-            <Link
-              href={`/booking?service=${category.slug}&package=${pkg.slug}`}
-              className="inline-block mt-4 px-6 py-2.5 rounded-lg font-semibold text-sm bg-neutral-200 text-neutral-900 border border-neutral-300 hover:bg-neutral-300 transition-colors"
-            >
-              Book This
-            </Link>
           </div>
         </div>
       </div>

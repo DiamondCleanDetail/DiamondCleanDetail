@@ -1,21 +1,30 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { tintLevels } from "@/data/tintLevels";
+import { tintLevels, type TintLevel } from "@/data/tintLevels";
 
-export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: boolean }) {
-  const [level, setLevel] = useState(tintLevels.find((l) => l.value === 20)!);
-  const [isTesla, setIsTesla] = useState(false);
-
+export default function TintVisualizer({
+  hasTeslaVariant,
+  level,
+  setLevel,
+  isTesla,
+  setIsTesla,
+}: {
+  hasTeslaVariant?: boolean;
+  level: TintLevel;
+  setLevel: (l: TintLevel) => void;
+  isTesla: boolean;
+  setIsTesla: (v: boolean) => void;
+}) {
   const image = isTesla ? level.teslaImage : level.image;
 
   return (
     <div className="relative w-full">
       <div className="relative py-14 sm:py-20">
         <div className="mx-auto max-w-3xl px-6 text-center mb-10">
-          <h3 className="font-semibold text-lg sm:text-xl text-neutral-900">Choose Your Tint Level</h3>
+          <span className="text-[10px] sm:text-xs uppercase tracking-widest text-neutral-500">Step 1</span>
+          <h3 className="font-semibold text-lg sm:text-xl text-neutral-900 mt-1">Choose Your Tint Level</h3>
           <p className="text-xs sm:text-sm text-neutral-500 mt-2">
             Preview how each shade looks before you book.
           </p>

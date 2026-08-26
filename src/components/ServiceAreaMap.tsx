@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { serviceArea } from "@/data/serviceArea";
 
 function PinIcon() {
@@ -41,6 +44,8 @@ function ClockIcon() {
 }
 
 export default function ServiceAreaMap() {
+  const [open, setOpen] = useState(false);
+
   return (
     <section className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
       <h2 className="text-xl sm:text-2xl font-semibold mb-2">
@@ -91,12 +96,30 @@ export default function ServiceAreaMap() {
         </div>
 
         <div className="bg-surface border border-border rounded-xl p-6">
-          <p className="text-xs uppercase tracking-widest text-muted mb-4">
-            Additional Service Areas
+          <p className="text-xs uppercase tracking-widest text-muted mb-2">
+            Service Area
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-3 gap-y-2">
+          <p className="text-sm text-muted mb-4">
+            Based in {serviceArea.region}, covering {serviceArea.cities.length}+ cities across
+            the metro — Denver, Aurora, Boulder, and everywhere in between.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="chrome-btn px-5 py-2 rounded-lg font-semibold text-sm"
+          >
+            {open ? "Hide Service Area" : "View Service Area"}
+          </button>
+
+          {/* Cities stay in the DOM (good for SEO) even when visually
+              collapsed — only their visibility toggles. */}
+          <div className={`flex flex-wrap gap-2 mt-4 ${open ? "" : "hidden"}`}>
             {serviceArea.cities.map((city) => (
-              <span key={city} className="text-sm text-muted">
+              <span
+                key={city}
+                className="text-xs sm:text-sm text-muted border border-border bg-surface-2 rounded-full px-3 py-1"
+              >
                 {city}
               </span>
             ))}
