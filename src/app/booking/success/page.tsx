@@ -3,7 +3,6 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
 import { getCategory } from "@/data/catalog";
 import ClearBookingDraft from "@/components/ClearBookingDraft";
-import ClearCart from "@/components/ClearCart";
 
 export default async function BookingSuccessPage({
   searchParams,
@@ -78,7 +77,6 @@ export default async function BookingSuccessPage({
   return (
     <div className="mx-auto max-w-xl px-6 py-24 text-center">
       <ClearBookingDraft />
-      <ClearCart />
       <div className="bg-surface border border-border rounded-xl p-8">
         <h1 className="text-2xl font-bold mb-2">{heading}</h1>
         <div className="space-y-2 text-left">

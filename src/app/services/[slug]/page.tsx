@@ -8,7 +8,6 @@ import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import ProcessSlideshow from "@/components/ProcessSlideshow";
 import ServiceGallery from "@/components/ServiceGallery";
 import ServiceHero from "@/components/ServiceHero";
-import AddToCartButton from "@/components/AddToCartButton";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
@@ -218,7 +217,6 @@ export default async function ServiceCategoryPage({
                   >
                     {pkg.pricing.type === "quote" ? "Request Quote" : "Book This"}
                   </Link>
-                  <AddToCartButton serviceSlug={category.slug} packageSlug={pkg.slug} />
                 </div>
               </div>
             </div>

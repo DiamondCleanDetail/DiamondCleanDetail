@@ -6,36 +6,43 @@ import {
   getCategory,
   vehicleSizeLabels,
   VehicleSize,
-  Package,
   priceForSize,
+  priceLabel,
 } from "@/data/catalog";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import PPFVisualizer from "@/components/PPFVisualizer";
 import VehiclePicker from "@/components/VehiclePicker";
 import { tintLevels } from "@/data/tintLevels";
-import { filmTypes, type FilmType } from "@/data/filmTypes";
+import { filmTypes } from "@/data/filmTypes";
 import { todayIso, isWeekend, availableSlotsFor, type BookedRange } from "@/lib/scheduling";
 
-const steps = [
-  "Service",
-  "Package",
-  "Vehicle",
-  "Date & Time",
-  "Details",
-  "Pay",
-  "Confirmation",
-];
+type Phase = "select" | "configure" | "vehicle" | "datetime" | "details" | "pay";
+
+const phaseLabels: Record<Phase, string> = {
+  select: "Services",
+  configure: "Options",
+  vehicle: "Vehicle",
+  datetime: "Date & Time",
+  details: "Details",
+  pay: "Pay",
+};
+const phaseOrder: Phase[] = ["select", "configure", "vehicle", "datetime", "details", "pay"];
+
+type ServiceSelection = {
+  serviceSlug: string;
+  packageSlug: string;
+  tintLevelValue?: number;
+  filmSlug?: string;
+  isTesla?: boolean;
+};
 
 type Draft = {
-  step: number;
-  categorySlug: string;
-  packageSlug: string;
+  phase: Phase;
+  configureIndex: number;
+  selections: ServiceSelection[];
   vehicleSize: VehicleSize;
   vehicleInfo: string;
-  tintLevelValue: number;
-  isTesla: boolean;
-  filmSlug: string;
   date: string;
   time: string;
   name: string;
@@ -55,11 +62,6 @@ function loadDraft(): Draft | null {
   }
 }
 
-function resolvePackage(categorySlug: string, packageSlug: string): Package {
-  const category = getCategory(categorySlug) ?? catalog[0];
-  return category.packages.find((p) => p.slug === packageSlug) ?? category.packages[0];
-}
-
 export default function BookingWizard({
   initialCategory,
   initialPackage,
@@ -73,71 +75,61 @@ export default function BookingWizard({
   initialFilm?: string;
   initialTesla?: boolean;
 }) {
-  const startCategory = getCategory(initialCategory ?? "") ?? catalog[0];
-  const startPackage =
-    startCategory.packages.find((p) => p.slug === initialPackage) ?? startCategory.packages[0];
   const hasValidInitialSelection = Boolean(initialCategory && getCategory(initialCategory));
+  const startCategory = getCategory(initialCategory ?? "");
+  const startPackage = startCategory?.packages.find((p) => p.slug === initialPackage) ?? startCategory?.packages[0];
 
   // State starts from SSR-safe defaults only — sessionStorage isn't
   // available on the server, so reading it here would make the client's
   // first render diverge from the server-rendered HTML (a hydration
   // mismatch). Any saved draft is applied after mount instead, below.
-  const [step, setStep] = useState(hasValidInitialSelection ? 3 : 1);
-  const [categorySlug, setCategorySlug] = useState(startCategory.slug);
-  const [pkg, setPkg] = useState<Package>(startPackage);
-  const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
-  const [tintLevel, setTintLevel] = useState(() => {
-    const value = initialTint ? Number(initialTint) : 35;
-    return tintLevels.find((l) => l.value === value) ?? tintLevels.find((l) => l.value === 35)!;
-  });
-  const [isTesla, setIsTesla] = useState(initialTesla ?? false);
-  const [filmType, setFilmType] = useState<FilmType>(
-    () => filmTypes.find((f) => f.slug === initialFilm) ?? filmTypes[1]
+  const [phase, setPhase] = useState<Phase>("select");
+  const [configureIndex, setConfigureIndex] = useState(0);
+  const [selections, setSelections] = useState<ServiceSelection[]>(() =>
+    hasValidInitialSelection && startCategory && startPackage
+      ? [
+          {
+            serviceSlug: startCategory.slug,
+            packageSlug: startPackage.slug,
+            tintLevelValue: initialTint ? Number(initialTint) : undefined,
+            filmSlug: initialFilm,
+            isTesla: initialTesla,
+          },
+        ]
+      : []
   );
+  const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
+  const [vehicleInfo, setVehicleInfo] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [vehicleInfo, setVehicleInfo] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [bookedRanges, setBookedRanges] = useState<BookedRange[]>([]);
 
-  const category = getCategory(categorySlug)!;
   const hasResumedRef = useRef(false);
 
-  // Resume an in-progress booking (e.g. after canceling out of Stripe) once
-  // the component has mounted on the client, but only when the saved draft
-  // matches what this page load was asked to start — otherwise a stale
-  // draft for a different service could bleed into a fresh booking. This is
-  // combined with the persist-on-change effect below (rather than kept as
-  // two separate effects) so the very first commit can't write this
-  // render's pre-resume defaults over the draft before the resume applies.
+  // Resume an in-progress booking (e.g. after canceling out of Stripe or an
+  // accidental reload) once mounted on the client. Any saved draft wins over
+  // a fresh URL's pre-selection — it reflects more progress than a bare link
+  // ever could.
   useEffect(() => {
     if (!hasResumedRef.current) {
       hasResumedRef.current = true;
       const existingDraft = loadDraft();
-      if (
-        existingDraft &&
-        existingDraft.categorySlug === startCategory.slug &&
-        existingDraft.packageSlug === startPackage.slug
-      ) {
-        setStep(existingDraft.step);
+      if (existingDraft && existingDraft.selections.length > 0) {
+        setPhase(existingDraft.phase);
+        setConfigureIndex(existingDraft.configureIndex);
+        setSelections(existingDraft.selections);
         setVehicleSize(existingDraft.vehicleSize);
-        setPkg(resolvePackage(existingDraft.categorySlug, existingDraft.packageSlug));
-        setTintLevel(
-          tintLevels.find((l) => l.value === existingDraft.tintLevelValue) ??
-            tintLevels.find((l) => l.value === 35)!
-        );
-        setIsTesla(existingDraft.isTesla);
-        setFilmType(filmTypes.find((f) => f.slug === existingDraft.filmSlug) ?? filmTypes[1]);
+        setVehicleInfo(existingDraft.vehicleInfo);
         setDate(existingDraft.date);
         setTime(existingDraft.time);
         setName(existingDraft.name);
         setPhone(existingDraft.phone);
         setEmail(existingDraft.email ?? "");
-        setVehicleInfo(existingDraft.vehicleInfo);
         // Skip persisting this render's stale pre-resume values — the
         // setState calls above trigger another render/effect pass, which
         // will persist the correctly-resumed state instead.
@@ -146,14 +138,11 @@ export default function BookingWizard({
     }
 
     const draftToSave: Draft = {
-      step,
-      categorySlug,
-      packageSlug: pkg.slug,
+      phase,
+      configureIndex,
+      selections,
       vehicleSize,
       vehicleInfo,
-      tintLevelValue: tintLevel.value,
-      isTesla,
-      filmSlug: filmType.slug,
       date,
       time,
       name,
@@ -165,7 +154,7 @@ export default function BookingWizard({
     } catch {
       // sessionStorage unavailable (private browsing, etc.) — non-fatal.
     }
-  }, [step, categorySlug, pkg, vehicleSize, vehicleInfo, tintLevel, isTesla, filmType, date, time, name, phone, email]);
+  }, [phase, configureIndex, selections, vehicleSize, vehicleInfo, date, time, name, phone, email]);
 
   // Real availability, sourced from actual bookings for the selected date.
   useEffect(() => {
@@ -187,45 +176,98 @@ export default function BookingWizard({
     };
   }, [date]);
 
-  const duration = pkg.durationMinutes ?? 60;
-  const weekend = isWeekend(date);
-  const availableSlots = useMemo(
-    () => availableSlotsFor(duration, bookedRanges, weekend),
-    [bookedRanges, duration, weekend]
+  const resolved = useMemo(
+    () =>
+      selections.map((s) => {
+        const category = getCategory(s.serviceSlug)!;
+        const pkg = category.packages.find((p) => p.slug === s.packageSlug) ?? category.packages[0];
+        return { ...s, category, pkg };
+      }),
+    [selections]
   );
 
-  const price = priceForSize(pkg, vehicleSize);
-  const isQuote = pkg.pricing.type === "quote";
-  const deposit = price && pkg.depositPercent ? Math.round((price * pkg.depositPercent) / 100) : 0;
+  const current = resolved[configureIndex];
+  const totalDuration = resolved.reduce((sum, r) => sum + (r.pkg.durationMinutes ?? 60), 0) || 60;
+  const weekend = isWeekend(date);
+  const availableSlots = useMemo(
+    () => availableSlotsFor(totalDuration, bookedRanges, weekend),
+    [bookedRanges, totalDuration, weekend]
+  );
 
-  function selectCategory(slug: string) {
-    const c = getCategory(slug)!;
-    setCategorySlug(slug);
-    setPkg(c.packages[0]);
-    setStep(2);
+  const subtotal = resolved.reduce((sum, r) => sum + (priceForSize(r.pkg, vehicleSize) ?? 0), 0);
+  const totalDeposit = resolved.reduce((sum, r) => {
+    const price = priceForSize(r.pkg, vehicleSize) ?? 0;
+    const deposit = r.pkg.depositPercent ? Math.round((price * r.pkg.depositPercent) / 100) : 0;
+    return sum + (r.pkg.pricing.type === "quote" ? 0 : deposit > 0 ? deposit : price);
+  }, 0);
+  const hasQuoteItem = resolved.some((r) => r.pkg.pricing.type === "quote");
+  const allQuoteItems = resolved.length > 0 && resolved.every((r) => r.pkg.pricing.type === "quote");
+
+  function toggleService(slug: string) {
+    setSelections((prev) => {
+      if (prev.some((s) => s.serviceSlug === slug)) {
+        return prev.filter((s) => s.serviceSlug !== slug);
+      }
+      const category = getCategory(slug)!;
+      return [...prev, { serviceSlug: slug, packageSlug: category.packages[0].slug }];
+    });
   }
 
-  function selectPackage(p: Package) {
-    setPkg(p);
-    setStep(3);
+  function updateCurrentSelection(patch: Partial<ServiceSelection>) {
+    setSelections((prev) => prev.map((s, i) => (i === configureIndex ? { ...s, ...patch } : s)));
   }
+
+  function handleBack() {
+    if (phase === "configure") {
+      if (configureIndex > 0) setConfigureIndex((i) => i - 1);
+      else setPhase("select");
+    } else if (phase === "vehicle") {
+      setConfigureIndex(Math.max(0, selections.length - 1));
+      setPhase("configure");
+    } else if (phase === "datetime") setPhase("vehicle");
+    else if (phase === "details") setPhase("datetime");
+    else if (phase === "pay") setPhase("details");
+  }
+
+  function handleContinue() {
+    if (phase === "select") {
+      setConfigureIndex(0);
+      setPhase("configure");
+    } else if (phase === "configure") {
+      if (configureIndex < selections.length - 1) setConfigureIndex((i) => i + 1);
+      else setPhase("vehicle");
+    } else if (phase === "vehicle") setPhase("datetime");
+    else if (phase === "datetime") setPhase("details");
+    else if (phase === "details") setPhase("pay");
+    else if (phase === "pay") submitBooking();
+  }
+
+  const canContinue = (() => {
+    if (phase === "select") return selections.length > 0;
+    if (phase === "vehicle") return Boolean(vehicleInfo);
+    if (phase === "datetime") return Boolean(date && time);
+    if (phase === "details") return Boolean(name && phone);
+    return true;
+  })();
 
   async function submitBooking() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const tintNote =
-        category.visualizer === "tint"
-          ? ` — ${tintLevel.label} tint, ${filmType.name}${isTesla ? ", Tesla (confirm pricing)" : ""}`
-          : "";
+      const items = resolved.map((r) => {
+        const tintNote =
+          r.category.visualizer === "tint"
+            ? ` — ${(tintLevels.find((l) => l.value === (r.tintLevelValue ?? 35)) ?? tintLevels.find((l) => l.value === 35)!).label} tint, ${(filmTypes.find((f) => f.slug === r.filmSlug) ?? filmTypes[1]).name}${r.isTesla ? ", Tesla (confirm pricing)" : ""}`
+            : "";
+        return { serviceSlug: r.category.slug, packageSlug: r.pkg.slug, note: tintNote };
+      });
       const res = await fetch("/api/booking/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          serviceSlug: category.slug,
-          packageSlug: pkg.slug,
+          items,
           vehicleSize,
-          vehicleInfo: `${vehicleInfo}${tintNote}`,
+          vehicleInfo,
           name,
           phone,
           email: email || undefined,
@@ -245,36 +287,35 @@ export default function BookingWizard({
     }
   }
 
-  const canGoNext = () => {
-    if (step === 3) return Boolean(vehicleInfo);
-    if (step === 4) return Boolean(date && time);
-    if (step === 5) return Boolean(name && phone);
-    return true;
-  };
+  const phaseIndex = phaseOrder.indexOf(phase);
 
   return (
     <div>
       {/* Progress — compact on mobile, full stepper from sm up */}
       <div className="sm:hidden mb-6">
         <div className="flex items-baseline justify-between mb-2">
-          <span className="text-sm font-medium">{steps[step - 1]}</span>
-          <span className="text-xs text-muted">Step {step} of {steps.length}</span>
+          <span className="text-sm font-medium">
+            {phaseLabels[phase]}
+            {phase === "configure" && selections.length > 1 ? ` (${configureIndex + 1}/${selections.length})` : ""}
+          </span>
+          <span className="text-xs text-muted">
+            Step {phaseIndex + 1} of {phaseOrder.length}
+          </span>
         </div>
         <div className="h-1 rounded-full bg-surface-2 overflow-hidden">
           <div
             className="h-full bg-accent transition-all duration-300"
-            style={{ width: `${(step / steps.length) * 100}%` }}
+            style={{ width: `${((phaseIndex + 1) / phaseOrder.length) * 100}%` }}
           />
         </div>
       </div>
 
       <div className="no-scrollbar hidden sm:flex items-center gap-1 mb-8 overflow-x-auto">
-        {steps.map((label, i) => {
-          const n = i + 1;
-          const active = n === step;
-          const done = n < step;
+        {phaseOrder.map((p, i) => {
+          const active = i === phaseIndex;
+          const done = i < phaseIndex;
           return (
-            <div key={label} className="flex items-center gap-1 shrink-0">
+            <div key={p} className="flex items-center gap-1 shrink-0">
               <div
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border ${
                   active
@@ -289,61 +330,92 @@ export default function BookingWizard({
                     done ? "bg-accent text-accent-foreground" : "bg-surface-2"
                   }`}
                 >
-                  {done ? "✓" : n}
+                  {done ? "✓" : i + 1}
                 </span>
-                {label}
+                {phaseLabels[p]}
+                {p === "configure" && selections.length > 1 && active ? ` (${configureIndex + 1}/${selections.length})` : ""}
               </div>
-              {n < steps.length && <span className="text-muted text-xs px-0.5">&rarr;</span>}
+              {i < phaseOrder.length - 1 && <span className="text-muted text-xs px-0.5">&rarr;</span>}
             </div>
           );
         })}
       </div>
 
-      {/* Step 1: Service */}
-      {step === 1 && (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-          {catalog.map((c) => (
-            <button
-              type="button"
-              key={c.slug}
-              onClick={() => selectCategory(c.slug)}
-              className="text-left bg-surface border border-border rounded-xl p-4 sm:p-5 hover:border-muted transition-colors"
-            >
-              <h3 className="font-semibold text-sm sm:text-base">{c.name}</h3>
-              <p className="hidden sm:block text-sm text-muted mt-1">{c.summary}</p>
-            </button>
-          ))}
+      {/* Select services */}
+      {phase === "select" && (
+        <div>
+          <p className="text-sm text-muted mb-4">
+            {selections.length > 0
+              ? "Would you like to add any additional services to this booking?"
+              : "Choose one or more services to book together."}
+          </p>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {catalog.map((c) => {
+              const checked = selections.some((s) => s.serviceSlug === c.slug);
+              return (
+                <button
+                  type="button"
+                  key={c.slug}
+                  onClick={() => toggleService(c.slug)}
+                  aria-pressed={checked}
+                  className={`text-left rounded-xl p-4 sm:p-5 transition-colors border ${
+                    checked ? "border-accent bg-accent/10" : "bg-surface border-border hover:border-muted"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="font-semibold text-sm sm:text-base">{c.name}</h3>
+                    <span
+                      className={`shrink-0 w-5 h-5 rounded-full border flex items-center justify-center text-[10px] ${
+                        checked ? "bg-accent border-accent text-accent-foreground" : "border-border"
+                      }`}
+                    >
+                      {checked && "✓"}
+                    </span>
+                  </div>
+                  <p className="hidden sm:block text-sm text-muted mt-1">{c.summary}</p>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* Step 2: Package */}
-      {step === 2 && (
+      {/* Configure each selected service */}
+      {phase === "configure" && current && (
         <div>
-          {category.visualizer === "tint" && (
+          <h2 className="font-semibold text-lg mb-1">{current.category.name}</h2>
+          <p className="text-sm text-muted mb-6">{current.category.summary}</p>
+          {current.category.visualizer === "tint" && (
             <div className="mb-6 bg-white rounded-2xl overflow-hidden">
               <TintVisualizer
-                hasTeslaVariant={category.hasTeslaVariant}
-                level={tintLevel}
-                setLevel={setTintLevel}
-                isTesla={isTesla}
-                setIsTesla={setIsTesla}
+                hasTeslaVariant={current.category.hasTeslaVariant}
+                level={
+                  tintLevels.find((l) => l.value === (current.tintLevelValue ?? 35)) ??
+                  tintLevels.find((l) => l.value === 35)!
+                }
+                setLevel={(l) => updateCurrentSelection({ tintLevelValue: l.value })}
+                isTesla={current.isTesla ?? false}
+                setIsTesla={(v) => updateCurrentSelection({ isTesla: v })}
               />
-              <TintFilmTypeSelector filmType={filmType} setFilmType={setFilmType} />
+              <TintFilmTypeSelector
+                filmType={filmTypes.find((f) => f.slug === current.filmSlug) ?? filmTypes[1]}
+                setFilmType={(f) => updateCurrentSelection({ filmSlug: f.slug })}
+              />
             </div>
           )}
-          {category.visualizer === "ppf" && (
+          {current.category.visualizer === "ppf" && (
             <div className="mb-6">
-              <PPFVisualizer packages={category.packages} categorySlug={category.slug} showCta={false} />
+              <PPFVisualizer packages={current.category.packages} categorySlug={current.category.slug} showCta={false} />
             </div>
           )}
           <div className="grid gap-3">
-            {category.packages.map((p) => (
+            {current.category.packages.map((p) => (
               <button
                 type="button"
                 key={p.slug}
-                onClick={() => selectPackage(p)}
+                onClick={() => updateCurrentSelection({ packageSlug: p.slug })}
                 className={`text-left bg-surface border rounded-xl p-5 transition-colors ${
-                  pkg.slug === p.slug ? "border-accent" : "border-border hover:border-muted"
+                  current.pkg.slug === p.slug ? "border-accent" : "border-border hover:border-muted"
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">
@@ -358,13 +430,7 @@ export default function BookingWizard({
                     </div>
                     <p className="text-sm text-muted mt-1">{p.tagline}</p>
                   </div>
-                  <p className="chrome-text font-semibold shrink-0">
-                    {p.pricing.type === "quote"
-                      ? "Quote"
-                      : p.pricing.type === "starting-at"
-                        ? `From $${p.pricing.amount}`
-                        : `$${p.pricing.byVehicleSize.sedan}+`}
-                  </p>
+                  <p className="chrome-text font-semibold shrink-0">{priceLabel(p, "sedan")}</p>
                 </div>
               </button>
             ))}
@@ -372,13 +438,11 @@ export default function BookingWizard({
         </div>
       )}
 
-      {/* Step 3: Vehicle */}
-      {step === 3 && (
+      {/* Vehicle */}
+      {phase === "vehicle" && (
         <div className="bg-surface border border-border rounded-xl p-6">
           <p className="text-sm text-muted mb-4">
-            {pkg.pricing.type === "fixed"
-              ? "Tell us your vehicle and we'll figure out pricing automatically."
-              : "Vehicle info helps us prepare, even though this service is priced separately."}
+            One vehicle for this whole booking — we&apos;ll figure out pricing for each service automatically.
           </p>
           <VehiclePicker
             vehicleSize={vehicleSize}
@@ -389,8 +453,8 @@ export default function BookingWizard({
         </div>
       )}
 
-      {/* Step 4: Date & Time */}
-      {step === 4 && (
+      {/* Date & Time */}
+      {phase === "datetime" && (
         <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>
@@ -429,15 +493,16 @@ export default function BookingWizard({
             </select>
             {date && !weekend && availableSlots.length === 0 && (
               <p className="text-xs text-muted mt-1">
-                No times left that day for this service&apos;s length — try another date.
+                No times left that day for {selections.length > 1 ? "this combined booking" : "this service"} — try
+                another date.
               </p>
             )}
           </div>
         </div>
       )}
 
-      {/* Step 5: Details */}
-      {step === 5 && (
+      {/* Details */}
+      {phase === "details" && (
         <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
@@ -477,11 +542,13 @@ export default function BookingWizard({
           <div className="flex items-center justify-between gap-4 bg-surface-2 border border-border rounded-lg px-3 py-2.5">
             <div>
               <p className="text-xs uppercase tracking-widest text-muted">Vehicle</p>
-              <p className="text-sm mt-0.5">{vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})</p>
+              <p className="text-sm mt-0.5">
+                {vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})
+              </p>
             </div>
             <button
               type="button"
-              onClick={() => setStep(3)}
+              onClick={() => setPhase("vehicle")}
               className="text-xs text-muted hover:text-foreground transition-colors underline underline-offset-4 shrink-0"
             >
               Change
@@ -490,64 +557,72 @@ export default function BookingWizard({
         </div>
       )}
 
-      {/* Step 6: Pay */}
-      {step === 6 && (
+      {/* Pay / Summary */}
+      {phase === "pay" && (
         <div className="bg-surface border border-border rounded-xl p-5 sm:p-6 space-y-4">
-          <div className="bg-surface-2 rounded-lg p-4 space-y-2 text-sm">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
-              <span className="text-muted shrink-0">Service</span>
-              <span className="sm:text-right">{category.name} — {pkg.name}</span>
-            </div>
-            {category.visualizer === "tint" && (
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
-                <span className="text-muted shrink-0">Tint &amp; Film</span>
-                <span className="sm:text-right">
-                  {tintLevel.label} &middot; {filmType.name}
-                  {isTesla ? " · Tesla" : ""}
+          <div className="bg-surface-2 rounded-lg p-4 space-y-3 text-sm">
+            {resolved.map((r) => (
+              <div key={r.serviceSlug} className="flex flex-col sm:flex-row sm:justify-between sm:gap-4 pb-3 border-b border-border last:border-b-0 last:pb-0">
+                <div>
+                  <p>
+                    {r.category.name} — {r.pkg.name}
+                  </p>
+                  {r.category.visualizer === "tint" && (
+                    <p className="text-muted text-xs mt-0.5">
+                      {(tintLevels.find((l) => l.value === (r.tintLevelValue ?? 35)) ?? tintLevels.find((l) => l.value === 35)!).label}{" "}
+                      tint &middot; {(filmTypes.find((f) => f.slug === r.filmSlug) ?? filmTypes[1]).name}
+                      {r.isTesla ? " · Tesla" : ""}
+                    </p>
+                  )}
+                </div>
+                <span className="sm:text-right shrink-0">
+                  {r.pkg.pricing.type === "quote" ? "Priced after assessment" : `$${priceForSize(r.pkg, vehicleSize)}`}
                 </span>
               </div>
-            )}
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
+            ))}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4 pt-1">
               <span className="text-muted shrink-0">Vehicle</span>
-              <span className="sm:text-right">{vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})</span>
+              <span className="sm:text-right">
+                {vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})
+              </span>
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
               <span className="text-muted shrink-0">Date &amp; Time</span>
-              <span className="sm:text-right">{date || "—"} at {time || "—"}</span>
+              <span className="sm:text-right">
+                {date || "—"} at {time || "—"}
+              </span>
             </div>
             <div className="flex justify-between gap-4 pt-2 border-t border-border">
               <span className="text-muted shrink-0">Total</span>
               <span className="font-semibold text-right">
-                {isQuote ? "Priced after assessment" : `$${price}`}
+                {allQuoteItems ? "Priced after assessment" : hasQuoteItem ? `$${subtotal} + quoted items` : `$${subtotal}`}
               </span>
             </div>
-            {!isQuote && deposit > 0 && (
+            {!allQuoteItems && totalDeposit > 0 && (
               <div className="flex justify-between gap-4">
-                <span className="text-muted shrink-0">Deposit due now</span>
-                <span className="font-semibold chrome-text text-right">${deposit}</span>
+                <span className="text-muted shrink-0">Due now</span>
+                <span className="font-semibold chrome-text text-right">${totalDeposit}</span>
               </div>
             )}
           </div>
-          {isTesla && category.hasTeslaVariant && (
+          {resolved.some((r) => r.isTesla && r.category.hasTeslaVariant) && (
             <div className="rounded-lg border border-dashed border-border p-4 text-xs text-muted">
-              Tesla glass can require additional installation time — we&apos;ll
-              confirm with you before your appointment if that changes your total.
+              Tesla glass can require additional installation time — we&apos;ll confirm with you before your
+              appointment if that changes your total.
             </div>
           )}
-          {isQuote ? (
+          {allQuoteItems ? (
             <div className="rounded-lg border border-dashed border-border p-4 text-xs text-muted">
-              No payment is required to request a quote — we&apos;ll follow up
-              with pricing after reviewing the details.
+              No payment is required to request a quote — we&apos;ll follow up with pricing after reviewing the
+              details.
             </div>
           ) : (
             <div className="rounded-lg border border-dashed border-border p-4 text-xs text-muted">
-              You&apos;ll be taken to Stripe&apos;s secure checkout to complete
-              payment (test mode).
+              You&apos;ll be taken to Stripe&apos;s secure checkout to complete payment (test mode).
+              {hasQuoteItem && " Quote-only services above won't be charged."}
             </div>
           )}
-          {submitError && (
-            <p className="text-sm text-red-400">{submitError}</p>
-          )}
+          {submitError && <p className="text-sm text-red-400">{submitError}</p>}
         </div>
       )}
 
@@ -555,24 +630,24 @@ export default function BookingWizard({
       <div className="flex justify-between mt-6">
         <button
           type="button"
-          onClick={() => setStep((s) => Math.max(1, s - 1))}
-          disabled={step === 1 || submitting}
+          onClick={handleBack}
+          disabled={phase === "select" || submitting}
           className="px-5 py-2 rounded-lg font-medium text-sm border border-border text-muted hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           Back
         </button>
         <button
           type="button"
-          onClick={() => (step === 6 ? submitBooking() : setStep((s) => Math.min(6, s + 1)))}
-          disabled={!canGoNext() || step === 1 || step === 2 || submitting}
+          onClick={handleContinue}
+          disabled={!canContinue || submitting}
           className="chrome-btn px-6 py-2 rounded-lg font-semibold text-sm disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {step === 6
+          {phase === "pay"
             ? submitting
               ? "Processing..."
-              : isQuote
+              : allQuoteItems
                 ? "Request Quote"
-                : `Pay $${deposit || price || 0} & Book`
+                : `Pay $${totalDeposit || subtotal || 0} & Book`
             : "Continue"}
         </button>
       </div>
