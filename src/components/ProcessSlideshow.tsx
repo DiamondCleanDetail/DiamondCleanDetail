@@ -51,7 +51,13 @@ export default function ProcessSlideshow({ items }: { items?: MediaItem[] }) {
                 playsInline
               />
             ) : (
-              <Image src={item.src} alt={item.caption ?? "Ceramic coating process"} fill className="object-cover" />
+              <Image
+                src={item.src}
+                alt={item.caption ?? "Ceramic coating process"}
+                fill
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
+              />
             )}
           </motion.div>
         </AnimatePresence>

@@ -41,7 +41,7 @@ export default function ServiceHero({
           playsInline
         />
       ) : image ? (
-        <Image src={image} alt="" fill priority className="object-cover" />
+        <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
       ) : null}
 
       {hasMedia && (

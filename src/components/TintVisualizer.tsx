@@ -110,6 +110,7 @@ export default function TintVisualizer({
                   alt={`${level.label} tint preview`}
                   fill
                   priority
+                  sizes="(max-width: 640px) 100vw, 1152px"
                   className="object-contain"
                 />
               ) : (

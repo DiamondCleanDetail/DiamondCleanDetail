@@ -86,6 +86,7 @@ export default function PPFVisualizer({
                   alt={`${pkg.name} PPF coverage`}
                   fill
                   priority
+                  sizes="(max-width: 640px) 100vw, 50vw"
                   className="object-contain"
                 />
               </div>

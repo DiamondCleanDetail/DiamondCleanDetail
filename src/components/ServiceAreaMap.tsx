@@ -107,6 +107,7 @@ export default function ServiceAreaMap() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
             className="chrome-btn px-5 py-2 rounded-lg font-semibold text-sm"
           >
             {open ? "Hide Service Area" : "View Service Area"}

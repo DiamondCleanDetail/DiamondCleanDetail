@@ -61,7 +61,13 @@ export default function BeforeAfterSlider({
   return (
     <div
       ref={containerRef}
-      className="relative aspect-square w-full max-w-[380px] mx-auto rounded-xl overflow-hidden select-none cursor-ew-resize bg-surface-2"
+      role="slider"
+      tabIndex={0}
+      aria-label={`Drag to compare ${beforeLabel.toLowerCase()} and ${afterLabel.toLowerCase()}`}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(pos)}
+      className="relative aspect-square w-full max-w-[380px] mx-auto rounded-xl overflow-hidden select-none cursor-ew-resize bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       onMouseDown={(e) => {
         draggingRef.current = true;
         updateFromClientX(e.clientX);
@@ -70,9 +76,30 @@ export default function BeforeAfterSlider({
         draggingRef.current = true;
         updateFromClientX(e.touches[0].clientX);
       }}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          setPos((p) => Math.max(0, p - 5));
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          setPos((p) => Math.min(100, p + 5));
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          setPos(0);
+        } else if (e.key === "End") {
+          e.preventDefault();
+          setPos(100);
+        }
+      }}
     >
       {/* After (coated) — full base layer */}
-      <Image src={after} alt={afterLabel} fill className="object-cover pointer-events-none" />
+      <Image
+        src={after}
+        alt={afterLabel}
+        fill
+        sizes="(max-width: 640px) 100vw, 380px"
+        className="object-cover pointer-events-none"
+      />
       <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-widest bg-black/60 text-white px-2 py-1 rounded pointer-events-none">
         {afterLabel}
       </span>
@@ -83,7 +110,13 @@ export default function BeforeAfterSlider({
         className="absolute inset-0"
         style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
       >
-        <Image src={before} alt={beforeLabel} fill className="object-cover pointer-events-none" />
+        <Image
+          src={before}
+          alt={beforeLabel}
+          fill
+          sizes="(max-width: 640px) 100vw, 380px"
+          className="object-cover pointer-events-none"
+        />
         <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest bg-black/60 text-white px-2 py-1 rounded pointer-events-none">
           {beforeLabel}
         </span>

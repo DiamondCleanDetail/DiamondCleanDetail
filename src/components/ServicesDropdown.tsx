@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, type FocusEvent, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { navGroups } from "@/data/navGroups";
@@ -8,6 +8,7 @@ import { navGroups } from "@/data/navGroups";
 export default function ServicesDropdown() {
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   function show() {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -18,10 +19,31 @@ export default function ServicesDropdown() {
     closeTimer.current = setTimeout(() => setOpen(false), 120);
   }
 
+  function handleBlur(e: FocusEvent<HTMLDivElement>) {
+    const next = e.relatedTarget as Node | null;
+    if (!next || !containerRef.current?.contains(next)) {
+      setOpen(false);
+    }
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    if (e.key === "Escape") setOpen(false);
+  }
+
   return (
-    <div className="relative" onMouseEnter={show} onMouseLeave={hide}>
+    <div
+      ref={containerRef}
+      className="relative"
+      onMouseEnter={show}
+      onMouseLeave={hide}
+      onFocus={show}
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+    >
       <Link
         href="/services"
+        aria-haspopup="true"
+        aria-expanded={open}
         className="link-underline text-muted hover:text-foreground transition-colors inline-flex items-center gap-1"
       >
         Services

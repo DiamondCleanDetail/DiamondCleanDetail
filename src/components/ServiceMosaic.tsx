@@ -14,6 +14,7 @@ function Tile({ tile }: { tile: (typeof serviceMosaic)[number] }) {
             src={tile.image}
             alt={tile.title}
             fill
+            sizes="(max-width: 640px) 50vw, 16vw"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 via-40% to-transparent" />
