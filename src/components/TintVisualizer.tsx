@@ -12,10 +12,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
   const image = isTesla ? level.teslaImage : level.image;
 
   return (
-    <div className="relative w-full bg-white">
-      <div className="absolute inset-x-0 top-0 h-16 sm:h-24 bg-gradient-to-b from-background to-white pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-16 sm:h-24 bg-gradient-to-t from-background to-white pointer-events-none" />
-
+    <div className="relative w-full">
       <div className="relative py-14 sm:py-20">
         <div className="mx-auto max-w-3xl px-6 text-center mb-10">
           <h3 className="font-semibold text-lg sm:text-xl text-neutral-900">Choose Your Tint Level</h3>
@@ -29,7 +26,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
                 onClick={() => setIsTesla(false)}
                 className={`px-3 py-1.5 rounded-full transition-colors ${
                   !isTesla
-                    ? "chrome-chip text-[color:var(--accent-foreground)] font-semibold shadow-[0_2px_10px_rgba(0,0,0,0.15)]"
+                    ? "chrome-chip text-[color:var(--accent-foreground)] font-semibold"
                     : "text-neutral-500 hover:text-neutral-900"
                 }`}
               >
@@ -40,7 +37,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
                 onClick={() => setIsTesla(true)}
                 className={`px-3 py-1.5 rounded-full transition-colors ${
                   isTesla
-                    ? "chrome-chip text-[color:var(--accent-foreground)] font-semibold shadow-[0_2px_10px_rgba(0,0,0,0.15)]"
+                    ? "chrome-chip text-[color:var(--accent-foreground)] font-semibold"
                     : "text-neutral-500 hover:text-neutral-900"
                 }`}
               >
@@ -52,7 +49,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
 
         <div className="mx-auto max-w-6xl px-6">
           {/* Level tabs */}
-          <div className="relative flex w-full rounded-full border border-neutral-200 bg-neutral-100 p-1 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.25)]">
+          <div className="relative flex w-full rounded-full border border-neutral-200 bg-neutral-100 p-1">
             {tintLevels.map((l) => {
               const isActive = l.value === level.value;
               return (
@@ -65,7 +62,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
                   {isActive && (
                     <motion.span
                       layoutId="tint-tab-highlight"
-                      className="absolute inset-0 chrome-chip rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.15)]"
+                      className="absolute inset-0 chrome-chip rounded-full"
                       transition={{ type: "spring", stiffness: 420, damping: 34 }}
                     />
                   )}
@@ -91,7 +88,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 24 }}
                 transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] as const }}
-                className="pointer-events-none select-none absolute bottom-[68%] right-[10%] z-0 text-7xl sm:text-9xl font-black text-neutral-900/10 leading-none"
+                className="pointer-events-none select-none absolute bottom-[68%] right-[10%] z-0 text-7xl sm:text-9xl font-black text-neutral-900/25 leading-none"
               >
                 {level.label}
               </motion.span>

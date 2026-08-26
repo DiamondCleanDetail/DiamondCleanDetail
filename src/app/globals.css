@@ -82,6 +82,22 @@ body::after {
   color: transparent;
 }
 
+/* Same sheen as .chrome-text but in dark tones, for use on light/white
+   backgrounds where the light chrome gradient would have no contrast. */
+.chrome-text-dark {
+  background: linear-gradient(
+    115deg,
+    #55585e 0%,
+    #17181a 25%,
+    #55585e 45%,
+    #17181a 65%,
+    #3a3d42 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .chrome-btn {
   position: relative;
   overflow: hidden;
