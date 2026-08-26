@@ -11,12 +11,17 @@ export default function ServiceHero({
   tagline,
   video,
   image,
+  mobileImage,
 }: {
   eyebrow: string;
   title: string;
   tagline: string;
   video?: string | null;
   image?: string | null;
+  /** Swapped in for `image` below the sm breakpoint — for art-directed
+   * backgrounds (e.g. a composite) that need a different crop on a tall,
+   * narrow viewport instead of just cropping the same wide image harder. */
+  mobileImage?: string | null;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -43,7 +48,28 @@ export default function ServiceHero({
           playsInline
         />
       ) : image ? (
-        <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
+        mobileImage ? (
+          <>
+            <Image
+              src={mobileImage}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover sm:hidden"
+            />
+            <Image
+              src={image}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover hidden sm:block"
+            />
+          </>
+        ) : (
+          <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
+        )
       ) : null}
 
       {hasMedia && (

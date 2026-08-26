@@ -43,6 +43,10 @@ export type ServiceCategory = {
   heroVideo?: string;
   /** Static hero background image, used when a video isn't available yet. */
   heroImage?: string;
+  /** Swapped in for heroImage on mobile — for a hero background that needs
+   * a different crop on a tall, narrow screen instead of a harder crop of
+   * the same wide image. */
+  heroImageMobile?: string;
   /** Optional explainer image shown beside the "What It Is" copy, e.g. "/services/ceramic-coating-diagram.jpg". */
   valuePropImage?: string;
   /** Drag-to-compare before/after photos shown beside the "What It Is" copy instead of valuePropImage. Null values render a "coming soon" placeholder. */
@@ -559,6 +563,8 @@ export const catalog: ServiceCategory[] = [
     description:
       "Detailing for RVs, boats, and aircraft interiors/exteriors. Every job is quoted individually based on size, condition, and material — request a quote to get started.",
     tagline: "Specialty detailing for whatever you drive, sail, or fly.",
+    heroImage: "/services/specialty-vehicles-hero.jpg",
+    heroImageMobile: "/services/specialty-vehicles-hero-mobile.jpg",
     valueProp:
       "RVs, boats, and aircraft each need their own approach — different materials, different surfaces, different exposure to the elements. We quote every job individually based on size, condition, and material so the price actually reflects the work involved.",
     benefits: [

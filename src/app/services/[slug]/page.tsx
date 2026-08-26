@@ -49,6 +49,7 @@ export default async function ServiceCategoryPage({
         tagline={category.tagline}
         video={category.heroVideo}
         image={category.heroImage}
+        mobileImage={category.heroImageMobile}
       />
 
       {/* Media placeholder — only shown until a hero video or image exists */}
