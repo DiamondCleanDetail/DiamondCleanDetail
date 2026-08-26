@@ -209,7 +209,14 @@ export default function BookingWizard({
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="font-semibold">{p.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold">{p.name}</h3>
+                      {p.featured && (
+                        <span className="chrome-btn text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full">
+                          Popular
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-muted mt-1">{p.tagline}</p>
                   </div>
                   <p className="chrome-text font-semibold shrink-0">

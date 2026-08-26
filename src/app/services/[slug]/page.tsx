@@ -107,7 +107,17 @@ export default async function ServiceCategoryPage({
         </FadeIn>
         <div className="grid gap-4 sm:gap-5">
           {category.packages.map((pkg) => (
-            <div key={pkg.slug} className="bg-surface border border-border rounded-xl p-5 sm:p-6">
+            <div
+              key={pkg.slug}
+              className={`relative bg-surface border rounded-xl p-5 sm:p-6 ${
+                pkg.featured ? "border-accent" : "border-border"
+              }`}
+            >
+              {pkg.featured && (
+                <span className="absolute -top-3 left-5 chrome-btn text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                  Most Popular
+                </span>
+              )}
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div>
                   <h3 className="text-lg font-semibold">{pkg.name}</h3>

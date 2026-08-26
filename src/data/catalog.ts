@@ -19,6 +19,8 @@ export type Package = {
   pricing: PricingModel;
   durationMinutes?: number;
   depositPercent?: number;
+  /** Shows a "Most Popular" badge and highlighted border on the package card. */
+  featured?: boolean;
 };
 
 export type Benefit = { title: string; description: string };
@@ -73,43 +75,46 @@ export const catalog: ServiceCategory[] = [
     relatedSlugs: ["paint-correction", "scratch-removal", "leather-restoration"],
     packages: [
       {
-        slug: "basic-wash",
-        name: "Basic Wash & Vacuum",
-        tagline: "A quick refresh for regular upkeep.",
+        slug: "the-diamond-detail",
+        name: "The Diamond Detail",
+        tagline: "A comprehensive deep clean, conditioning, and protection for all surfaces.",
         features: [
-          "Exterior hand wash & dry",
-          "Wheel & tire cleaning",
-          "Interior vacuum",
-          "Window cleaning, in & out",
-        ],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 45, suv: 55, truck: 65 } },
-        durationMinutes: 45,
-      },
-      {
-        slug: "interior-detail",
-        name: "Interior Detail",
-        tagline: "Deep clean for the cabin.",
-        features: [
-          "Full interior shampoo",
-          "Dashboard & console detailing",
-          "Leather/vinyl conditioning",
-          "Odor treatment",
-        ],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 90, suv: 110, truck: 125 } },
-        durationMinutes: 90,
-      },
-      {
-        slug: "full-detail",
-        name: "Full Interior & Exterior Detail",
-        tagline: "Our most popular full-service package.",
-        features: [
-          "Everything in Interior Detail",
-          "Clay bar decontamination",
-          "Hand wax & paint sealant",
-          "Tire shine & trim dressing",
+          "Deep interior & exterior clean",
+          "Conditioning for all surfaces",
+          "Protective finish",
+          "Restores that factory-fresh feel and scent",
         ],
         pricing: { type: "fixed", byVehicleSize: { sedan: 175, suv: 210, truck: 240 } },
         durationMinutes: 180,
+        depositPercent: 25,
+      },
+      {
+        slug: "the-diamond-detail-plus",
+        name: "The Diamond Detail Plus",
+        tagline: "Multi-stage paint correction with a premium wax or sealant finish.",
+        features: [
+          "Everything in The Diamond Detail",
+          "Multi-stage paint correction",
+          "Removes swirls & imperfections",
+          "Premium wax or sealant for a deep, glossy finish",
+        ],
+        pricing: { type: "fixed", byVehicleSize: { sedan: 450, suv: 525, truck: 575 } },
+        durationMinutes: 480,
+        depositPercent: 25,
+        featured: true,
+      },
+      {
+        slug: "the-diamond-detail-pro",
+        name: "The Diamond Detail Pro",
+        tagline: "Full paint correction and professional-grade ceramic coating.",
+        features: [
+          "Everything in The Diamond Detail Plus",
+          "Full multi-stage paint correction",
+          "Professional-grade ceramic coating",
+          "Long-lasting, unparalleled shine",
+        ],
+        pricing: { type: "fixed", byVehicleSize: { sedan: 750, suv: 875, truck: 950 } },
+        durationMinutes: 600,
         depositPercent: 25,
       },
     ],
