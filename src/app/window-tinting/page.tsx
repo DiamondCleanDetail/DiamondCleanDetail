@@ -20,7 +20,7 @@ export default function WindowTintingPage() {
         </p>
       </section>
 
-      <section className="mx-auto max-w-4xl px-6 pb-6 sm:pb-10">
+      <section className="w-full pb-6 sm:pb-10">
         <TintVisualizer hasTeslaVariant={category.hasTeslaVariant} />
       </section>
 
