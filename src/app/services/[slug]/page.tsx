@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { catalog, getCategory, priceLabel } from "@/data/catalog";
 import PPFVisualizer from "@/components/PPFVisualizer";
+import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
@@ -46,7 +47,24 @@ export default async function ServiceCategoryPage({
       )}
 
       {/* Value proposition */}
-      {category.valuePropImage ? (
+      {category.beforeAfter ? (
+        <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
+          <FadeIn>
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-10 items-center">
+              <BeforeAfterSlider
+                before={category.beforeAfter.before}
+                after={category.beforeAfter.after}
+                beforeLabel={category.beforeAfter.beforeLabel}
+                afterLabel={category.beforeAfter.afterLabel}
+              />
+              <div>
+                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">What It Is</span>
+                <p className="text-lg sm:text-xl mt-3 leading-relaxed">{category.valueProp}</p>
+              </div>
+            </div>
+          </FadeIn>
+        </section>
+      ) : category.valuePropImage ? (
         <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
           <FadeIn>
             <div className="grid sm:grid-cols-2 gap-6 sm:gap-10 items-center">
