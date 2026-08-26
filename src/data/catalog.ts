@@ -33,6 +33,8 @@ export type ServiceCategory = {
   heroNote?: string;
   /** One-line hero subtitle for the detail page. */
   tagline: string;
+  /** Path under /public/video for this page's hero background, e.g. "/video/mobile-detailing.mp4". */
+  heroVideo?: string;
   /** "What is this service" explainer paragraph. */
   valueProp: string;
   benefits: Benefit[];
@@ -54,6 +56,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "Our core detailing packages, brought to your driveway or office. Hand wash, deep interior cleaning, and finishing touches that leave your vehicle looking showroom-fresh.",
     tagline: "Showroom results, without the drive to a shop.",
+    heroVideo: "/video/mobile-detailing.mp4",
     valueProp:
       "Mobile detailing means our team comes to you — your driveway, office lot, or apartment garage — with everything needed to hand wash, deep-clean, and finish your vehicle on site. No drop-off, no waiting around a shop, no losing your car for the day.",
     benefits: [

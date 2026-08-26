@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { catalog, getCategory, priceLabel } from "@/data/catalog";
 import PPFVisualizer from "@/components/PPFVisualizer";
+import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
@@ -24,22 +25,23 @@ export default async function ServiceCategoryPage({
   return (
     <div>
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pt-10 sm:pt-16 pb-6 sm:pb-10">
-        <Link href="/services" className="text-sm text-muted hover:text-foreground transition-colors">
-          &larr; All Services
-        </Link>
-        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mt-3">{category.name}</h1>
-        <p className="text-base sm:text-lg text-muted mt-3 max-w-2xl">{category.tagline}</p>
-      </section>
+      <ServiceHero
+        eyebrow={category.shortName}
+        title={category.name}
+        tagline={category.tagline}
+        video={category.heroVideo}
+      />
 
-      {/* Media placeholder */}
-      <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
-        <FadeIn>
-          <div className="aspect-video sm:aspect-[21/9] rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
-            <p className="text-sm text-muted">Photo/video coming soon — {category.name}</p>
-          </div>
-        </FadeIn>
-      </section>
+      {/* Media placeholder — only shown until a hero video exists */}
+      {!category.heroVideo && (
+        <section className="mx-auto max-w-6xl px-6 pt-10 sm:pt-16 pb-10 sm:pb-16">
+          <FadeIn>
+            <div className="aspect-video sm:aspect-[21/9] rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
+              <p className="text-sm text-muted">Photo/video coming soon — {category.name}</p>
+            </div>
+          </FadeIn>
+        </section>
+      )}
 
       {/* Value proposition */}
       <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16 text-center">
