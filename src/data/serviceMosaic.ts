@@ -9,10 +9,10 @@ export type MosaicTile = {
 };
 
 export const serviceMosaic: MosaicTile[] = [
-  { title: "Mobile Detailing", href: "/services/mobile-detailing", image: null, col: 1, row: "1" },
-  { title: "Ceramic Coatings", href: "/services/ceramic-coating", image: null, col: 1, row: "2" },
-  { title: "Paint Protection Film", href: "/services/paint-protection-film", image: null, col: 2, row: "1" },
-  { title: "Window Tinting", href: "/window-tinting", image: null, col: 2, row: "2" },
+  { title: "Mobile Detailing", href: "/services/mobile-detailing", image: "/mosaic/mobile-detailing.jpg", col: 1, row: "1" },
+  { title: "Ceramic Coatings", href: "/services/ceramic-coating", image: "/services/ceramic-coating-hero.jpg", col: 1, row: "2" },
+  { title: "Paint Protection Film", href: "/services/paint-protection-film", image: "/services/ppf-hero.jpg", col: 2, row: "1" },
+  { title: "Window Tinting", href: "/window-tinting", image: "/services/window-tinting-hero.webp", col: 2, row: "2" },
   { title: "See Our Work", href: "/our-work", image: null, col: 3, row: "span" },
   { title: "Paint Correction", href: "/services/paint-correction", image: null, col: 4, row: "1" },
   { title: "Fleet Services", href: "/services/fleet-detailing", image: null, col: 4, row: "2" },
