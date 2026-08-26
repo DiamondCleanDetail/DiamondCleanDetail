@@ -62,7 +62,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
                   {isActive && (
                     <motion.span
                       layoutId="tint-tab-highlight"
-                      className="absolute inset-0 chrome-chip rounded-full"
+                      className="absolute inset-0 bg-neutral-200 rounded-full"
                       transition={{ type: "spring", stiffness: 420, damping: 34 }}
                     />
                   )}

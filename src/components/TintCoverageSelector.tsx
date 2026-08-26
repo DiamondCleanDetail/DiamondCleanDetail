@@ -127,7 +127,7 @@ export default function TintCoverageSelector() {
           <p className="text-2xl font-semibold chrome-text-dark">${price}</p>
           <Link
             href={`/booking?service=${category.slug}&package=${pkg.slug}`}
-            className="chrome-btn inline-block mt-4 px-6 py-2.5 rounded-lg font-semibold text-sm border border-neutral-300"
+            className="inline-block mt-4 px-6 py-2.5 rounded-lg font-semibold text-sm bg-neutral-200 text-neutral-900 border border-neutral-300 hover:bg-neutral-300 transition-colors"
           >
             Book This
           </Link>
