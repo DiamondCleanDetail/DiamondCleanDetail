@@ -96,7 +96,7 @@ export default async function ServiceCategoryPage({
       {category.visualizer === "ppf" && (
         <section className="w-full pb-10 sm:pb-16">
           <FadeIn>
-            <PPFVisualizer />
+            <PPFVisualizer packages={category.packages} categorySlug={category.slug} />
           </FadeIn>
         </section>
       )}
@@ -123,7 +123,8 @@ export default async function ServiceCategoryPage({
         </div>
       </section>
 
-      {/* Packages */}
+      {/* Packages — the PPF visualizer above already covers tiers, pricing, and CTAs */}
+      {category.visualizer !== "ppf" && (
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
           <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Packages &amp; Pricing</h2>
@@ -177,6 +178,7 @@ export default async function ServiceCategoryPage({
           ))}
         </div>
       </section>
+      )}
 
       {/* Related services */}
       {related && related.length > 0 && (

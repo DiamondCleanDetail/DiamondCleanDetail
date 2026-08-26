@@ -194,7 +194,7 @@ export default function BookingWizard({
           )}
           {category.visualizer === "ppf" && (
             <div className="mb-6">
-              <PPFVisualizer />
+              <PPFVisualizer packages={category.packages} categorySlug={category.slug} showCta={false} />
             </div>
           )}
           <div className="grid gap-3">
