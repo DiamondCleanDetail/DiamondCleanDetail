@@ -9,7 +9,6 @@ import ServicesDropdown from "@/components/ServicesDropdown";
 const links = [
   { href: "/our-work", label: "Our Work" },
   { href: "/booking", label: "Book Now" },
-  { href: "/shop", label: "Shop" },
   { href: "/login", label: "Login" },
 ];
 
