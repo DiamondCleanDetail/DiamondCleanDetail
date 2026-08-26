@@ -37,7 +37,7 @@ export default function PPFVisualizer({
   const override = priceOverride[pkg.slug];
 
   return (
-    <div className="w-full py-14 sm:py-20">
+    <div className="w-full py-14 sm:py-20 bg-black">
       <div className="mx-auto max-w-3xl px-6 text-center mb-10">
         <h3 className="font-semibold text-lg sm:text-xl">Preview Your Coverage</h3>
         <p className="text-xs sm:text-sm text-muted mt-2">
@@ -79,37 +79,21 @@ export default function PPFVisualizer({
         {/* Content */}
         <div className="mt-10 sm:mt-14 grid sm:grid-cols-2 gap-8 sm:gap-10 items-center">
           <div className="relative aspect-[1133/535] w-full">
-            <AnimatePresence mode="wait">
-              {image ? (
-                <motion.div
-                  key={pkg.slug}
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.03 }}
-                  transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] as const }}
-                  className="absolute inset-0"
-                >
-                  <Image
-                    src={image}
-                    alt={`${pkg.name} PPF coverage`}
-                    fill
-                    priority
-                    className="object-contain"
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={pkg.slug}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute inset-0 rounded-xl border border-dashed border-border/60 flex items-center justify-center"
-                >
-                  <p className="text-sm text-muted">Coverage photo coming soon</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {image ? (
+              <div className="absolute inset-0">
+                <Image
+                  src={image}
+                  alt={`${pkg.name} PPF coverage`}
+                  fill
+                  priority
+                  className="object-contain"
+                />
+              </div>
+            ) : (
+              <div className="absolute inset-0 rounded-xl border border-dashed border-border/60 flex items-center justify-center">
+                <p className="text-sm text-muted">Coverage photo coming soon</p>
+              </div>
+            )}
           </div>
 
           <AnimatePresence mode="wait">
