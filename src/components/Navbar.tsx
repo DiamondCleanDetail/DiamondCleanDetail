@@ -35,7 +35,7 @@ export default function Navbar() {
       <div className="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 min-w-0" onClick={() => setOpen(false)}>
           <Image src="/brand/logo.png" alt="Diamond Clean Detail" width={36} height={36} className="h-9 w-9 shrink-0" />
-          <span className="text-lg font-semibold tracking-tight chrome-text truncate">
+          <span className="font-wordmark text-[26px] sm:text-[30px] leading-none chrome-text truncate pt-1">
             Diamond Clean Detail
           </span>
         </Link>
