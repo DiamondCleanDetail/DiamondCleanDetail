@@ -9,6 +9,8 @@ import ServiceHero from "@/components/ServiceHero";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintCoverageSelector from "@/components/TintCoverageSelector";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
+import FadeIn from "@/components/FadeIn";
+import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 const category = getCategory("window-tinting")!;
 
@@ -32,6 +34,54 @@ export default function WindowTintingPage() {
       />
 
       <div className="bg-white text-neutral-900">
+        {/* What It Is */}
+        <section className="mx-auto max-w-4xl px-6 pt-10 sm:pt-16 pb-10 sm:pb-16 text-center">
+          <FadeIn>
+            <span className="text-[10px] sm:text-xs uppercase tracking-widest text-neutral-500">What It Is</span>
+            <p className="text-lg sm:text-xl mt-3 leading-relaxed">{category.valueProp}</p>
+          </FadeIn>
+        </section>
+
+        {/* Why It's Worth It */}
+        <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
+          <FadeIn>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Why It&apos;s Worth It</h2>
+          </FadeIn>
+          <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
+            {category.benefits.map((b, i) => (
+              <StaggerItem key={b.title}>
+                <div className="h-full bg-neutral-50 border border-neutral-200 rounded-xl p-5">
+                  <span className="chrome-text-dark text-3xl font-black">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="font-semibold mt-3 text-neutral-900">{b.title}</h3>
+                  <p className="text-sm text-neutral-500 mt-2">{b.description}</p>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerGrid>
+        </section>
+
+        {/* How It Works */}
+        <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
+          <FadeIn>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">How It Works</h2>
+          </FadeIn>
+          <div className="space-y-4">
+            {category.process.map((step, i) => (
+              <FadeIn key={step.title} delay={i * 0.06}>
+                <div className="flex gap-4 bg-neutral-50 border border-neutral-200 rounded-xl p-5">
+                  <span className="shrink-0 w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-sm font-semibold chrome-text-dark">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <h3 className="font-semibold text-neutral-900">{step.title}</h3>
+                    <p className="text-sm text-neutral-500 mt-1">{step.description}</p>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </section>
+
         <section className="w-full pb-6 sm:pb-10">
           <TintVisualizer
             hasTeslaVariant={category.hasTeslaVariant}
