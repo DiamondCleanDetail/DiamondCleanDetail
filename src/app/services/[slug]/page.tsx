@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { catalog, getCategory, priceLabel } from "@/data/catalog";
 import PPFVisualizer from "@/components/PPFVisualizer";
@@ -12,6 +13,19 @@ import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 export function generateStaticParams() {
   return catalog.filter((c) => c.slug !== "window-tinting").map((c) => ({ slug: c.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/services/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const category = getCategory(slug);
+  if (!category) return {};
+  return {
+    title: category.name,
+    description: category.summary,
+    openGraph: { title: category.name, description: category.summary },
+  };
 }
 
 export default async function ServiceCategoryPage({
@@ -75,6 +89,7 @@ export default async function ServiceCategoryPage({
                   src={category.valuePropImage}
                   alt={`How ${category.name} works`}
                   fill
+                  sizes="(max-width: 640px) 100vw, 380px"
                   className="object-contain"
                 />
               </div>

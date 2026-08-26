@@ -1,7 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { catalog, priceLabel } from "@/data/catalog";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
+
+export const metadata: Metadata = {
+  title: "Services",
+  description: "Every detailing service we offer, with real packages and pricing — mobile detailing, ceramic coatings, PPF, window tinting, and more.",
+};
 
 export default function ServicesPage() {
   return (

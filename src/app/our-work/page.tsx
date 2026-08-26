@@ -1,7 +1,13 @@
 import Image from "next/image";
+import type { Metadata } from "next";
 import { workItems } from "@/data/work";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
+
+export const metadata: Metadata = {
+  title: "Our Work",
+  description: "A look at recent detailing jobs from Diamond Clean Detail, straight from real customers.",
+};
 
 export default function OurWorkPage() {
   return (
@@ -23,6 +29,7 @@ export default function OurWorkPage() {
                     src={item.image}
                     alt={item.title}
                     fill
+                    sizes="(max-width: 1024px) 50vw, 33vw"
                     className="object-cover"
                   />
                 ) : (
