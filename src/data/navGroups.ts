@@ -5,9 +5,9 @@
 // primary category page instead of getting their own nav entry.
 export const navGroups = [
   { label: "Mobile Detailing", href: "/services/mobile-detailing" },
-  { label: "Ceramic Coating", href: "/services/ceramic-coating" },
-  { label: "Paint Protection Film (PPF)", href: "/services/paint-protection-film" },
   { label: "Window Tinting", href: "/window-tinting" },
+  { label: "Paint Protection Film (PPF)", href: "/services/paint-protection-film" },
+  { label: "Ceramic Coating", href: "/services/ceramic-coating" },
   { label: "Maintenance Plans", href: "/services/maintenance-plans" },
   { label: "Fleet, RV, Boat, Aircraft & More", href: "/services/fleet-detailing" },
 ];
