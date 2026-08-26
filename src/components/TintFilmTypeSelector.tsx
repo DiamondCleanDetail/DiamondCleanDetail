@@ -58,8 +58,8 @@ export default function TintFilmTypeSelector({
                 type="button"
                 key={f.slug}
                 onClick={() => setFilmType(f)}
-                className={`text-left rounded-xl border p-5 transition-colors ${
-                  isActive ? "border-neutral-900 bg-neutral-50" : "border-neutral-200 bg-white hover:border-neutral-300"
+                className={`text-left rounded-xl border-2 p-5 transition-colors ${
+                  isActive ? "border-neutral-900 bg-neutral-50" : "border-neutral-300 bg-white hover:border-neutral-400"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">

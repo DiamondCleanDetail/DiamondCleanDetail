@@ -93,7 +93,7 @@ export default function TintCoverageSelector({
 
         {/* Preview + details */}
         <div className="mt-10 sm:mt-14 grid sm:grid-cols-2 gap-8 sm:gap-10 items-center">
-          <div className="aspect-[3054/955] w-full rounded-xl border border-dashed border-neutral-300 flex items-center justify-center">
+          <div className="aspect-[3054/955] w-full rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center">
             <p className="text-sm text-neutral-500">Coverage diagram coming soon</p>
           </div>
 

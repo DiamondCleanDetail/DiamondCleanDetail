@@ -52,7 +52,7 @@ export default function WindowTintingClient() {
           <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
             {category.benefits.map((b, i) => (
               <StaggerItem key={b.title}>
-                <div className="h-full bg-neutral-50 border border-neutral-200 rounded-xl p-5">
+                <div className="h-full bg-neutral-50 border-2 border-neutral-300 rounded-xl p-5">
                   <span className="chrome-text-dark text-3xl font-black">{String(i + 1).padStart(2, "0")}</span>
                   <h3 className="font-semibold mt-3 text-neutral-900">{b.title}</h3>
                   <p className="text-sm text-neutral-500 mt-2">{b.description}</p>
@@ -70,8 +70,8 @@ export default function WindowTintingClient() {
           <div className="space-y-4">
             {category.process.map((step, i) => (
               <FadeIn key={step.title} delay={i * 0.06}>
-                <div className="flex gap-4 bg-neutral-50 border border-neutral-200 rounded-xl p-5">
-                  <span className="shrink-0 w-8 h-8 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-sm font-semibold chrome-text-dark">
+                <div className="flex gap-4 bg-neutral-50 border-2 border-neutral-300 rounded-xl p-5">
+                  <span className="shrink-0 w-8 h-8 rounded-full bg-white border-2 border-neutral-300 flex items-center justify-center text-sm font-semibold chrome-text-dark">
                     {i + 1}
                   </span>
                   <div>
@@ -96,7 +96,7 @@ export default function WindowTintingClient() {
 
         {/* Colorado tint law */}
         <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
-          <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 sm:p-8">
+          <div className="bg-neutral-50 border-2 border-neutral-300 rounded-xl p-6 sm:p-8">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <h2 className="text-lg sm:text-xl font-semibold text-neutral-900">Colorado Tint Law</h2>
               <span
@@ -138,7 +138,7 @@ export default function WindowTintingClient() {
         </section>
 
         <section className="mx-auto max-w-4xl px-6 pb-12 sm:pb-24">
-          <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 sm:p-8 text-center">
+          <div className="bg-neutral-50 border-2 border-neutral-300 rounded-xl p-6 sm:p-8 text-center">
             <p className="text-xs uppercase tracking-widest text-neutral-500">Your Selection</p>
             <p className="text-lg font-semibold text-neutral-900 mt-2">
               {level.label} tint &middot; {pkg.name} &middot; {filmType.name}
@@ -162,7 +162,7 @@ export default function WindowTintingClient() {
             </Link>
           </div>
 
-          <div className="mt-6 bg-neutral-50 border border-neutral-200 rounded-xl p-5 text-sm text-neutral-500">
+          <div className="mt-6 bg-neutral-50 border-2 border-neutral-300 rounded-xl p-5 text-sm text-neutral-500">
             Tesla vehicles use different glass and film-application techniques.
             The price above reflects our standard install — we&apos;ll confirm
             with you before your appointment if Tesla glass changes that total.

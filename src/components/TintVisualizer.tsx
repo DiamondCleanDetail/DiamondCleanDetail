@@ -114,7 +114,7 @@ export default function TintVisualizer({
                   className="object-contain"
                 />
               ) : (
-                <div className="absolute inset-0 rounded-xl border border-dashed border-neutral-300 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center">
                   <p className="text-sm text-neutral-500 text-center px-6">
                     {isTesla ? "Tesla" : "Standard vehicle"} preview at{" "}
                     <span className="text-neutral-900 font-medium">{level.label}</span> coming soon.

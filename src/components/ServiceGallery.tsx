@@ -13,7 +13,7 @@ export default function ServiceGallery({
   if (!images || images.length === 0) {
     return (
       <div
-        className={`rounded-xl border border-dashed py-10 text-center ${
+        className={`rounded-xl border-2 border-dashed py-10 text-center ${
           light ? "border-neutral-300" : "border-border/60"
         }`}
       >
