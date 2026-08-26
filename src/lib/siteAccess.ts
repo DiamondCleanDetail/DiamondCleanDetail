@@ -1,4 +1,5 @@
 export const SITE_ACCESS_COOKIE = "dcd_access";
+export const ADMIN_ACCESS_COOKIE = "dcd_admin_access";
 export const SITE_ACCESS_MAX_AGE_SECONDS = 60 * 60 * 24 * 180; // ~6 months
 
 /** Works in both the Node.js and Edge runtimes — no `Buffer`, no `node:crypto`. */
