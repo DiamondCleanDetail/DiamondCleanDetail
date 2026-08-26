@@ -1,18 +1,13 @@
 import Link from "next/link";
-import { catalog, priceLabel } from "@/data/catalog";
 import Hero from "@/components/Hero";
 import FadeIn from "@/components/FadeIn";
-import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
+import ServiceMosaic from "@/components/ServiceMosaic";
 import BeforeAfterGallery from "@/components/BeforeAfterGallery";
 import Testimonials from "@/components/Testimonials";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
 import DiamondDivider from "@/components/DiamondDivider";
 
-const featured = ["mobile-detailing", "ceramic-coating", "paint-protection-film", "wheel-ceramic-coating"];
-
 export default function Home() {
-  const featuredCategories = catalog.filter((c) => featured.includes(c.slug));
-
   return (
     <div>
       <Hero />
@@ -44,24 +39,13 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Popular Services</h2>
+          <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-center mb-6 sm:mb-10">
+            Passion For Paint Protection <span className="chrome-text">In Denver</span>
+          </h2>
         </FadeIn>
-        <StaggerGrid className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {featuredCategories.map((category) => (
-            <StaggerItem key={category.slug}>
-              <Link
-                href={`/services/${category.slug}`}
-                className="card-lift block h-full bg-surface border border-border rounded-xl p-4 sm:p-5"
-              >
-                <h3 className="font-medium text-sm sm:text-base">{category.name}</h3>
-                <p className="hidden sm:block text-sm text-muted mt-2">{category.summary}</p>
-                <p className="mt-3 sm:mt-4 font-semibold chrome-text text-sm sm:text-base">
-                  {priceLabel(category.packages[0], "sedan")}
-                </p>
-              </Link>
-            </StaggerItem>
-          ))}
-        </StaggerGrid>
+        <FadeIn delay={0.1}>
+          <ServiceMosaic />
+        </FadeIn>
       </section>
 
       <DiamondDivider />
