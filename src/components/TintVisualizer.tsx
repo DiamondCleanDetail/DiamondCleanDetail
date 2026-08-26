@@ -26,7 +26,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
                 onClick={() => setIsTesla(false)}
                 className={`px-3 py-1.5 rounded-full transition-colors ${
                   !isTesla
-                    ? "chrome-chip text-[color:var(--accent-foreground)] font-semibold"
+                    ? "bg-neutral-200 text-neutral-900 font-semibold"
                     : "text-neutral-500 hover:text-neutral-900"
                 }`}
               >
@@ -37,7 +37,7 @@ export default function TintVisualizer({ hasTeslaVariant }: { hasTeslaVariant?: 
                 onClick={() => setIsTesla(true)}
                 className={`px-3 py-1.5 rounded-full transition-colors ${
                   isTesla
-                    ? "chrome-chip text-[color:var(--accent-foreground)] font-semibold"
+                    ? "bg-neutral-200 text-neutral-900 font-semibold"
                     : "text-neutral-500 hover:text-neutral-900"
                 }`}
               >
