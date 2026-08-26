@@ -60,6 +60,7 @@ const localBusinessSchema = {
   telephone: "+1-720-703-2795",
   email: "info@diamondcleandetail.com",
   areaServed: "Denver Metro Area",
+  sameAs: ["https://www.facebook.com/Diamondcleandetailingdenver"],
   address: {
     "@type": "PostalAddress",
     addressLocality: "Denver",
