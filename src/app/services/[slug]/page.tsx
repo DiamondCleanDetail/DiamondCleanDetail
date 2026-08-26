@@ -94,7 +94,7 @@ export default async function ServiceCategoryPage({
 
       {/* Visualizer, if applicable */}
       {category.visualizer === "ppf" && (
-        <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
+        <section className="w-full pb-10 sm:pb-16">
           <FadeIn>
             <PPFVisualizer />
           </FadeIn>
