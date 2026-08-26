@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getCategory, priceForSize, Package, VehicleSize } from "@/data/catalog";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
+import { coTintLaw, isRoadLegalInColorado } from "@/data/tintLaw";
 import ServiceHero from "@/components/ServiceHero";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintCoverageSelector from "@/components/TintCoverageSelector";
@@ -93,6 +94,36 @@ export default function WindowTintingClient() {
           />
         </section>
 
+        {/* Colorado tint law */}
+        <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
+          <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 sm:p-8">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <h2 className="text-lg sm:text-xl font-semibold text-neutral-900">Colorado Tint Law</h2>
+              <span
+                className={`text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full ${
+                  level.value === 0 || isRoadLegalInColorado(level.value)
+                    ? "bg-green-100 text-green-800"
+                    : "bg-amber-100 text-amber-800"
+                }`}
+              >
+                {level.label} tint —{" "}
+                {level.value === 0 || isRoadLegalInColorado(level.value)
+                  ? "Road legal in CO"
+                  : "Not road legal in CO"}
+              </span>
+            </div>
+            <ul className="mt-4 space-y-2">
+              {coTintLaw.rules.map((r) => (
+                <li key={r.area} className="text-sm text-neutral-600 flex gap-2">
+                  <span className="font-medium text-neutral-900 shrink-0">{r.area}:</span>
+                  {r.rule}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs text-neutral-500 mt-4 leading-relaxed">{coTintLaw.note}</p>
+          </div>
+        </section>
+
         <section className="w-full pb-6 sm:pb-10">
           <TintCoverageSelector
             vehicleSize={vehicleSize}
@@ -117,6 +148,12 @@ export default function WindowTintingClient() {
               <span className="font-semibold text-neutral-900">${price}</span>
               {filmType.slug !== "diamond-smoke" && " (film upgrade priced separately — we'll confirm exact total)"}
             </p>
+            {!(level.value === 0 || isRoadLegalInColorado(level.value)) && (
+              <p className="text-xs text-amber-700 mt-2">
+                {level.label} tint is below Colorado&apos;s 27% legal minimum for road use — ask us about
+                show/track-only options.
+              </p>
+            )}
             <Link
               href={bookingHref}
               className="inline-block mt-5 px-6 py-2.5 rounded-lg font-semibold text-sm bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
