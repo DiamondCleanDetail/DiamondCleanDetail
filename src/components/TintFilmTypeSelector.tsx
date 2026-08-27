@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { filmTypes, type FilmType } from "@/data/filmTypes";
 
 export default function TintFilmTypeSelector({
@@ -13,10 +13,12 @@ export default function TintFilmTypeSelector({
   return (
     <div className="w-full py-14 sm:py-20">
       <div className="mx-auto max-w-3xl px-6 text-center mb-10">
-        <span className="text-[10px] sm:text-xs uppercase tracking-widest text-neutral-500">Step 3</span>
-        <h3 className="font-semibold text-lg sm:text-xl text-neutral-900 mt-1">Choose Your Film Type</h3>
+        <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-widest text-blue-700 bg-white border-2 border-neutral-900 rounded-full px-3 py-1">
+          Step 3
+        </span>
+        <h3 className="font-semibold text-lg sm:text-xl text-neutral-900 mt-3">Choose Your Film Type</h3>
         <p className="text-xs sm:text-sm text-neutral-500 mt-2">
-          Every shade above is available in each of these three films.
+          Every shade above is available in each of these three films. Tap a card to see what it does.
         </p>
       </div>
 
@@ -50,7 +52,7 @@ export default function TintFilmTypeSelector({
           })}
         </div>
 
-        <div className="mt-10 sm:mt-14 grid sm:grid-cols-3 gap-4 sm:gap-5">
+        <div className="mt-10 sm:mt-14 grid sm:grid-cols-3 gap-4 sm:gap-5 items-start">
           {filmTypes.map((f) => {
             const isActive = filmType.slug === f.slug;
             return (
@@ -58,6 +60,7 @@ export default function TintFilmTypeSelector({
                 type="button"
                 key={f.slug}
                 onClick={() => setFilmType(f)}
+                aria-expanded={isActive}
                 className={`text-left rounded-xl border-2 p-5 transition-colors ${
                   isActive ? "border-neutral-900 bg-neutral-50" : "border-neutral-300 bg-white hover:border-neutral-400"
                 }`}
@@ -67,8 +70,32 @@ export default function TintFilmTypeSelector({
                   <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">{f.code}</span>
                 </div>
                 <p className="text-sm text-neutral-500 mt-2">{f.tagline}</p>
-                <p className="text-xs text-neutral-500 mt-3 leading-relaxed">{f.description}</p>
-                <p className="text-xs font-medium text-neutral-400 mt-4 uppercase tracking-widest">{f.priceNote}</p>
+
+                <AnimatePresence initial={false}>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25, ease: [0.2, 0.8, 0.2, 1] as const }}
+                      className="overflow-hidden"
+                    >
+                      <p className="text-xs text-neutral-500 mt-3 leading-relaxed">{f.description}</p>
+                      <ul className="mt-3 space-y-1.5">
+                        {f.benefits.map((b) => (
+                          <li key={b} className="text-xs text-neutral-600 flex gap-2">
+                            <span className="text-neutral-900">&#10003;</span>
+                            {b}
+                          </li>
+                        ))}
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <p className="text-xs font-medium text-neutral-400 mt-4 uppercase tracking-widest">
+                  {isActive ? f.priceNote : "Tap to learn more"}
+                </p>
               </button>
             );
           })}

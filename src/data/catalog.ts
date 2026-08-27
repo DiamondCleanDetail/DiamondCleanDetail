@@ -209,6 +209,7 @@ export const catalog: ServiceCategory[] = [
       after: "/services/ceramic-coating-after.jpg",
     },
     processMedia: [
+      { type: "image", src: "/services/ceramic-coating-application.jpg", caption: "Applying ceramic coating by hand" },
       { type: "video", src: "/video/wheel-ceramic-coating.mp4", caption: "Wheel ceramic coating in action" },
     ],
     valueProp:

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { getCategory, priceForSize, Package, VehicleSize } from "@/data/catalog";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
-import { isRoadLegalInColorado } from "@/data/tintLaw";
 import ServiceHero from "@/components/ServiceHero";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintCoverageSelector from "@/components/TintCoverageSelector";
@@ -117,12 +116,6 @@ export default function WindowTintingClient() {
               <span className="font-semibold text-neutral-900">${price}</span>
               {filmType.slug !== "diamond-smoke" && " (film upgrade priced separately — we'll confirm exact total)"}
             </p>
-            {!(level.value === 0 || isRoadLegalInColorado(level.value)) && (
-              <p className="text-xs text-amber-700 mt-2">
-                {level.label} tint is below Colorado&apos;s 27% legal minimum for road use — ask us about
-                show/track-only options.
-              </p>
-            )}
             <Link
               href={bookingHref}
               className="inline-block mt-5 px-6 py-2.5 rounded-lg font-semibold text-sm bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"

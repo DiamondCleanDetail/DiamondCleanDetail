@@ -4,6 +4,9 @@ export type FilmType = {
   code: string;
   tagline: string;
   description: string;
+  /** What to show when a customer expands the card — specific, factual
+   * selling points rather than generic marketing copy. */
+  benefits: string[];
   /** Relative price note shown until Farhan confirms exact per-tier pricing. */
   priceNote: string;
   featured?: boolean;
@@ -16,16 +19,30 @@ export const filmTypes: FilmType[] = [
     code: "DS",
     tagline: "Entry-level dyed film — mainly for looks.",
     description:
-      "Our entry-level dyed film. Gives windows a clean, dark look and blocks UV rays, without the heat-rejection performance of our ceramic films.",
+      "A deep-dyed film built for a clean, dark look at the lowest cost of our three films. It blocks 99%+ of UV rays and won't fade or turn purple over time, but doesn't reject heat the way our ceramic films do.",
+    benefits: [
+      "Deep, non-reflective black finish",
+      "99%+ UV rejection",
+      "Fade-free — won't turn purple with age",
+      "Blocks 30–42% of total solar energy",
+      "Lifetime warranty",
+    ],
     priceNote: "Base pricing",
   },
   {
     slug: "diamond-ceramic-rx",
     name: "Diamond Ceramic RX",
     code: "RX",
-    tagline: "Nano-ceramic — our most popular performance film.",
+    tagline: "Carbon-ceramic — our most popular performance film.",
     description:
-      "Nano-ceramic film that blocks significantly more heat than dyed film while staying clear and glare-free. The most popular choice for everyday drivers.",
+      "A carbon-pigmented ceramic film that meaningfully outperforms dyed film on heat rejection while staying clear and glare-free. This is the film most customers land on — real performance without flagship pricing.",
+    benefits: [
+      "Blocks 71–85% of infrared heat",
+      "Blocks up to 63% of total solar energy",
+      "99%+ UV rejection",
+      "No signal interference with GPS, radio, or phones",
+      "Lifetime warranty",
+    ],
     priceNote: "Pricing TBD",
     featured: true,
   },
@@ -33,9 +50,16 @@ export const filmTypes: FilmType[] = [
     slug: "diamond-ceramic-rx1",
     name: "Diamond Ceramic RX1",
     code: "RX1",
-    tagline: "Dual-layer nano-ceramic — maximum heat reduction.",
+    tagline: "Dual-ceramic — maximum heat reduction and clarity.",
     description:
-      "Our flagship film. Dual-layer nano-ceramic construction for maximum heat rejection and infrared blocking, for drivers who want the best performance available.",
+      "Our flagship film. A dual-layer ceramic construction pushes infrared rejection to the top of the range at every shade, for drivers who want the most heat and glare blocked without going darker than they want.",
+    benefits: [
+      "Blocks 95% of infrared heat at every shade",
+      "Blocks up to 70% of total solar energy",
+      "99%+ UV rejection",
+      "Extreme optical clarity — no haze",
+      "Lifetime warranty",
+    ],
     priceNote: "Pricing TBD",
   },
 ];
