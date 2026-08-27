@@ -563,7 +563,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "Detailing for RVs, boats, and aircraft interiors/exteriors. Every job is quoted individually based on size, condition, and material — request a quote to get started.",
     tagline: "Specialty detailing for whatever you drive, sail, or fly.",
-    heroImage: "/services/specialty-vehicles-hero.jpg",
+    heroImage: "/services/specialty-vehicles-hero.png",
     heroImageMobile: "/services/specialty-vehicles-hero-mobile.jpg",
     valueProp:
       "RVs, boats, and aircraft each need their own approach — different materials, different surfaces, different exposure to the elements. We quote every job individually based on size, condition, and material so the price actually reflects the work involved.",
