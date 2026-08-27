@@ -10,6 +10,12 @@ export type VehicleTypeBreakdown = {
   services: string[];
   /** Matches a packages[].slug on the specialty-vehicles category, for the booking link. */
   packageSlug: string;
+  /** Tailwind padding classes for the image card — smaller padding renders the photo larger. */
+  imagePadding?: string;
+  /** Tailwind object-position class. Defaults to centered; use object-bottom for images
+   * (like the boat, with a tall reflection beneath it) where the subject itself should
+   * read as centered rather than the image's own bounding box. */
+  imagePosition?: string;
 };
 
 export const specialtyVehicleBreakdown: VehicleTypeBreakdown[] = [
@@ -21,6 +27,7 @@ export const specialtyVehicleBreakdown: VehicleTypeBreakdown[] = [
     image: "/services/vehicle-rv.webp",
     timeOnSite: "Typically 4–8 hours on site, depending on size and condition",
     packageSlug: "rv-detailing",
+    imagePadding: "p-2 sm:p-4",
     services: [
       "Full exterior hand wash & bug/tar removal",
       "Oxidation removal & paint decontamination",
@@ -42,6 +49,7 @@ export const specialtyVehicleBreakdown: VehicleTypeBreakdown[] = [
     image: "/services/vehicle-boat.webp",
     timeOnSite: "Typically 3–6 hours on site, depending on size and hull condition",
     packageSlug: "boat-detailing",
+    imagePosition: "object-bottom",
     services: [
       "Hull wash, oxidation & waterline stain removal",
       "Gelcoat compounding, polish & wax or ceramic sealant",

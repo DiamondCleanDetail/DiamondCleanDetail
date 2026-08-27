@@ -88,7 +88,7 @@ export default function SpecialtyVehiclesPage() {
                     alt={v.name}
                     fill
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-contain p-6 sm:p-10"
+                    className={`object-contain ${v.imagePosition ?? "object-center"} ${v.imagePadding ?? "p-6 sm:p-10"}`}
                   />
                 </div>
 
