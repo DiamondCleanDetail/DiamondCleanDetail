@@ -74,12 +74,16 @@ export default function BookingWizard({
   initialTint,
   initialFilm,
   initialTesla,
+  initialVehicleSize,
+  initialVehicleInfo,
 }: {
   initialCategory?: string;
   initialPackage?: string;
   initialTint?: string;
   initialFilm?: string;
   initialTesla?: boolean;
+  initialVehicleSize?: VehicleSize;
+  initialVehicleInfo?: string;
 }) {
   const hasValidInitialSelection = Boolean(initialCategory && getCategory(initialCategory));
   const startCategory = getCategory(initialCategory ?? "");
@@ -104,8 +108,8 @@ export default function BookingWizard({
         ]
       : []
   );
-  const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
-  const [vehicleInfo, setVehicleInfo] = useState("");
+  const [vehicleSize, setVehicleSize] = useState<VehicleSize>(initialVehicleSize ?? "sedan");
+  const [vehicleInfo, setVehicleInfo] = useState(initialVehicleInfo ?? "");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [name, setName] = useState("");
@@ -394,19 +398,34 @@ export default function BookingWizard({
           {current.category.visualizer === "tint" && (
             <div className="mb-6 bg-white rounded-2xl overflow-hidden">
               <TintVisualizer
-                hasTeslaVariant={current.category.hasTeslaVariant}
                 level={
                   tintLevels.find((l) => l.value === (current.tintLevelValue ?? 35)) ??
                   tintLevels.find((l) => l.value === 35)!
                 }
                 setLevel={(l) => updateCurrentSelection({ tintLevelValue: l.value })}
-                isTesla={current.isTesla ?? false}
-                setIsTesla={(v) => updateCurrentSelection({ isTesla: v })}
               />
               <TintFilmTypeSelector
                 filmType={filmTypes.find((f) => f.slug === current.filmSlug) ?? filmTypes[1]}
                 setFilmType={(f) => updateCurrentSelection({ filmSlug: f.slug })}
               />
+              {current.category.hasTeslaVariant && (
+                <div className="px-5 sm:px-8 pb-8">
+                  <label className="flex items-center gap-2.5 text-sm text-neutral-700 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={current.isTesla ?? false}
+                      onChange={(e) => updateCurrentSelection({ isTesla: e.target.checked })}
+                      className="h-4 w-4 rounded border-2 border-neutral-300 accent-neutral-900"
+                    />
+                    This is a Tesla
+                  </label>
+                  {current.isTesla && (
+                    <p className="mt-2 text-xs text-neutral-500">
+                      Tesla glass uses a different installation process — we&apos;ll confirm exact pricing before your appointment.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           )}
           {current.category.visualizer === "ppf" && (

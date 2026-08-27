@@ -2,17 +2,26 @@
 
 import { motion } from "framer-motion";
 import { getCategory, vehicleSizeLabels, VehicleSize, priceForSize, Package } from "@/data/catalog";
+import VehiclePicker from "@/components/VehiclePicker";
 
 const category = getCategory("window-tinting")!;
 
 export default function TintCoverageSelector({
   vehicleSize,
   setVehicleSize,
+  vehicleInfo,
+  setVehicleInfo,
+  isTesla,
+  setIsTesla,
   pkg,
   setPkg,
 }: {
   vehicleSize: VehicleSize;
   setVehicleSize: (v: VehicleSize) => void;
+  vehicleInfo: string;
+  setVehicleInfo: (v: string) => void;
+  isTesla: boolean;
+  setIsTesla: (v: boolean) => void;
   pkg: Package;
   setPkg: (p: Package) => void;
 }) {
@@ -24,40 +33,36 @@ export default function TintCoverageSelector({
         <span className="text-[10px] sm:text-xs uppercase tracking-widest text-neutral-500">Step 2</span>
         <h3 className="font-semibold text-lg sm:text-xl text-neutral-900 mt-1">Choose Your Coverage</h3>
         <p className="text-xs sm:text-sm text-neutral-500 mt-2">
-          Pick your vehicle size and how much glass you want covered.
+          Tell us your vehicle and how much glass you want covered.
         </p>
       </div>
 
       <div className="mx-auto max-w-6xl px-6">
-        {/* Vehicle size tabs */}
-        <p className="text-xs text-neutral-500 mb-2">Vehicle Size</p>
-        <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1 mb-6">
-          {(Object.keys(vehicleSizeLabels) as VehicleSize[]).map((size) => {
-            const isActive = vehicleSize === size;
-            return (
-              <button
-                type="button"
-                key={size}
-                onClick={() => setVehicleSize(size)}
-                className="relative flex-1 py-2.5 sm:py-3 text-center"
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="vehicle-size-highlight"
-                    className="absolute inset-0 bg-neutral-200 rounded-full"
-                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-colors ${
-                    isActive ? "text-neutral-900" : "text-neutral-400 hover:text-neutral-700"
-                  }`}
-                >
-                  {vehicleSizeLabels[size]}
-                </span>
-              </button>
-            );
-          })}
+        {/* Vehicle picker — auto-detects Sedan/SUV/Truck pricing from year/make/model
+            so nobody has to guess which bucket their car falls into. */}
+        <p className="text-xs text-neutral-500 mb-2">Your Vehicle</p>
+        <div className="mb-6 bg-neutral-50 border-2 border-neutral-300 rounded-xl p-5">
+          <VehiclePicker
+            vehicleSize={vehicleSize}
+            setVehicleSize={setVehicleSize}
+            vehicleInfo={vehicleInfo}
+            setVehicleInfo={setVehicleInfo}
+            light
+          />
+          <label className="mt-4 flex items-center gap-2.5 text-sm text-neutral-700 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isTesla}
+              onChange={(e) => setIsTesla(e.target.checked)}
+              className="h-4 w-4 rounded border-2 border-neutral-300 accent-neutral-900"
+            />
+            This is a Tesla
+          </label>
+          {isTesla && (
+            <p className="mt-2 text-xs text-neutral-500">
+              Tesla glass uses a different installation process — we&apos;ll confirm exact pricing before your appointment.
+            </p>
+          )}
         </div>
 
         {/* Coverage package tabs */}

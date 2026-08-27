@@ -20,18 +20,19 @@ export default function WindowTintingClient() {
   const [level, setLevel] = useState(tintLevels.find((l) => l.value === 35)!);
   const [isTesla, setIsTesla] = useState(false);
   const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
+  const [vehicleInfo, setVehicleInfo] = useState("");
   const [pkg, setPkg] = useState<Package>(category.packages[0]);
   const [filmType, setFilmType] = useState(filmTypes[1]); // Diamond Ceramic RX, most popular
 
   const price = priceForSize(pkg, vehicleSize);
-  const bookingHref = `/booking?service=${category.slug}&package=${pkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}`;
+  const bookingHref = `/booking?service=${category.slug}&package=${pkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}&vehicleSize=${vehicleSize}&vehicleInfo=${encodeURIComponent(vehicleInfo)}`;
 
   return (
     <div>
       <ServiceHero
         eyebrow="Window Tinting"
         title="See Your Shade Before You Book."
-        tagline="Preview how each tint shade looks, then choose your coverage and book online — Tesla glass previewed separately."
+        tagline="Preview how each tint shade looks, then choose your coverage and book online."
         image="/services/window-tinting-hero.webp"
       />
 
@@ -85,19 +86,17 @@ export default function WindowTintingClient() {
         </section>
 
         <section className="w-full pb-6 sm:pb-10">
-          <TintVisualizer
-            hasTeslaVariant={category.hasTeslaVariant}
-            level={level}
-            setLevel={setLevel}
-            isTesla={isTesla}
-            setIsTesla={setIsTesla}
-          />
+          <TintVisualizer level={level} setLevel={setLevel} />
         </section>
 
         <section className="w-full pb-6 sm:pb-10">
           <TintCoverageSelector
             vehicleSize={vehicleSize}
             setVehicleSize={setVehicleSize}
+            vehicleInfo={vehicleInfo}
+            setVehicleInfo={setVehicleInfo}
+            isTesla={isTesla}
+            setIsTesla={setIsTesla}
             pkg={pkg}
             setPkg={setPkg}
           />

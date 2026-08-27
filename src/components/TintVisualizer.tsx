@@ -5,20 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { tintLevels, type TintLevel } from "@/data/tintLevels";
 
 export default function TintVisualizer({
-  hasTeslaVariant,
   level,
   setLevel,
-  isTesla,
-  setIsTesla,
 }: {
-  hasTeslaVariant?: boolean;
   level: TintLevel;
   setLevel: (l: TintLevel) => void;
-  isTesla: boolean;
-  setIsTesla: (v: boolean) => void;
 }) {
-  const image = isTesla ? level.teslaImage : level.image;
-
   return (
     <div className="relative w-full">
       <div className="relative py-14 sm:py-20">
@@ -28,32 +20,6 @@ export default function TintVisualizer({
           <p className="text-xs sm:text-sm text-neutral-500 mt-2">
             Preview how each shade looks before you book.
           </p>
-          {hasTeslaVariant && (
-            <div className="inline-flex bg-neutral-100 border-2 border-neutral-300 rounded-full p-1 text-xs mt-5">
-              <button
-                type="button"
-                onClick={() => setIsTesla(false)}
-                className={`px-3 py-1.5 rounded-full transition-colors ${
-                  !isTesla
-                    ? "bg-neutral-200 text-neutral-900 font-semibold"
-                    : "text-neutral-500 hover:text-neutral-900"
-                }`}
-              >
-                Standard Vehicle
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsTesla(true)}
-                className={`px-3 py-1.5 rounded-full transition-colors ${
-                  isTesla
-                    ? "bg-neutral-200 text-neutral-900 font-semibold"
-                    : "text-neutral-500 hover:text-neutral-900"
-                }`}
-              >
-                Tesla
-              </button>
-            </div>
-          )}
         </div>
 
         <div className="mx-auto max-w-6xl px-6">
@@ -104,9 +70,9 @@ export default function TintVisualizer({
             </AnimatePresence>
 
             <div className="absolute inset-0">
-              {image ? (
+              {level.image ? (
                 <Image
-                  src={image}
+                  src={level.image}
                   alt={`${level.label} tint preview`}
                   fill
                   priority
@@ -116,8 +82,7 @@ export default function TintVisualizer({
               ) : (
                 <div className="absolute inset-0 rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center">
                   <p className="text-sm text-neutral-500 text-center px-6">
-                    {isTesla ? "Tesla" : "Standard vehicle"} preview at{" "}
-                    <span className="text-neutral-900 font-medium">{level.label}</span> coming soon.
+                    Preview at <span className="text-neutral-900 font-medium">{level.label}</span> coming soon.
                   </p>
                 </div>
               )}

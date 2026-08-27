@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import BookingWizard from "@/components/BookingWizard";
+import type { VehicleSize } from "@/data/catalog";
 
 export const metadata: Metadata = {
   title: "Book a Detail",
@@ -15,6 +16,12 @@ export default async function BookingPage({
   const tint = typeof params.tint === "string" ? params.tint : undefined;
   const film = typeof params.film === "string" ? params.film : undefined;
   const tesla = params.tesla === "1";
+  const vehicleSizeParam = typeof params.vehicleSize === "string" ? params.vehicleSize : undefined;
+  const vehicleSize: VehicleSize | undefined =
+    vehicleSizeParam === "sedan" || vehicleSizeParam === "suv" || vehicleSizeParam === "truck"
+      ? vehicleSizeParam
+      : undefined;
+  const vehicleInfo = typeof params.vehicleInfo === "string" ? params.vehicleInfo : undefined;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10 sm:py-16">
@@ -29,6 +36,8 @@ export default async function BookingPage({
         initialTint={tint}
         initialFilm={film}
         initialTesla={tesla}
+        initialVehicleSize={vehicleSize}
+        initialVehicleInfo={vehicleInfo}
       />
     </div>
   );
