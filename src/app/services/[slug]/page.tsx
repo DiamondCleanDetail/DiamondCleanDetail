@@ -12,7 +12,9 @@ import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 export function generateStaticParams() {
-  return catalog.filter((c) => c.slug !== "window-tinting").map((c) => ({ slug: c.slug }));
+  return catalog
+    .filter((c) => c.slug !== "window-tinting" && c.slug !== "specialty-vehicles")
+    .map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({
