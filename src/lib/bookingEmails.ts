@@ -60,10 +60,11 @@ export async function sendBookingEmails(booking: ConfirmedBooking): Promise<void
   const ownerSend = resend.emails
     .send({
       from: EMAIL_FROM,
-      // Until diamondcleandetail.com is verified in Resend, sends are
-      // sandboxed to the Resend account's own signup address — this lets
-      // the owner alert actually deliver today. Switch OWNER_NOTIFICATION_EMAIL
-      // (or just drop it) to use serviceArea.email once verified.
+      // diamondcleandetail.com is verified now, so this could deliver to
+      // serviceArea.email directly — but that address (info@) isn't a
+      // confirmed real mailbox yet, so this still overrides to somewhere
+      // known-good until Farhan's actual business inbox is confirmed. Drop
+      // OWNER_NOTIFICATION_EMAIL once it is.
       to: process.env.OWNER_NOTIFICATION_EMAIL || serviceArea.email,
       subject: `New booking — ${booking.customerName} — ${booking.date} ${booking.time}`,
       html: `<h2>New Booking</h2>${summaryHtml}`,
