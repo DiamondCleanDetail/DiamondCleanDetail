@@ -86,7 +86,7 @@ export default function WindowTintingClient() {
         </section>
 
         <section className="w-full pb-6 sm:pb-10">
-          <TintVisualizer level={level} setLevel={setLevel} />
+          <TintVisualizer level={level} setLevel={setLevel} vehicleSize={vehicleSize} />
         </section>
 
         <section className="w-full pb-6 sm:pb-10">

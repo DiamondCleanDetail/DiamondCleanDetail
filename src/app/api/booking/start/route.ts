@@ -112,6 +112,10 @@ export async function POST(req: NextRequest) {
     success_url: `${origin}/booking/success?group_id=${groupId}&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/booking`,
     metadata: { group_id: groupId },
+    // Stripe's default is 24h. An abandoned checkout otherwise blocks that
+    // time slot for a full day even though no payment is coming — an hour
+    // is plenty of time to finish paying but releases the slot quickly.
+    expires_at: Math.floor(Date.now() / 1000) + 60 * 60,
   });
 
   await db

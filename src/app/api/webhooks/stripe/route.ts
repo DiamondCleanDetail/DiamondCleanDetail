@@ -46,5 +46,26 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // A customer who starts checkout but never pays (closes the tab, card
+  // declines and they give up) would otherwise leave a "pending" row that
+  // blocks that time slot forever — nothing else ever transitions it out
+  // of "pending". Release the slot by cancelling it once Stripe considers
+  // the session dead.
+  if (event.type === "checkout.session.expired" || event.type === "checkout.session.async_payment_failed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const groupId = session.metadata?.group_id;
+    if (groupId) {
+      const db = supabaseAdmin();
+      const { error } = await db
+        .from("bookings")
+        .update({ status: "cancelled" })
+        .eq("group_id", groupId)
+        .eq("status", "pending");
+      if (error) {
+        console.error("Webhook failed to release abandoned booking:", error.message);
+      }
+    }
+  }
+
   return NextResponse.json({ received: true });
 }

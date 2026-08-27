@@ -403,6 +403,7 @@ export default function BookingWizard({
                   tintLevels.find((l) => l.value === 35)!
                 }
                 setLevel={(l) => updateCurrentSelection({ tintLevelValue: l.value })}
+                vehicleSize={vehicleSize}
               />
               <TintFilmTypeSelector
                 filmType={filmTypes.find((f) => f.slug === current.filmSlug) ?? filmTypes[1]}

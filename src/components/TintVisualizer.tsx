@@ -3,14 +3,20 @@
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { tintLevels, type TintLevel } from "@/data/tintLevels";
+import { vehicleSizeLabels, type VehicleSize } from "@/data/catalog";
 
 export default function TintVisualizer({
   level,
   setLevel,
+  vehicleSize,
 }: {
   level: TintLevel;
   setLevel: (l: TintLevel) => void;
+  /** Which example vehicle to preview — defaults to Sedan/Coupe if omitted. */
+  vehicleSize?: VehicleSize;
 }) {
+  const size = vehicleSize ?? "sedan";
+  const image = level.images[size];
   return (
     <div className="relative w-full">
       <div className="relative py-14 sm:py-20">
@@ -70,10 +76,10 @@ export default function TintVisualizer({
             </AnimatePresence>
 
             <div className="absolute inset-0">
-              {level.image ? (
+              {image ? (
                 <Image
-                  src={level.image}
-                  alt={`${level.label} tint preview`}
+                  src={image}
+                  alt={`${level.label} tint preview on a ${vehicleSizeLabels[size]}`}
                   fill
                   priority
                   sizes="(max-width: 640px) 100vw, 1152px"
@@ -82,7 +88,8 @@ export default function TintVisualizer({
               ) : (
                 <div className="absolute inset-0 rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center">
                   <p className="text-sm text-neutral-500 text-center px-6">
-                    Preview at <span className="text-neutral-900 font-medium">{level.label}</span> coming soon.
+                    {vehicleSizeLabels[size]} preview at{" "}
+                    <span className="text-neutral-900 font-medium">{level.label}</span> coming soon.
                   </p>
                 </div>
               )}
