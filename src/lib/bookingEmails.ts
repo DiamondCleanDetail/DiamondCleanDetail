@@ -60,7 +60,11 @@ export async function sendBookingEmails(booking: ConfirmedBooking): Promise<void
   const ownerSend = resend.emails
     .send({
       from: EMAIL_FROM,
-      to: serviceArea.email,
+      // Until diamondcleandetail.com is verified in Resend, sends are
+      // sandboxed to the Resend account's own signup address — this lets
+      // the owner alert actually deliver today. Switch OWNER_NOTIFICATION_EMAIL
+      // (or just drop it) to use serviceArea.email once verified.
+      to: process.env.OWNER_NOTIFICATION_EMAIL || serviceArea.email,
       subject: `New booking — ${booking.customerName} — ${booking.date} ${booking.time}`,
       html: `<h2>New Booking</h2>${summaryHtml}`,
       text: `New Booking\n\n${booking.customerName} · ${booking.customerPhone}${booking.customerEmail ? ` · ${booking.customerEmail}` : ""}\n${booking.vehicleInfo}\n${booking.date} at ${booking.time}\n\n${itemsText(booking.items)}\n\n${booking.chargedCents > 0 ? `Charged today: ${money(booking.chargedCents)}` : "No charge today — quote-only."}`,
