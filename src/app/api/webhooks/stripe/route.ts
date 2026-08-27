@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripeClient } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { getCategory } from "@/data/catalog";
+import { sendBookingEmails } from "@/lib/bookingEmails";
 
 export async function POST(req: NextRequest) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -34,14 +36,35 @@ export async function POST(req: NextRequest) {
     if (session.payment_status === "paid") {
       const db = supabaseAdmin();
       const query = groupId
-        ? db.from("bookings").update({ status: "paid" }).eq("group_id", groupId).eq("status", "pending")
+        ? db.from("bookings").update({ status: "paid" }).eq("group_id", groupId).eq("status", "pending").select()
         : bookingId
-          ? db.from("bookings").update({ status: "paid" }).eq("id", bookingId).eq("status", "pending")
+          ? db.from("bookings").update({ status: "paid" }).eq("id", bookingId).eq("status", "pending").select()
           : null;
 
-      const { error } = query ? await query : { error: null };
+      const { data: updatedRows, error } = query ? await query : { data: null, error: null };
       if (error) {
         console.error("Webhook failed to mark booking paid:", error.message);
+      } else if (updatedRows && updatedRows.length > 0) {
+        const first = updatedRows[0];
+        await sendBookingEmails({
+          customerName: first.customer_name,
+          customerEmail: first.customer_email,
+          customerPhone: first.customer_phone,
+          vehicleInfo: first.vehicle_info,
+          date: first.booking_date,
+          time: first.booking_time,
+          chargedCents: updatedRows.reduce((sum, r) => sum + r.deposit_cents, 0),
+          items: updatedRows.map((r) => {
+            const category = getCategory(r.service_slug);
+            const pkg = category?.packages.find((p) => p.slug === r.package_slug);
+            return {
+              serviceName: category?.name ?? r.service_slug,
+              packageName: pkg?.name ?? r.package_slug,
+              priceCents: r.price_cents,
+              isQuote: pkg?.pricing.type === "quote",
+            };
+          }),
+        }).catch((err) => console.error("sendBookingEmails threw unexpectedly:", err));
       }
     }
   }

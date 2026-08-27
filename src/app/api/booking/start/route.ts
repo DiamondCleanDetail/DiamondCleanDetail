@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
 import { getCategory, priceForSize } from "@/data/catalog";
 import { todayIso, isWeekend, parseTimeToMinutes, rangesOverlap, CLOSING_MINUTES } from "@/lib/scheduling";
+import { sendBookingEmails } from "@/lib/bookingEmails";
 
 type ItemInput = { serviceSlug: string; packageSlug: string; note?: string };
 
@@ -127,7 +128,23 @@ export async function POST(req: NextRequest) {
   const totalCharge = rows.reduce((sum, r) => sum + r.chargeAmount, 0);
 
   if (totalCharge <= 0) {
-    // Every selected service is quote-only — nothing to charge.
+    // Every selected service is quote-only — nothing to charge, and this
+    // never touches Stripe/the webhook, so send the confirmation now.
+    await sendBookingEmails({
+      customerName: body.name,
+      customerEmail: body.email || null,
+      customerPhone: body.phone,
+      vehicleInfo: body.vehicleInfo,
+      date: body.date,
+      time: body.time,
+      chargedCents: 0,
+      items: rows.map((r) => ({
+        serviceName: r.category.name,
+        packageName: r.pkg.name,
+        priceCents: r.dbRow.price_cents,
+        isQuote: true,
+      })),
+    }).catch((err) => console.error("sendBookingEmails threw unexpectedly:", err));
     return NextResponse.json({ redirectUrl: `/booking/success?group_id=${groupId}` });
   }
 
