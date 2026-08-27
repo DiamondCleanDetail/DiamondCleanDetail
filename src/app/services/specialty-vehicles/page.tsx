@@ -82,7 +82,7 @@ export default function SpecialtyVehiclesPage() {
                   i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
                 }`}
               >
-                <div className="relative aspect-[4/3] bg-surface-2 border border-border rounded-2xl overflow-hidden">
+                <div className="relative aspect-[4/3] bg-white border border-border rounded-2xl overflow-hidden">
                   <Image
                     src={v.image}
                     alt={v.name}
