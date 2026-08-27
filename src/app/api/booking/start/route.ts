@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
 import { getCategory, priceForSize } from "@/data/catalog";
+import { todayIso, isWeekend, parseTimeToMinutes, rangesOverlap, CLOSING_MINUTES } from "@/lib/scheduling";
 
 type ItemInput = { serviceSlug: string; packageSlug: string; note?: string };
 
@@ -29,6 +30,15 @@ export async function POST(req: NextRequest) {
   if (!body.name || !body.phone || !body.vehicleInfo || !body.date || !body.time) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
+  // The date picker enforces this client-side, but nothing stops a direct
+  // API request from skipping it — a past or weekend date would otherwise
+  // create a real, chargeable booking Farhan can never fulfill.
+  if (body.date < todayIso()) {
+    return NextResponse.json({ error: "That date has already passed." }, { status: 400 });
+  }
+  if (isWeekend(body.date)) {
+    return NextResponse.json({ error: "We're closed on weekends." }, { status: 400 });
+  }
 
   const resolved = body.items.map((item) => {
     const category = getCategory(item.serviceSlug);
@@ -44,6 +54,38 @@ export async function POST(req: NextRequest) {
 
   const groupId = randomUUID();
   const db = supabaseAdmin();
+
+  // Re-validate the slot server-side. The client only checks availability
+  // when the page loads, so without this a second tab, a slow connection,
+  // or a direct API request could double-book the same appointment.
+  const totalDuration = resolved.reduce((sum, r) => sum + (r.pkg!.durationMinutes ?? 60), 0);
+  const start = parseTimeToMinutes(body.time);
+  const end = start + totalDuration;
+  if (end > CLOSING_MINUTES) {
+    return NextResponse.json({ error: "That time doesn't leave enough room before closing." }, { status: 400 });
+  }
+  const { data: existingBookings, error: availabilityError } = await db
+    .from("bookings")
+    .select("service_slug, package_slug, booking_time")
+    .eq("booking_date", body.date)
+    .neq("status", "cancelled");
+  if (availabilityError) {
+    console.error("Failed to check availability:", availabilityError.message);
+    return NextResponse.json({ error: "Could not verify availability. Please try again." }, { status: 500 });
+  }
+  const hasConflict = (existingBookings ?? []).some((existing) => {
+    const existingCategory = getCategory(existing.service_slug);
+    const existingPkg = existingCategory?.packages.find((p) => p.slug === existing.package_slug);
+    const existingStart = parseTimeToMinutes(existing.booking_time);
+    const existingEnd = existingStart + (existingPkg?.durationMinutes ?? 60);
+    return rangesOverlap(start, end, existingStart, existingEnd);
+  });
+  if (hasConflict) {
+    return NextResponse.json(
+      { error: "That time was just booked by someone else — please pick another." },
+      { status: 409 }
+    );
+  }
 
   const rows = resolved.map(({ item, category, pkg }) => {
     const price = priceForSize(pkg!, body.vehicleSize) ?? 0;
