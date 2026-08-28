@@ -42,7 +42,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm shrink-0">
+        <nav className="hidden lg:flex items-center gap-6 text-sm shrink-0">
           <ServicesDropdown />
           {links.map((link) => (
             <Link
@@ -54,12 +54,23 @@ export default function Navbar() {
             </Link>
           ))}
           {/* Phone escape hatch — some customers will always rather call, and
-              until now the number only existed in the footer. */}
+              until now the number only existed in the footer. Icon-only at
+              tablet widths so it can't crowd the wordmark into truncating;
+              the full number appears from lg up. */}
           <a
             href={`tel:${serviceArea.phoneHref}`}
-            className="link-underline text-muted hover:text-foreground transition-colors whitespace-nowrap"
+            aria-label={`Call ${serviceArea.phone}`}
+            className="flex items-center gap-1.5 text-muted hover:text-foreground transition-colors whitespace-nowrap"
           >
-            {serviceArea.phone.replace(/^\+1 /, "")}
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden className="shrink-0">
+              <path
+                d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3.9c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.2 1z"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="hidden lg:inline link-underline">{serviceArea.phone.replace(/^\+1 /, "")}</span>
           </a>
           <Show when="signed-out">
             <SignInButton mode="modal">
@@ -81,7 +92,7 @@ export default function Navbar() {
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={open}
-          className="md:hidden shrink-0 w-11 h-11 flex flex-col items-center justify-center gap-1.5 border border-border rounded-lg"
+          className="lg:hidden shrink-0 w-11 h-11 flex flex-col items-center justify-center gap-1.5 border border-border rounded-lg"
         >
           <span className={`block h-0.5 w-5 bg-foreground transition-transform ${open ? "translate-y-2 rotate-45" : ""}`} />
           <span className={`block h-0.5 w-5 bg-foreground transition-opacity ${open ? "opacity-0" : ""}`} />
@@ -90,7 +101,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <nav className="md:hidden border-t border-border bg-surface px-6 py-4 flex flex-col gap-1 text-sm">
+        <nav className="lg:hidden border-t border-border bg-surface px-6 py-4 flex flex-col gap-1 text-sm">
           <button
             type="button"
             onClick={() => setServicesOpen((v) => !v)}
