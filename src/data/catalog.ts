@@ -456,7 +456,12 @@ export const catalog: ServiceCategory[] = [
         src: "/services/ppf-self-healing-placeholder-stock.webp",
         alt: "A dark green car panel under a work light, the left half clouded with fine swirl marks and the right half polished clear",
       },
-      null,
+      // TODO(placeholder): stock image, not our work — swap when Farhan has a
+      // real handover or appraisal shot.
+      {
+        src: "/services/ppf-resale-placeholder-stock.webp",
+        alt: "A person in a business suit making notes on a tablet beside a white car",
+      },
     ],
     valueProp:
       "Paint Protection Film is a clear, self-healing urethane film applied directly over your paint. It absorbs rock chips, road debris, and light scratches that would otherwise damage the clear coat — and minor scuffs in the film itself heal with heat, so it stays looking new.",
