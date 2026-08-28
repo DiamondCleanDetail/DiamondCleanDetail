@@ -2,6 +2,15 @@ export type FilmType = {
   slug: "diamond-smoke" | "diamond-ceramic-rx" | "diamond-ceramic-rx1";
   name: string;
   code: string;
+  /** Where this film sits on the good/better/best ladder. Customers arrive
+   * knowing nothing about tint, so the ladder has to be readable before any
+   * of the copy is — `tierRank` fills that many pips on the card. Held as
+   * data rather than derived from array position so reordering the list
+   * can't silently re-rank the films. */
+  tier: string;
+  tierRank: 1 | 2 | 3;
+  /** One line, in plain language, leading with what the customer gets. The
+   * film technology belongs in `description` as supporting detail. */
   tagline: string;
   description: string;
   /** What to show when a customer expands the card — specific, factual
@@ -17,9 +26,12 @@ export const filmTypes: FilmType[] = [
     slug: "diamond-smoke",
     name: "Diamond Smoke",
     code: "DS",
-    tagline: "Entry-level dyed film — mainly for looks.",
+    tier: "Good",
+    tierRank: 1,
+    tagline:
+      "The dark, finished look for the lowest price — with 99%+ of UV blocked, but the least heat of our three films.",
     description:
-      "A deep-dyed film built for a clean, dark look at the lowest cost of our three films. It blocks 99%+ of UV rays and won't fade or turn purple over time, but doesn't reject heat the way our ceramic films do.",
+      "Gets you a clean, dark look at the lowest cost of our three films. It's a deep-dyed film, so it blocks 99%+ of UV rays and won't fade or turn purple over time, but it doesn't reject heat the way our ceramic films do.",
     benefits: [
       "Deep, non-reflective black finish",
       "99%+ UV rejection",
@@ -33,9 +45,12 @@ export const filmTypes: FilmType[] = [
     slug: "diamond-ceramic-rx",
     name: "Diamond Ceramic RX",
     code: "RX",
-    tagline: "Carbon-ceramic — our most popular performance film.",
+    tier: "Better",
+    tierRank: 2,
+    tagline:
+      "A noticeably cooler cabin without flagship pricing — the film most of our customers choose.",
     description:
-      "A carbon-pigmented ceramic film that meaningfully outperforms dyed film on heat rejection while staying clear and glare-free. This is the film most customers land on — real performance without flagship pricing.",
+      "Keeps the cabin meaningfully cooler than dyed film while staying clear and glare-free. It's a carbon-pigmented ceramic: real performance without flagship pricing, which is where most customers land.",
     benefits: [
       "Blocks 71–85% of infrared heat",
       "Blocks up to 63% of total solar energy",
@@ -50,9 +65,12 @@ export const filmTypes: FilmType[] = [
     slug: "diamond-ceramic-rx1",
     name: "Diamond Ceramic RX1",
     code: "RX1",
-    tagline: "Dual-ceramic — maximum heat reduction and clarity.",
+    tier: "Best",
+    tierRank: 3,
+    tagline:
+      "The most heat blocked and the clearest view, at whatever shade you pick.",
     description:
-      "Our flagship film. A dual-layer ceramic construction pushes infrared rejection to the top of the range at every shade, for drivers who want the most heat and glare blocked without going darker than they want.",
+      "Blocks the most heat and glare of anything we install, at every shade — so you don't have to go darker than you want to stay cool. Our flagship film, built from a dual-layer ceramic construction that pushes infrared rejection to the top of the range.",
     benefits: [
       "Blocks 95% of infrared heat at every shade",
       "Blocks up to 70% of total solar energy",

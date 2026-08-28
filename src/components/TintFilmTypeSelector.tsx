@@ -35,11 +35,50 @@ export default function TintFilmTypeSelector({
                   isActive ? "border-neutral-900 bg-neutral-50" : "border-neutral-300 bg-white hover:border-neutral-400"
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
-                  <h4 className="font-semibold text-neutral-900">{f.name}</h4>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">{f.code}</span>
+                {/* The ladder goes above the name so it reads before the
+                    product does — someone who has never bought tint can see
+                    which film is the step up without parsing "carbon-ceramic"
+                    against "dual-ceramic". The pips carry the ranking for
+                    anyone skimming past the words entirely.
+
+                    "Most Popular" sits on the middle tier next to "Better",
+                    which is deliberate and shouldn't read as a contradiction:
+                    the top tier is the best film, this is the one most people
+                    actually buy. Keeping them adjacent, in one row and in the
+                    same visual family, says that more clearly than putting
+                    them at opposite ends of the card would. It wraps rather
+                    than squeezing, so a narrow card can't crush the row. */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 bg-neutral-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-neutral-700">
+                    <span aria-hidden className="flex items-center gap-0.5">
+                      {[1, 2, 3].map((pip) => (
+                        <span
+                          key={pip}
+                          className={`h-1 w-1 rounded-full ${
+                            pip <= f.tierRank ? "bg-neutral-800" : "bg-neutral-300"
+                          }`}
+                        />
+                      ))}
+                    </span>
+                    {f.tier}
+                  </span>
+                  {f.featured && (
+                    <span className="rounded-full bg-neutral-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                      Popular
+                    </span>
+                  )}
                 </div>
-                <p className="text-sm text-neutral-500 mt-2">{f.tagline}</p>
+                {/* The code stays on the name's row, as it was: in the chip row
+                    it pushed the pair onto two lines in the narrow three-column
+                    band, which dropped the featured card's name below its
+                    neighbours' for no benefit. */}
+                <div className="flex items-center justify-between gap-2 mt-3">
+                  <h4 className="font-semibold text-neutral-900">{f.name}</h4>
+                  <span className="shrink-0 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                    {f.code}
+                  </span>
+                </div>
+                <p className="text-sm text-neutral-500 mt-1">{f.tagline}</p>
 
                 <AnimatePresence initial={false}>
                   {isActive && (
