@@ -4,6 +4,12 @@ import {
   BUSINESS_TIME_ZONE,
   isPastDate,
   isValidIsoDate,
+  isSlotTooSoon,
+  leadTimeLabel,
+  minutesIntoBusinessDay,
+  availableSlotsFor,
+  timeSlots,
+  MIN_LEAD_TIME_MINUTES,
   isWeekend,
   todayIso,
 } from "./scheduling.ts";
@@ -142,4 +148,133 @@ test("weekends are read off the calendar date itself", () => {
 test("weekend detection rejects malformed input rather than guessing", () => {
   assert.equal(isWeekend(""), false);
   assert.equal(isWeekend("08/29/2026"), false);
+});
+
+// ---------------------------------------------------------------------------
+// Same-day lead time.
+//
+// Today's 9:00 AM used to stay bookable at 4:00 PM: nothing compared a slot
+// against the current time of day, only against the calendar date. These
+// instants are given in UTC so the assertions hold in any timezone.
+// ---------------------------------------------------------------------------
+
+/** 2026-08-28 is a Friday. MDT is UTC-6, so 20:00Z is 14:00 in Denver. */
+const denverOn28th = (hour: number, minute = 0) =>
+  new Date(Date.UTC(2026, 7, 28, hour + 6, minute));
+
+test("a slot earlier today is no longer bookable", () => {
+  const fourPm = denverOn28th(16);
+  assert.equal(isSlotTooSoon("2026-08-28", "9:00 AM", fourPm), true);
+  assert.equal(isSlotTooSoon("2026-08-28", "12:00 PM", fourPm), true);
+  assert.equal(isSlotTooSoon("2026-08-28", "3:00 PM", fourPm), true);
+});
+
+test("the lead time is enforced, not just 'later than right now'", () => {
+  const twoPm = denverOn28th(14); // cutoff is 16:00 with a 120-minute rule
+  assert.equal(MIN_LEAD_TIME_MINUTES, 120, "these boundaries assume a 2 hour rule");
+  assert.equal(isSlotTooSoon("2026-08-28", "3:00 PM", twoPm), true, "only an hour out");
+  assert.equal(isSlotTooSoon("2026-08-28", "4:30 PM", twoPm), false, "two and a half hours out");
+});
+
+test("a slot exactly one lead time away is still bookable", () => {
+  // 14:30 + 120 = 16:30, which is exactly the 4:30 PM slot.
+  const boundary = denverOn28th(14, 30);
+  assert.equal(isSlotTooSoon("2026-08-28", "4:30 PM", boundary), false);
+  // One minute later and it has slipped out of reach.
+  assert.equal(isSlotTooSoon("2026-08-28", "4:30 PM", denverOn28th(14, 31)), true);
+});
+
+test("the lead time only applies to today", () => {
+  const lateToday = denverOn28th(17);
+  // Monday the 31st is a whole day away, so every slot stands.
+  for (const slot of timeSlots) {
+    assert.equal(isSlotTooSoon("2026-08-31", slot, lateToday), false, slot);
+  }
+});
+
+test("the lead time is measured on Denver's clock, not the server's", () => {
+  // 2026-08-29T02:00Z is 20:00 MDT on the 28th. Read as UTC it would look
+  // like 02:00 on the 29th, which would wrongly reopen the whole day.
+  const evening = new Date("2026-08-29T02:00:00Z");
+  assert.equal(isSlotTooSoon("2026-08-28", "9:00 AM", evening), true);
+  assert.equal(minutesIntoBusinessDay(evening), 20 * 60);
+});
+
+test("minutesIntoBusinessDay reads midnight as 0, not 24:00", () => {
+  assert.equal(minutesIntoBusinessDay(new Date("2026-08-28T06:00:00Z")), 0); // 00:00 MDT
+  assert.equal(minutesIntoBusinessDay(new Date("2026-01-15T07:00:00Z")), 0); // 00:00 MST
+});
+
+test("lead time holds across the winter offset too", () => {
+  // 2026-01-15 is a Thursday; MST is UTC-7, so 21:00Z is 14:00 in Denver.
+  const twoPmMst = new Date("2026-01-15T21:00:00Z");
+  assert.equal(isSlotTooSoon("2026-01-15", "3:00 PM", twoPmMst), true);
+  assert.equal(isSlotTooSoon("2026-01-15", "4:30 PM", twoPmMst), false);
+});
+
+// ---------------------------------------------------------------------------
+// The picker and the validator have to agree — that is the whole point.
+// ---------------------------------------------------------------------------
+
+test("every slot the form offers is one the API would accept", () => {
+  // Walk the working day; at each moment, everything offered must clear the
+  // same checks the route applies.
+  for (let hour = 6; hour <= 20; hour++) {
+    for (const minute of [0, 17, 44]) {
+      const now = denverOn28th(hour, minute);
+      const offered = availableSlotsFor(90, [], "2026-08-28", now);
+      for (const slot of offered) {
+        assert.equal(
+          isSlotTooSoon("2026-08-28", slot, now),
+          false,
+          `form offered ${slot} at ${hour}:${String(minute).padStart(2, "0")} but the API refuses it`
+        );
+        assert.ok(timeSlots.includes(slot), `${slot} is not a real appointment time`);
+      }
+    }
+  }
+});
+
+test("the form stops offering today's slots as the day runs out", () => {
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-28", denverOn28th(6)), [
+    "9:00 AM",
+    "10:30 AM",
+    "12:00 PM",
+    "1:30 PM",
+    "3:00 PM",
+    "4:30 PM",
+  ]);
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-28", denverOn28th(14)), ["4:30 PM"]);
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-28", denverOn28th(17)), []);
+});
+
+test("availableSlotsFor still respects closing, weekends and bookings", () => {
+  const earlyOn31st = new Date("2026-08-31T13:00:00Z"); // 07:00 MDT Monday
+  // A 6 hour job can start at noon and finish exactly at the 6pm close, but
+  // not at 1:30pm.
+  assert.deepEqual(availableSlotsFor(360, [], "2026-08-31", earlyOn31st), [
+    "9:00 AM",
+    "10:30 AM",
+    "12:00 PM",
+  ]);
+  // Saturday.
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-29", earlyOn31st), []);
+  // Already booked.
+  assert.deepEqual(
+    availableSlotsFor(90, [{ time: "9:00 AM", durationMinutes: 180 }], "2026-08-31", earlyOn31st),
+    ["12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM"]
+  );
+});
+
+test("availableSlotsFor rejects malformed and past dates outright", () => {
+  const now = denverOn28th(8);
+  assert.deepEqual(availableSlotsFor(90, [], "", now), []);
+  assert.deepEqual(availableSlotsFor(90, [], "08/31/2026", now), []);
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-27", now), []);
+});
+
+test("leadTimeLabel reads naturally for whole and partial hours", () => {
+  assert.equal(leadTimeLabel(120), "2 hours");
+  assert.equal(leadTimeLabel(60), "1 hour");
+  assert.equal(leadTimeLabel(90), "90 minutes");
 });

@@ -5,10 +5,13 @@ import { stripeClient } from "@/lib/stripe";
 import { getCategory, priceForSize } from "@/data/catalog";
 import {
   isPastDate,
+  isSlotTooSoon,
   isValidIsoDate,
   isWeekend,
+  leadTimeLabel,
   parseTimeToMinutes,
   rangesOverlap,
+  timeSlots,
   CLOSING_MINUTES,
 } from "@/lib/scheduling";
 import { sendBookingEmails } from "@/lib/bookingEmails";
@@ -59,6 +62,21 @@ export async function POST(req: NextRequest) {
   }
   if (isWeekend(body.date)) {
     return NextResponse.json({ error: "We're closed on weekends." }, { status: 400 });
+  }
+  // The form only ever offers these, so anything else came from somewhere
+  // that skipped it — and an unrecognised time would otherwise be stored
+  // verbatim and scheduled as if it were midnight.
+  if (!timeSlots.includes(body.time)) {
+    return NextResponse.json({ error: "That isn't one of our appointment times." }, { status: 400 });
+  }
+  // Same rule the form filters today's slots with, applied again here so a
+  // stale page or a direct request can't book a van into a slot it can't
+  // reach. Today's 9:00 AM was bookable at 4:00 PM before this.
+  if (isSlotTooSoon(body.date, body.time)) {
+    return NextResponse.json(
+      { error: `We need at least ${leadTimeLabel()}' notice — please pick a later time.` },
+      { status: 400 }
+    );
   }
 
   const resolved = body.items.map((item) => {

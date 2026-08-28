@@ -2,6 +2,27 @@ export const timeSlots = ["9:00 AM", "10:30 AM", "12:00 PM", "1:30 PM", "3:00 PM
 export const CLOSING_MINUTES = 18 * 60; // 6:00 PM — matches serviceArea.ts business hours.
 
 /**
+ * How much warning the crew needs before a job starts, in minutes.
+ *
+ * This is a mobile service: the van has to be loaded and driven across the
+ * Denver metro, so a slot that starts shortly from now can't actually be
+ * honoured. Two hours still leaves same-day booking genuinely useful — at
+ * 10am you can take the noon slot — while ruling out the ones nobody can
+ * make. Change this one number to change the rule everywhere; the booking
+ * form and the API both read it.
+ */
+export const MIN_LEAD_TIME_MINUTES = 120;
+
+/** The lead time as a short phrase for customer-facing copy ("2 hours"). */
+export function leadTimeLabel(minutes: number = MIN_LEAD_TIME_MINUTES): string {
+  if (minutes % 60 === 0) {
+    const hours = minutes / 60;
+    return `${hours} hour${hours === 1 ? "" : "s"}`;
+  }
+  return `${minutes} minutes`;
+}
+
+/**
  * Every date this business schedules against is a Mountain Time calendar date:
  * the shop is in the Denver metro, and the hours in serviceArea.ts are local
  * ones. "Today" therefore has to mean "today in Denver" no matter where the
@@ -22,6 +43,23 @@ const businessDateParts = new Intl.DateTimeFormat("en-CA", {
   month: "2-digit",
   day: "2-digit",
 });
+
+const businessClockParts = new Intl.DateTimeFormat("en-GB", {
+  timeZone: BUSINESS_TIME_ZONE,
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
+/** Minutes since midnight *in Denver* — the same axis slot times live on.
+ *
+ * Read from the shop's clock rather than the running process's, for the same
+ * reason todayIso() is: the browser and the server are in different places. */
+export function minutesIntoBusinessDay(now: Date = new Date()): number {
+  const parts = businessClockParts.formatToParts(now);
+  const part = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
+  return part("hour") * 60 + part("minute");
+}
 
 export function parseTimeToMinutes(time: string): number {
   const m = time.match(/(\d+):(\d+)\s*(AM|PM)/i);
@@ -70,6 +108,20 @@ export function isPastDate(dateStr: string, now: Date = new Date()): boolean {
   return dateStr < todayIso(now);
 }
 
+/** Whether a slot starts too soon to be worth offering.
+ *
+ * Only today's slots can be: any later date is a whole day away, and an
+ * earlier one is already caught by isPastDate. Without this, today's
+ * 9:00 AM stayed bookable at 4:00 PM. */
+export function isSlotTooSoon(
+  dateStr: string,
+  time: string,
+  now: Date = new Date()
+): boolean {
+  if (dateStr !== todayIso(now)) return false;
+  return parseTimeToMinutes(time) < minutesIntoBusinessDay(now) + MIN_LEAD_TIME_MINUTES;
+}
+
 export function isWeekend(dateStr: string): boolean {
   if (!isValidIsoDate(dateStr)) return false;
   // Read the day off the calendar date itself rather than parsing it into an
@@ -81,18 +133,26 @@ export function isWeekend(dateStr: string): boolean {
 
 export type BookedRange = { time: string; durationMinutes: number };
 
-/** Time slots that fit a service of `duration` minutes without running past
- * closing or overlapping an existing booking. */
+/** Time slots on `date` that fit a service of `duration` minutes without
+ * running past closing, overlapping an existing booking, or starting sooner
+ * than the crew can get there.
+ *
+ * This is the single definition of "bookable": the form offers exactly what
+ * it returns and the API re-checks the same conditions, so the two can't
+ * drift apart. It takes the date rather than a `weekend` flag precisely so a
+ * caller can't hand it a flag that disagrees with the date. */
 export function availableSlotsFor(
   duration: number,
   bookedRanges: BookedRange[],
-  weekend: boolean
+  date: string,
+  now: Date = new Date()
 ): string[] {
-  if (weekend) return [];
+  if (!isValidIsoDate(date) || isWeekend(date) || isPastDate(date, now)) return [];
   return timeSlots.filter((slot) => {
     const start = parseTimeToMinutes(slot);
     const end = start + duration;
     if (end > CLOSING_MINUTES) return false;
+    if (isSlotTooSoon(date, slot, now)) return false;
     return !bookedRanges.some((b) => {
       const bStart = parseTimeToMinutes(b.time);
       const bEnd = bStart + b.durationMinutes;

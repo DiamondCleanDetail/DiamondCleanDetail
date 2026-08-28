@@ -17,7 +17,13 @@ import VehiclePicker from "@/components/VehiclePicker";
 import AddOnSelector from "@/components/AddOnSelector";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
-import { todayIso, isWeekend, availableSlotsFor, type BookedRange } from "@/lib/scheduling";
+import {
+  todayIso,
+  isWeekend,
+  availableSlotsFor,
+  leadTimeLabel,
+  type BookedRange,
+} from "@/lib/scheduling";
 import { serviceArea } from "@/data/serviceArea";
 
 type Phase = "select" | "configure" | "vehicle" | "datetime" | "details" | "pay";
@@ -216,12 +222,23 @@ export default function BookingWizard({
   const addOnsTotalFor = (addOns: { price: number }[]) =>
     addOns.reduce((n, a) => n + a.price, 0);
 
+  // Which of today's slots are still reachable depends on the time of day, so
+  // this has to keep up while the customer sits on the step — otherwise the
+  // form goes on offering a slot the API has already started refusing, which
+  // is the same picker/validator disagreement the date check used to have.
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    if (phase !== "datetime") return;
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, [phase]);
+
   const current = resolved[configureIndex];
   const totalDuration = resolved.reduce((sum, r) => sum + (r.pkg.durationMinutes ?? 60), 0) || 60;
   const weekend = isWeekend(date);
   const availableSlots = useMemo(
-    () => availableSlotsFor(totalDuration, bookedRanges, weekend),
-    [bookedRanges, totalDuration, weekend]
+    () => availableSlotsFor(totalDuration, bookedRanges, date, now),
+    [bookedRanges, totalDuration, date, now]
   );
 
   const subtotal = resolved.reduce(
@@ -296,7 +313,7 @@ export default function BookingWizard({
   const canContinue = (() => {
     if (phase === "select") return selections.length > 0;
     if (phase === "vehicle") return Boolean(vehicleInfo);
-    if (phase === "datetime") return Boolean(date && time);
+    if (phase === "datetime") return Boolean(date && time && availableSlots.includes(time));
     if (phase === "details") return Boolean(name && phone);
     return true;
   })();
@@ -605,8 +622,9 @@ export default function BookingWizard({
             </select>
             {date && !weekend && availableSlots.length === 0 && (
               <p className="text-xs text-muted mt-1">
-                No times left that day for {selections.length > 1 ? "this combined booking" : "this service"} — try
-                another date.
+                {date === todayIso()
+                  ? `We need at least ${leadTimeLabel()}' notice to get to you, so there's nothing left today — please pick another date.`
+                  : `No times left that day for ${selections.length > 1 ? "this combined booking" : "this service"} — try another date.`}
               </p>
             )}
           </div>
