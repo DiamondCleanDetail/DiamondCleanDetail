@@ -313,7 +313,7 @@ export const catalog: ServiceCategory[] = [
     shortName: "PPF",
     summary: "Self-healing film that shields your paint from rock chips and scratches.",
     description:
-      "Choose a coverage tier and see exactly which panels get protected — from Barrier's essential front-end coverage up to Fortress, which wraps the entire vehicle in self-healing film.",
+      "Choose a coverage tier and see exactly which panels get protected — from Barrier's essential front-end coverage up to Full Protection, which wraps the entire vehicle in self-healing film.",
     tagline: "Invisible armor for the panels that take the hits.",
     heroImage: "/services/ppf-hero.jpg",
     valueProp:
@@ -340,14 +340,6 @@ export const catalog: ServiceCategory[] = [
         depositPercent: 25,
       },
       {
-        slug: "guard",
-        name: "Guard",
-        tagline: "A dedicated line of defense up front.",
-        features: ["Full front bumper"],
-        pricing: { type: "starting-at", amount: 599 },
-        depositPercent: 25,
-      },
-      {
         slug: "shield",
         name: "Shield",
         tagline: "Well-rounded coverage for everyday driving.",
@@ -365,8 +357,16 @@ export const catalog: ServiceCategory[] = [
         depositPercent: 25,
       },
       {
-        slug: "fortress",
-        name: "Fortress",
+        slug: "track",
+        name: "Track",
+        tagline: "Near-total coverage for the panels that see the most road.",
+        features: ["Full hood, fenders & bumper", "Roof, A-pillars & mirrors", "Front & rear doors"],
+        pricing: { type: "starting-at", amount: 3499 },
+        depositPercent: 25,
+      },
+      {
+        slug: "full-protection",
+        name: "Full Protection",
         tagline: "Ultimate coverage for the entire vehicle.",
         features: [
           "Full hood, front & rear bumpers",

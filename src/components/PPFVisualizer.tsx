@@ -8,13 +8,15 @@ import type { Package } from "@/data/catalog";
 import { priceLabel } from "@/data/catalog";
 
 const images: Record<string, string> = {
-  guard: "/services/ppf-visualizer-bumper.png",
-  armor: "/services/ppf-visualizer-front.png",
-  fortress: "/services/ppf-visualizer-full.png",
+  barrier: "/services/ppf-visualizer-barrier.png",
+  shield: "/services/ppf-visualizer-shield.png",
+  armor: "/services/ppf-visualizer-armor.png",
+  track: "/services/ppf-visualizer-track.png",
+  "full-protection": "/services/ppf-visualizer-full-protection.png",
 };
 
 const priceOverride: Record<string, { price: string; note?: string }> = {
-  fortress: {
+  "full-protection": {
     price: "$4,999 – $6,999",
     note: "Price varies by coverage area and vehicle size. Contact us for an exact estimate and installation time.",
   },
@@ -77,8 +79,8 @@ export default function PPFVisualizer({
         </div>
 
         {/* Content */}
-        <div className="mt-10 sm:mt-14 grid sm:grid-cols-2 gap-8 sm:gap-10 items-center">
-          <div className="relative aspect-[1133/535] w-full">
+        <div className="mt-10 sm:mt-14 grid lg:grid-cols-[3fr_2fr] gap-8 sm:gap-10 items-start">
+          <div className="relative aspect-[1438/703] w-full">
             {image ? (
               <div className="absolute inset-0">
                 <Image
@@ -86,7 +88,7 @@ export default function PPFVisualizer({
                   alt={`${pkg.name} PPF coverage`}
                   fill
                   priority
-                  sizes="(max-width: 640px) 100vw, 50vw"
+                  sizes="(max-width: 1024px) 100vw, 60vw"
                   className="object-contain"
                 />
               </div>
