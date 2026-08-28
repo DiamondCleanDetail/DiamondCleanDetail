@@ -4,7 +4,7 @@ import { catalog } from "@/data/catalog";
 const siteUrl = "https://diamondcleandetail.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/services", "/window-tinting", "/our-work", "/booking"].map((path) => ({
+  const staticRoutes = ["", "/services", "/window-tinting", "/our-work", "/booking", "/about"].map((path) => ({
     url: `${siteUrl}${path}`,
     lastModified: new Date(),
   }));

@@ -15,6 +15,7 @@ import MoreServices from "@/components/MoreServices";
 import PackagePrices from "@/components/PackagePrices";
 import PackageDetails from "@/components/PackageDetails";
 import DiamondDivider from "@/components/DiamondDivider";
+import WashComparison from "@/components/WashComparison";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 const category = getCategory("mobile-detailing");
@@ -107,6 +108,21 @@ export default function MobileDetailingPage() {
             </StaggerItem>
           ))}
         </StaggerGrid>
+        <FadeIn>
+          {/* Honest membership pointer: the member visit is a different
+              (lighter) service, so it's framed as its own thing rather than
+              a discount on the packages above. */}
+          <p className="text-sm text-muted text-center mt-6">
+            Detailing regularly? Members get a wash &amp; vacuum visit from $35 —{" "}
+            <Link
+              href="#membership"
+              className="text-foreground underline underline-offset-4 hover:text-accent transition-colors"
+            >
+              see the plans below
+            </Link>
+            .
+          </p>
+        </FadeIn>
       </section>
 
       <DiamondDivider />
@@ -154,7 +170,7 @@ export default function MobileDetailingPage() {
       <DiamondDivider />
 
       {/* Membership — the recurring option, in front of people choosing a detail. */}
-      <section className="mx-auto max-w-4xl px-6 py-12 sm:py-20">
+      <section id="membership" className="mx-auto max-w-4xl px-6 py-12 sm:py-20 scroll-mt-24">
         <FadeIn>
           <MembershipCard />
         </FadeIn>
@@ -180,6 +196,24 @@ export default function MobileDetailingPage() {
             </StaggerItem>
           ))}
         </StaggerGrid>
+      </section>
+
+      <DiamondDivider />
+
+      {/* Why a detail beats the drive-through — every row restates a claim
+          already made on this page. */}
+      <section className="mx-auto max-w-5xl px-6 py-12 sm:py-20">
+        <FadeIn>
+          <SectionHeading
+            eyebrow="The Difference"
+            title="Not a"
+            accent="Car Wash"
+            className="mb-8 sm:mb-12"
+          />
+        </FadeIn>
+        <FadeIn>
+          <WashComparison />
+        </FadeIn>
       </section>
 
       <DiamondDivider />

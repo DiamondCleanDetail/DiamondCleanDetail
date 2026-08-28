@@ -151,6 +151,23 @@ export const catalog: ServiceCategory[] = [
       { title: "Final walkthrough", description: "We review the vehicle with you before we leave to make sure every detail is covered." },
     ],
     relatedSlugs: ["paint-correction", "scratch-removal", "leather-restoration"],
+    // Practical questions people actually have about mobile service (what
+    // every national mobile detailer answers), replacing the generic
+    // auto-generated set. Answers restate facts already on this page.
+    faqs: [
+      {
+        q: "Do I need to provide water or power?",
+        a: "No — we arrive fully equipped with water, power, and every product and tool the job needs. Nothing is required from you except the car.",
+      },
+      {
+        q: "Where can you detail my car?",
+        a: "Anywhere you're parked in the Denver Metro Area — your driveway, office lot, or apartment garage all work.",
+      },
+      {
+        q: "How do I book?",
+        a: "Pick a package, choose an available date and time, and pay online — no phone call needed. We'll confirm the address before your appointment.",
+      },
+    ],
     // Nearly every job on the Our Work page is a mobile detail, so the same
     // photos carry this page's gallery.
     galleryImages: [
