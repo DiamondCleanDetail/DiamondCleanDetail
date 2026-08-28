@@ -236,8 +236,8 @@ export default function MobileDetailingPage() {
                   <div className="relative aspect-[4/3] bg-surface-2">
                     {image ? (
                       <Image
-                        src={image}
-                        alt={b.title}
+                        src={image.src}
+                        alt={image.alt}
                         fill
                         sizes="(max-width: 640px) 100vw, 33vw"
                         className="object-cover"

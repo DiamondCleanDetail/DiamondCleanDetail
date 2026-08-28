@@ -80,7 +80,7 @@ export type ServiceCategory = {
   /** One photo per benefit card, same order as `benefits`. A missing or
    * null entry renders a "coming soon" placeholder for that card instead
    * of leaving it text-only. */
-  benefitImages?: (string | null)[];
+  benefitImages?: ({ src: string; alt: string } | null)[];
   /** Drag-to-compare before/after photos shown beside the "What It Is" copy instead of valuePropImage. Null values render a "coming soon" placeholder. */
   beforeAfter?: { before: string | null; after: string | null; beforeLabel?: string; afterLabel?: string };
   /** Slideshow of application/process photos or video (e.g. applying ceramic coating, water beading on finished paint). Set to an empty array or omit to render a "coming soon" placeholder. */
@@ -127,9 +127,9 @@ export const catalog: ServiceCategory[] = [
     // Matched to the benefits below: on-location van, a swirl-free dark panel,
     // and a finish still glossy after the fact.
     benefitImages: [
-      "/work/morgan-1.webp",
-      "/work/range-rover-black-1.webp",
-      "/work/porsche-911-orange-1.webp",
+      { src: "/work/morgan-1.webp", alt: "A detailer working on a blue SUV parked on a residential driveway" },
+      { src: "/work/range-rover-black-1.webp", alt: "The hand-washed flank of a black Range Rover, free of swirl marks" },
+      { src: "/work/porsche-911-orange-1.webp", alt: "Sunlight reflecting cleanly off the finished paint of an orange Porsche 911" },
     ],
     beforeAfter: {
       before: "/before-after/rav4-before.jpg",
@@ -434,8 +434,23 @@ export const catalog: ServiceCategory[] = [
     description:
       "Choose a coverage tier and see exactly which panels get protected — from Barrier's essential front-end coverage up to Full Protection, which wraps the entire vehicle in self-healing film.",
     tagline: "Invisible armor for the panels that take the hits.",
-    heroImage: "/services/ppf-hero.jpg",
+    // TODO(placeholder): `ppf-hero-placeholder-stock.webp` is a STOCK PHOTO,
+    // not our work — Farhan's own PPF photos are due the week of 2026-08-31.
+    // To swap it: drop the new file into public/services/ and change this one
+    // line. Nothing else references it, and nothing on the page claims the
+    // hero as our own job (the hero image is decorative, with empty alt).
+    heroImage: "/services/ppf-hero-placeholder-stock.webp",
     cardImage: "/services/ppf-hero.jpg",
+    // Real, and genuinely a customer's car: the chips are the point of the
+    // shot, so it is cropped tight enough that they still read at phone size.
+    benefitImages: [
+      {
+        src: "/services/ppf-rock-chips.webp",
+        alt: "Dozens of small light-coloured stone chips scattered across the grey metallic paint of a car's hood, beside the headlight",
+      },
+      null,
+      null,
+    ],
     valueProp:
       "Paint Protection Film is a clear, self-healing urethane film applied directly over your paint. It absorbs rock chips, road debris, and light scratches that would otherwise damage the clear coat — and minor scuffs in the film itself heal with heat, so it stays looking new.",
     benefits: [

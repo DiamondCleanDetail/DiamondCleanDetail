@@ -154,7 +154,7 @@ export default async function ServiceCategoryPage({
                 <div className="card-lift h-full bg-surface border border-border rounded-xl overflow-hidden">
                   <div className="relative aspect-[4/3] bg-surface-2">
                     {image ? (
-                      <Image src={image} alt={b.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
+                      <Image src={image.src} alt={image.alt} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <p className="text-xs text-muted text-center px-4">Photo coming soon</p>
