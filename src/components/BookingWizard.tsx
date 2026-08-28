@@ -9,6 +9,7 @@ import {
   priceForSize,
   priceLabel,
 } from "@/data/catalog";
+import Image from "next/image";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import PPFVisualizer from "@/components/PPFVisualizer";
@@ -368,21 +369,38 @@ export default function BookingWizard({
                   key={c.slug}
                   onClick={() => toggleService(c.slug)}
                   aria-pressed={checked}
-                  className={`text-left rounded-xl p-4 sm:p-5 transition-colors border ${
+                  className={`text-left rounded-xl overflow-hidden transition-colors border ${
                     checked ? "border-accent bg-accent/10" : "bg-surface border-border hover:border-muted"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-semibold text-sm sm:text-base">{c.name}</h3>
+                  <div className="relative aspect-[16/10] bg-surface-2">
+                    {c.cardImage ? (
+                      <Image
+                        src={c.cardImage}
+                        alt=""
+                        fill
+                        sizes="(max-width: 1024px) 50vw, 33vw"
+                        className={`object-cover transition-opacity ${checked ? "opacity-100" : "opacity-80"}`}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <p className="text-[11px] text-muted text-center px-3">Photo coming soon</p>
+                      </div>
+                    )}
                     <span
-                      className={`shrink-0 w-5 h-5 rounded-full border flex items-center justify-center text-[10px] ${
-                        checked ? "bg-accent border-accent text-accent-foreground" : "border-border"
+                      className={`absolute top-2 right-2 shrink-0 w-5 h-5 rounded-full border flex items-center justify-center text-[10px] ${
+                        checked
+                          ? "bg-accent border-accent text-accent-foreground"
+                          : "bg-background/80 backdrop-blur-sm border-border"
                       }`}
                     >
                       {checked && "✓"}
                     </span>
                   </div>
-                  <p className="hidden sm:block text-sm text-muted mt-1">{c.summary}</p>
+                  <div className="p-4 sm:p-5">
+                    <h3 className="font-semibold text-sm sm:text-base">{c.name}</h3>
+                    <p className="hidden sm:block text-sm text-muted mt-1">{c.summary}</p>
+                  </div>
                 </button>
               );
             })}

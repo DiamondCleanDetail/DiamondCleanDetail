@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { catalog, priceLabel } from "@/data/catalog";
 import FadeIn from "@/components/FadeIn";
@@ -32,22 +33,37 @@ export default function ServicesPage() {
             <StaggerItem key={category.slug}>
               <Link
                 href={category.slug === "window-tinting" ? "/window-tinting" : `/services/${category.slug}`}
-                className="card-lift block h-full bg-surface border border-border rounded-xl p-6 flex flex-col"
+                className="card-lift block h-full bg-surface border border-border rounded-xl overflow-hidden flex flex-col"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <h2 className="text-lg font-semibold">{category.name}</h2>
+                <div className="relative aspect-[16/10] bg-surface-2">
+                  {category.cardImage ? (
+                    <Image
+                      src={category.cardImage}
+                      alt={category.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <p className="text-xs text-muted text-center px-4">Photo coming soon</p>
+                    </div>
+                  )}
                   {category.visualizer && (
-                    <span className="shrink-0 text-[10px] uppercase tracking-wide bg-surface-2 border border-border rounded-full px-2 py-1 text-muted">
+                    <span className="absolute top-3 right-3 text-[10px] uppercase tracking-wide bg-background/80 backdrop-blur-sm border border-border rounded-full px-2 py-1 text-muted">
                       Visualizer
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-muted mt-2 flex-1">{category.summary}</p>
-                <p className="mt-4 font-semibold chrome-text">
-                  {category.isQuoteOnly
-                    ? "Get a Quote"
-                    : priceLabel(startingPackage, "sedan")}
-                </p>
+                <div className="p-5 sm:p-6 flex flex-col flex-1">
+                  <h2 className="text-lg font-semibold">{category.name}</h2>
+                  <p className="text-sm text-muted mt-2 flex-1">{category.summary}</p>
+                  <p className="mt-4 font-semibold chrome-text">
+                    {category.isQuoteOnly
+                      ? "Get a Quote"
+                      : priceLabel(startingPackage, "sedan")}
+                  </p>
+                </div>
               </Link>
             </StaggerItem>
           );

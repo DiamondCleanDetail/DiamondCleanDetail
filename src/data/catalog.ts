@@ -43,6 +43,11 @@ export type ServiceCategory = {
   heroVideo?: string;
   /** Static hero background image, used when a video isn't available yet. */
   heroImage?: string;
+  /** Photo shown on this service's card in the services list and booking
+   * picker, so those grids read visually instead of as a wall of text.
+   * Omit for a category with no representative photo yet — the card falls
+   * back to a placeholder rather than borrowing an unrelated image. */
+  cardImage?: string;
   /** Swapped in for heroImage on mobile — for a hero background that needs
    * a different crop on a tall, narrow screen instead of a harder crop of
    * the same wide image. */
@@ -93,6 +98,20 @@ export const catalog: ServiceCategory[] = [
       "Our core detailing packages, brought to your driveway or office. Hand wash, deep interior cleaning, and finishing touches that leave your vehicle looking showroom-fresh.",
     tagline: "Showroom results, without the drive to a shop.",
     heroVideo: "/video/mobile-detailing.mp4",
+    cardImage: "/work/porsche-911-orange-1.webp",
+    // Matched to the benefits below: on-location van, a swirl-free dark panel,
+    // and a finish still glossy after the fact.
+    benefitImages: [
+      "/work/morgan-1.webp",
+      "/work/range-rover-black-1.webp",
+      "/work/porsche-911-orange-1.webp",
+    ],
+    beforeAfter: {
+      before: "/before-after/rav4-before.jpg",
+      after: "/before-after/rav4-after.jpg",
+      beforeLabel: "Before",
+      afterLabel: "After",
+    },
     valueProp:
       "Mobile detailing means our team comes to you — your driveway, office lot, or apartment garage — with everything needed to hand wash, deep-clean, and finish your vehicle on site. No drop-off, no waiting around a shop, no losing your car for the day.",
     benefits: [
@@ -107,15 +126,35 @@ export const catalog: ServiceCategory[] = [
       { title: "Final walkthrough", description: "We review the vehicle with you before we leave to make sure every detail is covered." },
     ],
     relatedSlugs: ["paint-correction", "scratch-removal", "leather-restoration"],
+    // Nearly every job on the Our Work page is a mobile detail, so the same
+    // photos carry this page's gallery.
     galleryImages: [
-      { src: "/work/jose-3.webp", caption: "The Diamond Detail — Land Rover Discovery Sport" },
-      { src: "/work/jose-2.webp", caption: "The Diamond Detail — Land Rover Discovery Sport" },
+      { src: "/work/ferrari-488-1.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
+      { src: "/work/ferrari-488-3.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
+      { src: "/work/lamborghini-huracan-1.webp", caption: "The Diamond Detail Pro — Lamborghini Huracán" },
+      { src: "/work/bentley-1.webp", caption: "The Diamond Detail Pro — Bentley" },
+      { src: "/work/porsche-911-orange-1.webp", caption: "The Diamond Detail Plus — Porsche 911 Carrera 4S" },
+      { src: "/work/porsche-911-orange-3.webp", caption: "The Diamond Detail Plus — Porsche 911 Carrera 4S" },
+      { src: "/work/porsche-911-red-1.webp", caption: "The Diamond Detail — Porsche 911" },
+      { src: "/work/porsche-macan-white-1.webp", caption: "The Diamond Detail — Porsche Macan" },
+      { src: "/work/porsche-macan-orange-1.webp", caption: "The Diamond Detail — Porsche Macan GTS" },
+      { src: "/work/porsche-cayenne-1.webp", caption: "The Diamond Detail — Porsche Cayenne" },
+      { src: "/work/mercedes-amg-gt-1.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/mercedes-amg-gt-3.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/bmw-m3-1.webp", caption: "The Diamond Detail — BMW M3 Competition" },
+      { src: "/work/bmw-x5-1.webp", caption: "The Diamond Detail Pro — BMW X5" },
+      { src: "/work/velar-1.webp", caption: "The Diamond Detail Plus — Range Rover Velar" },
+      { src: "/work/range-rover-black-1.webp", caption: "The Diamond Detail Plus — Range Rover" },
       { src: "/work/jose-1.webp", caption: "The Diamond Detail — Land Rover Discovery Sport" },
+      { src: "/work/jose-3.webp", caption: "The Diamond Detail — Land Rover Discovery Sport" },
+      { src: "/work/audi-interior-1.webp", caption: "The Diamond Detail — Audi Interior" },
+      { src: "/work/lexus-rx-1.webp", caption: "The Diamond Detail Pro — Lexus RX" },
+      { src: "/work/acura-mdx-1.webp", caption: "Clean & Condition — Acura MDX" },
+      { src: "/work/jeep-wrangler-1.webp", caption: "The Diamond Detail — Jeep Wrangler" },
       { src: "/work/morgan-1.webp", caption: "The Diamond Detail Plus — Blue SUV" },
-      { src: "/work/morgan-2.webp", caption: "The Diamond Detail Plus — Blue SUV" },
+      { src: "/work/green-car-1.webp", caption: "The Diamond Detail — Green Hatchback" },
       { src: "/work/sport-bike.jpg", caption: "Mobile Detail — Sport Bike" },
       { src: "/work/harley-bagger.jpg", caption: "Motorcycle Detail — Harley-Davidson Bagger" },
-      { src: "/work/lexus-rx-1.webp", caption: "The Diamond Detail Pro — Lexus RX" },
     ],
     packages: [
       {
@@ -172,6 +211,14 @@ export const catalog: ServiceCategory[] = [
       "Multi-stage machine polishing that removes swirl marks, light scratches, and oxidation to restore paint clarity and gloss before a ceramic coating or on its own.",
     tagline: "Restore the paint underneath the swirls.",
     heroVideo: "/video/paint-correction.mp4",
+    cardImage: "/work/range-rover-black-1.webp",
+    processMedia: [
+      {
+        type: "video",
+        src: "/video/paint-correction-apillar.mp4",
+        caption: "Machine-polishing faded A-pillar trim back to gloss",
+      },
+    ],
     valueProp:
       "Every vehicle picks up fine swirl marks and light scratches from years of washing. Paint correction uses machine polishers and cutting/finishing compounds to level out that top layer of clear coat, bringing back true clarity and gloss before any wax, sealant, or ceramic coating goes on.",
     benefits: [
@@ -220,6 +267,7 @@ export const catalog: ServiceCategory[] = [
       "Professional-grade ceramic coating bonds to your paint for years of protection, deep gloss, and easier washing. Paint correction is included on prep before every coating. Dedicated wheel and glass coatings are available too.",
     tagline: "A years-long shield with a mirror finish.",
     heroImage: "/services/ceramic-coating-hero.jpg",
+    cardImage: "/services/ceramic-coating-hero.jpg",
     beforeAfter: {
       before: "/services/ceramic-coating-before.jpg",
       after: "/services/ceramic-coating-after.jpg",
@@ -227,6 +275,8 @@ export const catalog: ServiceCategory[] = [
     processMedia: [
       { type: "image", src: "/services/ceramic-coating-application.jpg", caption: "Applying ceramic coating by hand" },
       { type: "video", src: "/video/wheel-ceramic-coating.mp4", caption: "Wheel ceramic coating in action" },
+      { type: "video", src: "/video/ceramic-glass-beading.mp4", caption: "Water beading off coated glass" },
+      { type: "video", src: "/video/ceramic-wheel-beading.mp4", caption: "Water beading off coated wheels" },
     ],
     valueProp:
       "Ceramic coating is a liquid polymer that chemically bonds to a surface, forming a hard, glossy, hydrophobic layer that outlasts any wax by years, not weeks. Beyond paint, we offer dedicated coatings for wheels — where brake dust and heat cycles do the most damage — and for glass, where a hydrophobic layer makes rain bead and roll off instead of smearing.",
@@ -316,6 +366,7 @@ export const catalog: ServiceCategory[] = [
       "Choose a coverage tier and see exactly which panels get protected — from Barrier's essential front-end coverage up to Full Protection, which wraps the entire vehicle in self-healing film.",
     tagline: "Invisible armor for the panels that take the hits.",
     heroImage: "/services/ppf-hero.jpg",
+    cardImage: "/services/ppf-hero.jpg",
     valueProp:
       "Paint Protection Film is a clear, self-healing urethane film applied directly over your paint. It absorbs rock chips, road debris, and light scratches that would otherwise damage the clear coat — and minor scuffs in the film itself heal with heat, so it stays looking new.",
     benefits: [
@@ -387,6 +438,7 @@ export const catalog: ServiceCategory[] = [
     description:
       "Ceramic and dyed window films that cut cabin heat, block UV, and add privacy — precision-cut and installed on every window, with shade and coverage options for any vehicle.",
     tagline: "Cooler cabin, less glare, better protected.",
+    cardImage: "/services/window-tinting-hero.webp",
     valueProp:
       "Window tint film blocks UV rays and heat, adds privacy, and gives your vehicle a finished look. Preview each darkness level and coverage option before booking, with separate pricing for Tesla's glass and installation requirements.",
     stats: [
@@ -474,6 +526,7 @@ export const catalog: ServiceCategory[] = [
       "Deep cleaning, conditioning, and restoration for leather seats and trim — from routine conditioning to repairing cracks and fading.",
     tagline: "Bring tired leather back to life.",
     heroVideo: "/video/leather-restoration.mp4",
+    cardImage: "/work/ferrari-488-1.webp",
     valueProp:
       "Leather seats dry out, crack, and fade over years of sun exposure and use. Routine cleaning and conditioning keeps healthy leather supple and protected, while full restoration repairs cracking, fading, and staining on leather that's already showing its age.",
     benefits: [
@@ -552,6 +605,7 @@ export const catalog: ServiceCategory[] = [
       "Volume pricing and recurring scheduling for companies with multiple vehicles — rideshare, rental, delivery, and corporate fleets.",
     tagline: "Volume detailing for businesses that run on their vehicles.",
     heroImage: "/services/fleet-hero.jpg",
+    cardImage: "/services/fleet-hero.jpg",
     valueProp:
       "Rideshare, rental, delivery, and corporate fleets all depend on vehicles that look and feel clean. We build a recurring detailing schedule around your fleet size and usage, with volume-based pricing and a single invoice instead of per-vehicle billing.",
     benefits: [
@@ -585,6 +639,7 @@ export const catalog: ServiceCategory[] = [
       "Detailing for RVs, boats, and aircraft interiors/exteriors. Every job is quoted individually based on size, condition, and material — request a quote to get started.",
     tagline: "Specialty detailing for whatever you drive, sail, or fly.",
     heroImage: "/services/specialty-vehicles-hero.png",
+    cardImage: "/services/specialty-vehicles-hero.png",
     heroImageMobile: "/services/specialty-vehicles-hero-mobile.jpg",
     valueProp:
       "RVs, boats, and aircraft each need their own approach — different materials, different surfaces, different exposure to the elements. We quote every job individually based on size, condition, and material so the price actually reflects the work involved.",
