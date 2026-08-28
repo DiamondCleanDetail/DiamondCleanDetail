@@ -220,10 +220,7 @@ export default function WindowTintingClient() {
                   />
                 </div>
                 <div className="p-5">
-                  <span className="chrome-text text-3xl font-black">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="font-semibold mt-3">{b.title}</h3>
+                  <h3 className="font-semibold">{b.title}</h3>
                   <p className="text-sm text-muted mt-2">{b.description}</p>
                 </div>
               </div>

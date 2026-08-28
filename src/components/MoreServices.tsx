@@ -22,7 +22,7 @@ export default function MoreServices({
 
   return (
     <StaggerGrid className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-      {items.map((c, i) => (
+      {items.map((c) => (
         <StaggerItem key={c.slug}>
           <Link
             href={c.slug === "window-tinting" ? "/window-tinting" : `/services/${c.slug}`}
@@ -42,9 +42,6 @@ export default function MoreServices({
                   <p className="text-[11px] text-muted">Photo coming soon</p>
                 </div>
               )}
-              <span className="absolute top-2 left-3 chrome-text text-2xl font-black leading-none drop-shadow">
-                {String(i + 1).padStart(2, "0")}
-              </span>
             </div>
             <div className="p-4">
               <h3 className="font-semibold text-sm sm:text-base">{c.name}</h3>

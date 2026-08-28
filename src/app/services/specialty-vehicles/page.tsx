@@ -50,11 +50,10 @@ export default function SpecialtyVehiclesPage() {
           <SectionHeading title="Why It's" accent="Worth It" className="mb-8 sm:mb-10" />
         </FadeIn>
         <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
-          {category.benefits.map((b, i) => (
+          {category.benefits.map((b) => (
             <StaggerItem key={b.title}>
               <div className="card-lift h-full bg-surface border border-border rounded-xl p-5">
-                <span className="chrome-text text-3xl font-black">{String(i + 1).padStart(2, "0")}</span>
-                <h3 className="font-semibold mt-3">{b.title}</h3>
+                <h3 className="font-semibold">{b.title}</h3>
                 <p className="text-sm text-muted mt-2">{b.description}</p>
               </div>
             </StaggerItem>

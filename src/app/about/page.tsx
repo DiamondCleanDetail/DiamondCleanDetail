@@ -68,11 +68,10 @@ export default function AboutPage() {
           <SectionHeading title="What We" accent="Stand For" className="mb-8 sm:mb-10" />
         </FadeIn>
         <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
-          {values.map((v, i) => (
+          {values.map((v) => (
             <StaggerItem key={v.title}>
               <div className="h-full bg-surface border border-border rounded-xl p-5">
-                <span className="chrome-text text-3xl font-black">{String(i + 1).padStart(2, "0")}</span>
-                <h3 className="font-semibold mt-3">{v.title}</h3>
+                <h3 className="font-semibold">{v.title}</h3>
                 <p className="text-sm text-muted mt-2">{v.description}</p>
               </div>
             </StaggerItem>
