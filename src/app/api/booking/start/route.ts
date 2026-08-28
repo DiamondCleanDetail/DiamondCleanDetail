@@ -3,7 +3,14 @@ import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
 import { getCategory, priceForSize } from "@/data/catalog";
-import { todayIso, isWeekend, parseTimeToMinutes, rangesOverlap, CLOSING_MINUTES } from "@/lib/scheduling";
+import {
+  isPastDate,
+  isValidIsoDate,
+  isWeekend,
+  parseTimeToMinutes,
+  rangesOverlap,
+  CLOSING_MINUTES,
+} from "@/lib/scheduling";
 import { sendBookingEmails } from "@/lib/bookingEmails";
 
 type ItemInput = {
@@ -36,10 +43,18 @@ export async function POST(req: NextRequest) {
   if (!body.name || !body.phone || !body.vehicleInfo || !body.date || !body.time) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
+  // Dates are compared as strings, so anything not in `YYYY-MM-DD` has to be
+  // rejected as malformed rather than silently sorting below today's date and
+  // coming back as the wrong error.
+  if (!isValidIsoDate(body.date)) {
+    return NextResponse.json({ error: "That date isn't a valid date." }, { status: 400 });
+  }
   // The date picker enforces this client-side, but nothing stops a direct
   // API request from skipping it — a past or weekend date would otherwise
-  // create a real, chargeable booking Farhan can never fulfill.
-  if (body.date < todayIso()) {
+  // create a real, chargeable booking Farhan can never fulfill. Both sides now
+  // ask the same question ("is it past in Denver?"), so the picker can no
+  // longer offer a date this rejects.
+  if (isPastDate(body.date)) {
     return NextResponse.json({ error: "That date has already passed." }, { status: 400 });
   }
   if (isWeekend(body.date)) {

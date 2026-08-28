@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { todayIso } from "@/lib/scheduling";
 import { getCategory } from "@/data/catalog";
 
 export const dynamic = "force-dynamic";
@@ -40,7 +41,10 @@ const statusStyle: Record<BookingRow["status"], string> = {
 
 export default async function AdminPage() {
   const db = supabaseAdmin();
-  const today = new Date().toISOString().slice(0, 10);
+  // Was `new Date().toISOString()`, i.e. the UTC date — which rolls over at
+  // 6pm Denver time and dropped the rest of today's jobs off the list every
+  // evening. Booking dates are Denver dates, so ask for Denver's today.
+  const today = todayIso();
 
   const [{ data: upcoming, error: upcomingError }, { data: recent, error: recentError }] = await Promise.all([
     db
