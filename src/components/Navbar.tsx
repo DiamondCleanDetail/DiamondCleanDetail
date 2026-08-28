@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Show, SignInButton, UserButton } from "@clerk/nextjs";
 import { navGroups } from "@/data/navGroups";
+import { serviceArea } from "@/data/serviceArea";
 import ServicesDropdown from "@/components/ServicesDropdown";
 
 const links = [
@@ -52,6 +53,14 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          {/* Phone escape hatch — some customers will always rather call, and
+              until now the number only existed in the footer. */}
+          <a
+            href={`tel:${serviceArea.phoneHref}`}
+            className="link-underline text-muted hover:text-foreground transition-colors whitespace-nowrap"
+          >
+            {serviceArea.phone.replace(/^\+1 /, "")}
+          </a>
           <Show when="signed-out">
             <SignInButton mode="modal">
               <button
@@ -123,6 +132,12 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <a
+            href={`tel:${serviceArea.phoneHref}`}
+            className="py-2 text-muted hover:text-foreground transition-colors"
+          >
+            Call {serviceArea.phone.replace(/^\+1 /, "")}
+          </a>
           <Show when="signed-out">
             <SignInButton mode="modal">
               <button

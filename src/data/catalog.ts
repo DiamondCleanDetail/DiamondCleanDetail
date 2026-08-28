@@ -333,7 +333,7 @@ export const catalog: ServiceCategory[] = [
     shortName: "Ceramic Coating",
     summary: "Long-term paint protection with a durable hydrophobic finish.",
     description:
-      "Professional-grade ceramic coating bonds to your paint for years of protection, deep gloss, and easier washing. Paint correction is included on prep before every coating. Dedicated wheel and glass coatings are available too.",
+      "Professional-grade ceramic coating bonds to your paint for years of protection, deep gloss, and easier washing. Every coating starts with full decontamination and prep, and the 3- and 5-year packages include paint correction first. Dedicated wheel and glass coatings are available too.",
     tagline: "A years-long shield with a mirror finish.",
     heroImage: "/services/ceramic-coating-hero.jpg",
     cardImage: "/services/ceramic-coating-hero.jpg",
@@ -355,7 +355,7 @@ export const catalog: ServiceCategory[] = [
       { title: "Easier to keep clean", description: "The hydrophobic surface sheds water, dirt, and grime, so regular washes take less effort." },
     ],
     process: [
-      { title: "Paint correction & prep", description: "Included on every paint package — coatings look and bond best over corrected paint." },
+      { title: "Prep — and correction on multi-year packages", description: "Every coating starts with decontamination and prep; the 3- and 5-year packages add machine paint correction first." },
       { title: "Decontamination", description: "Paint, wheels, or glass are deep-cleaned to remove embedded grime before anything is applied." },
       { title: "Coating application", description: "The ceramic coating is applied by hand and leveled evenly across the surface." },
       { title: "Cure time", description: "Coatings cure for 24-48 hours before the vehicle should get wet." },
@@ -816,8 +816,14 @@ export function getCategory(slug: string): ServiceCategory | undefined {
   return catalog.find((c) => c.slug === slug);
 }
 
+/** Summary price label for places that show one figure for a package.
+ * Fixed pricing varies by vehicle size and these call sites default to the
+ * sedan (cheapest) figure, so it's rendered as "From $X" — a bare "$175"
+ * next to no size label reads as *the* price and feels like bait once an
+ * SUV owner reaches checkout. Callers that show the full per-size grid use
+ * priceForSize instead. */
 export function priceLabel(pkg: Package, size: VehicleSize = "sedan"): string {
-  if (pkg.pricing.type === "fixed") return `$${pkg.pricing.byVehicleSize[size]}`;
+  if (pkg.pricing.type === "fixed") return `From $${pkg.pricing.byVehicleSize[size]}`;
   if (pkg.pricing.type === "starting-at") return `From $${pkg.pricing.amount}`;
   return "Get a Quote";
 }

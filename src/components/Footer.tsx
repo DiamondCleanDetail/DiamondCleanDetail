@@ -17,6 +17,10 @@ export default function Footer() {
         <a href={`mailto:${serviceArea.email}`} className="hover:text-foreground transition-colors">
           {serviceArea.email}
         </a>
+        <span className="hidden sm:inline text-border">&bull;</span>
+        <span>
+          {serviceArea.hours[0].days}: {serviceArea.hours[0].time}
+        </span>
       </div>
       <div className="mx-auto max-w-6xl px-6 pb-8 text-center text-xs text-muted tracking-wide">
         A cut above every car wash.

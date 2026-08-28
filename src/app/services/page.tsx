@@ -54,7 +54,7 @@ export default function ServicesPage() {
                   )}
                   {category.visualizer && (
                     <span className="absolute top-3 right-3 text-[10px] uppercase tracking-wide bg-background/80 backdrop-blur-sm border border-border rounded-full px-2 py-1 text-muted">
-                      Visualizer
+                      Preview Tool
                     </span>
                   )}
                 </div>

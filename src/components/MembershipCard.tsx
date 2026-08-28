@@ -16,7 +16,6 @@ export default function MembershipCard() {
 
   const monthlyPrice = priceForSize(monthly, "sedan");
   const biweeklyPrice = priceForSize(biweekly, "sedan");
-  const yearly = monthlyPrice ? monthlyPrice * 12 : null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-surface border border-border px-6 py-10 sm:px-12 sm:py-14 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.8)]">
@@ -57,7 +56,7 @@ export default function MembershipCard() {
               <h3 className="font-semibold text-lg">{pkg.name}</h3>
               <p className="text-sm text-muted mt-1">{pkg.tagline}</p>
               <p className="chrome-text text-4xl font-black leading-none mt-4">${price}</p>
-              <p className="text-xs text-muted mt-1">per visit, {cadence}</p>
+              <p className="text-xs text-muted mt-1">per visit, {cadence} — sedan; SUV &amp; truck priced at checkout</p>
               <ul className="mt-4 space-y-1.5">
                 {pkg.features.map((f) => (
                   <li key={f} className="text-sm text-muted flex gap-2">
@@ -84,13 +83,10 @@ export default function MembershipCard() {
           covers households and businesses booking several at once.
         </p>
 
-        {yearly && (
-          <p className="text-xs text-muted text-center mt-4">
-            Monthly works out to about ${yearly.toLocaleString()} a year for a sedan — versus $
-            {(priceForSize(getCategory("mobile-detailing")!.packages[0], "sedan") ?? 0) * 12}
-            {" "}at one-off pricing. Larger vehicles priced accordingly.
-          </p>
-        )}
+        {/* No annual-savings comparison here on purpose: a member visit is a
+            wash & vacuum, not the full Diamond Detail, so comparing it to 12
+            full details would inflate the "savings" against a different
+            service. The per-visit price stands on its own. */}
       </div>
     </div>
   );

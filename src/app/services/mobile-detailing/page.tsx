@@ -113,7 +113,7 @@ export default function MobileDetailingPage() {
               (lighter) service, so it's framed as its own thing rather than
               a discount on the packages above. */}
           <p className="text-sm text-muted text-center mt-6">
-            Detailing regularly? Members get a wash &amp; vacuum visit from $35 —{" "}
+            Detailing regularly? Members get a wash &amp; vacuum visit from $35 for a sedan —{" "}
             <Link
               href="#membership"
               className="text-foreground underline underline-offset-4 hover:text-accent transition-colors"

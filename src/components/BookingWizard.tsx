@@ -18,6 +18,7 @@ import AddOnSelector from "@/components/AddOnSelector";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
 import { todayIso, isWeekend, availableSlotsFor, type BookedRange } from "@/lib/scheduling";
+import { serviceArea } from "@/data/serviceArea";
 
 type Phase = "select" | "configure" | "vehicle" | "datetime" | "details" | "pay";
 
@@ -565,6 +566,10 @@ export default function BookingWizard({
         <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>
+            {/* Stated up front rather than as an error after picking a
+                weekend — a Saturday customer shouldn't discover the closure
+                four steps into the funnel. */}
+            <p className="text-xs text-muted mb-2">Weekdays only — we&apos;re closed Saturday &amp; Sunday.</p>
             <input
               type="date"
               value={date}
@@ -769,6 +774,18 @@ export default function BookingWizard({
             : "Continue"}
         </button>
       </div>
+
+      {/* Escape hatch for anyone who'd rather not book or pay online. */}
+      <p className="text-center text-xs text-muted mt-6">
+        Prefer to talk it through?{" "}
+        <a
+          href={`tel:${serviceArea.phoneHref}`}
+          className="text-foreground underline underline-offset-4 hover:text-accent transition-colors"
+        >
+          Call {serviceArea.phone.replace(/^\+1 /, "")}
+        </a>{" "}
+        — Monday to Friday.
+      </p>
     </div>
   );
 }
