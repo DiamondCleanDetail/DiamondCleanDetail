@@ -74,7 +74,18 @@ export default function BeforeAfterGallery() {
       </FadeIn>
       {/* Mobile: swipeable row with shorter tiles so the pairs don't take
           several screens of scroll. sm+: normal grid. */}
-      <div className="sm:hidden -mx-6 px-6 flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar">
+        {/* Full-bleed scroller with the inset on the items (-mx-6 px-6), so the
+            first card lines up with the heading and the next one still peeks
+            at the right edge.
+
+            scroll-pl-6 is what makes that actually hold: scroll snapping
+            aligns a snap target to the *scrollport's* edge, which ignores
+            padding, so on load the browser snapped the first card flush to
+            x=0 and scrolled 24px right — exactly cancelling the padding. The
+            scroll padding moves the snap edge in to match. scroll-pr-6 does
+            the same at the other end so the last card can come to rest clear
+            of the edge. */}
+      <div className="sm:hidden -mx-6 px-6 scroll-pl-6 scroll-pr-6 flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar">
         {beforeAfterHomePairs.map((pair, i) => (
           <div
             key={i}

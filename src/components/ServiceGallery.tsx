@@ -26,7 +26,9 @@ export default function ServiceGallery({
 
   return (
     <div
-      className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 -mx-6 px-6 sm:mx-0 sm:px-0 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      // scroll-pl-6/-pr-6 for the same reason as the home carousels: snapping
+      // aligns to the scrollport edge and would otherwise cancel the inset.
+      className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 -mx-6 px-6 scroll-pl-6 scroll-pr-6 sm:mx-0 sm:px-0 sm:scroll-pl-0 sm:scroll-pr-0 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
     >
       {images.map((img, i) => (
         <div
