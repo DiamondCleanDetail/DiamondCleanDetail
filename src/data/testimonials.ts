@@ -42,3 +42,18 @@ export const testimonials: Testimonial[] = [
     rating: 5,
   },
 ];
+
+/** Headline rating shown above the reviews. Averaged from the reviews above,
+ * so it can never overstate them.
+ *
+ * `totalOnGoogle` is the count on the Google listing, which may be higher than
+ * the handful quoted here — set it to the real number and it will be used
+ * instead. Left null, the page reports only what it can actually show. */
+export const reviewsTotalOnGoogle: number | null = null;
+
+export const reviewsAverage =
+  Math.round(
+    (testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonials.length) * 10
+  ) / 10;
+
+export const reviewsCount = reviewsTotalOnGoogle ?? testimonials.length;

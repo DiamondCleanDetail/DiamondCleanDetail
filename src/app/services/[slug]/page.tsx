@@ -16,6 +16,7 @@ import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
 import AddOnSelector from "@/components/AddOnSelector";
 import PackagePrices from "@/components/PackagePrices";
+import PackageDetails from "@/components/PackageDetails";
 import DiamondDivider from "@/components/DiamondDivider";
 
 export function generateStaticParams() {
@@ -281,12 +282,24 @@ export default async function ServiceCategoryPage({
                     </li>
                   ))}
                 </ul>
+                <PackageDetails pkg={pkg} />
                 {(pkg.durationMinutes || pkg.depositPercent) && (
-                  <p className="text-xs text-muted mt-3">
-                    {pkg.durationMinutes && <>~{pkg.durationMinutes} min</>}
-                    {pkg.durationMinutes && pkg.depositPercent ? " · " : ""}
-                    {pkg.depositPercent ? `${pkg.depositPercent}% deposit at booking` : ""}
-                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {pkg.durationMinutes && (
+                      <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
+                        &#9201;{" "}
+                        {pkg.durationMinutes >= 120
+                          ? `~${Math.round(pkg.durationMinutes / 60)} hr`
+                          : `~${pkg.durationMinutes} min`}{" "}
+                        on site
+                      </span>
+                    )}
+                    {pkg.depositPercent && (
+                      <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
+                        {pkg.depositPercent}% deposit
+                      </span>
+                    )}
+                  </div>
                 )}
 
                 <div className="mt-auto pt-5 border-t border-border flex flex-col gap-3">

@@ -1,4 +1,4 @@
-import { testimonials } from "@/data/testimonials";
+import { testimonials, reviewsAverage, reviewsCount } from "@/data/testimonials";
 import FadeIn from "@/components/FadeIn";
 import SectionHeading from "@/components/SectionHeading";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
@@ -20,7 +20,17 @@ export default function Testimonials() {
           <div>
             <SectionHeading align="left" eyebrow="Certified Brilliance" title="Brilliant" accent="Reviews" />
           </div>
-          <span className="text-xs sm:text-sm text-muted shrink-0">From Google</span>
+          <div className="shrink-0 text-right">
+            <p className="flex items-baseline justify-end gap-2">
+              <span className="chrome-text text-3xl sm:text-4xl font-black leading-none tabular-nums">
+                {reviewsAverage.toFixed(1)}
+              </span>
+              <Stars rating={Math.round(reviewsAverage)} />
+            </p>
+            <p className="text-xs text-muted mt-1">
+              {reviewsCount} Google review{reviewsCount === 1 ? "" : "s"}
+            </p>
+          </div>
         </div>
       </FadeIn>
 

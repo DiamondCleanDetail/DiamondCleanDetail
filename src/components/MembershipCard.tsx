@@ -76,8 +76,16 @@ export default function MembershipCard() {
           ))}
         </div>
 
+        <p className="text-sm text-muted text-center mt-7">
+          More than one car in the driveway?{" "}
+          <Link href="/services/fleet-detailing" className="text-foreground underline underline-offset-4 hover:text-accent transition-colors">
+            Multi-vehicle pricing
+          </Link>{" "}
+          covers households and businesses booking several at once.
+        </p>
+
         {yearly && (
-          <p className="text-xs text-muted text-center mt-6">
+          <p className="text-xs text-muted text-center mt-4">
             Monthly works out to about ${yearly.toLocaleString()} a year for a sedan — versus $
             {(priceForSize(getCategory("mobile-detailing")!.packages[0], "sedan") ?? 0) * 12}
             {" "}at one-off pricing. Larger vehicles priced accordingly.

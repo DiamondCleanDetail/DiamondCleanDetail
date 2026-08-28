@@ -13,6 +13,7 @@ import CtaCard from "@/components/CtaCard";
 import MembershipCard from "@/components/MembershipCard";
 import MoreServices from "@/components/MoreServices";
 import PackagePrices from "@/components/PackagePrices";
+import PackageDetails from "@/components/PackageDetails";
 import DiamondDivider from "@/components/DiamondDivider";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
@@ -79,14 +80,21 @@ export default function MobileDetailingPage() {
                       </li>
                     ))}
                   </ul>
+                  <PackageDetails pkg={pkg} />
                   <div className="mt-6 pt-5 border-t border-border">
                     <PackagePrices pkg={pkg} />
-                    {pkg.durationMinutes && (
-                      <p className="text-xs text-muted mt-2">
-                        ~{Math.round(pkg.durationMinutes / 60)} hr
-                        {pkg.depositPercent ? ` · ${pkg.depositPercent}% deposit at booking` : ""}
-                      </p>
-                    )}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {pkg.durationMinutes && (
+                        <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
+                          &#9201; ~{Math.round(pkg.durationMinutes / 60)} hr on site
+                        </span>
+                      )}
+                      {pkg.depositPercent && (
+                        <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
+                          {pkg.depositPercent}% deposit
+                        </span>
+                      )}
+                    </div>
                     <Link
                       href={`/booking?service=${category.slug}&package=${pkg.slug}`}
                       className="chrome-btn w-full text-center inline-block mt-5 px-5 py-3 rounded-lg font-bold"

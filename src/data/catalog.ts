@@ -19,6 +19,14 @@ export type Package = {
   pricing: PricingModel;
   durationMinutes?: number;
   depositPercent?: number;
+  /** Headline outcome for tiered corrective work, e.g. "70–80%". Rendered as
+   * the card's defining number so stages compare on result, not just price. */
+  defectRemoval?: string;
+  /** Who this tier is actually for — the paint/interior conditions it suits. */
+  bestFor?: string[];
+  /** Stated plainly on the card. Prevents the worst outcome in this trade:
+   * someone expecting correction from a clean, or a coating from a polish. */
+  excludes?: string[];
   /** Shows a "Most Popular" badge and highlighted border on the package card. */
   featured?: boolean;
   /** Groups packages under a subheading on the pricing list, e.g. "Wheel Coating" —
@@ -184,6 +192,7 @@ export const catalog: ServiceCategory[] = [
           "Protective finish",
           "Restores that factory-fresh feel and scent",
         ],
+        excludes: ["Paint correction or scratch removal", "Ceramic coating"],
         pricing: { type: "fixed", byVehicleSize: { sedan: 175, suv: 210, truck: 240 } },
         durationMinutes: 180,
         depositPercent: 25,
@@ -198,6 +207,7 @@ export const catalog: ServiceCategory[] = [
           "Removes swirls & imperfections",
           "Premium wax or sealant for a deep, glossy finish",
         ],
+        excludes: ["Ceramic coating", "Paint protection film"],
         pricing: { type: "fixed", byVehicleSize: { sedan: 450, suv: 525, truck: 575 } },
         durationMinutes: 480,
         depositPercent: 25,
@@ -252,23 +262,48 @@ export const catalog: ServiceCategory[] = [
     packages: [
       {
         slug: "single-stage",
-        name: "Single-Stage Polish",
-        tagline: "Removes light swirls, adds gloss.",
+        name: "Stage 1 — Enhancement",
+        tagline: "A one-step polish that lifts gloss and clears light swirls.",
+        defectRemoval: "40–50%",
         features: ["One-step machine polish", "Removes light swirl marks", "Enhanced gloss & clarity"],
+        bestFor: ["Light swirl marks", "Minor water spots", "Dull or faded finish", "Prep before a wax or sealant"],
+        excludes: ["Deep scratches you can catch with a fingernail", "Ceramic coating"],
         pricing: { type: "fixed", byVehicleSize: { sedan: 250, suv: 300, truck: 325 } },
         durationMinutes: 240,
         depositPercent: 25,
       },
       {
+        // PLACEHOLDER PRICING — this middle tier is new; confirm with Farhan.
+        slug: "two-stage",
+        name: "Stage 2 — Correction",
+        tagline: "Compound and polish for paint that's taken real wear.",
+        defectRemoval: "70–80%",
+        features: [
+          "Compounding pass, then a refining polish",
+          "Removes heavier swirls & light scratches",
+          "Corrects moderate oxidation",
+          "Solid prep before a ceramic coating",
+        ],
+        bestFor: ["Heavy swirl marks", "Light scratches", "Moderate oxidation", "Buffer trails from a previous shop"],
+        excludes: ["Scratches through the clear coat", "Ceramic coating"],
+        pricing: { type: "fixed", byVehicleSize: { sedan: 350, suv: 415, truck: 450 } },
+        durationMinutes: 360,
+        depositPercent: 25,
+        featured: true,
+      },
+      {
         slug: "multi-stage",
-        name: "Multi-Stage Correction",
-        tagline: "Maximum defect removal.",
+        name: "Stage 3 — Full Correction",
+        tagline: "Every pass we have, for paint that's been neglected.",
+        defectRemoval: "90%+",
         features: [
           "Compound + polish + finishing pass",
-          "Removes moderate scratches & oxidation",
+          "Removes deep scratches & severe oxidation",
           "Show-quality finish",
-          "Recommended before ceramic coating",
+          "The right prep before ceramic coating",
         ],
+        bestFor: ["Deep scratches", "Severe oxidation", "Neglected or long-unwashed paint", "Maximum gloss restoration"],
+        excludes: ["Scratches through to primer or metal", "Ceramic coating"],
         pricing: { type: "fixed", byVehicleSize: { sedan: 450, suv: 525, truck: 575 } },
         durationMinutes: 480,
         depositPercent: 25,
@@ -520,6 +555,20 @@ export const catalog: ServiceCategory[] = [
       { title: "Film application", description: "Film is precision-cut and applied to each window, then squeegeed to remove air and moisture." },
       { title: "Cure time", description: "Tint should not be rolled down for a few days while it fully cures." },
     ],
+    faqs: [
+      {
+        q: "Myth: a cheap tint and a ceramic tint look the same, so why pay more?",
+        a: "They can look identical and perform nothing alike. Shade is how dark the film looks; heat rejection is a separate property of the film itself. Our ceramic films block up to 95% of infrared heat, where a basic dyed film mostly just darkens the glass.",
+      },
+      {
+        q: "Myth: tint is only about privacy and looks.",
+        a: "Every film we install blocks over 99% of UV. That is what keeps a dashboard, leather, and trim from fading and cracking - the tint is protecting the interior as much as it is shading you.",
+      },
+      {
+        q: "Myth: darker tint always means a cooler car.",
+        a: "Not on its own. A very dark dyed film can reject less heat than a lighter ceramic one, because heat rejection comes from the film's construction rather than how dark it looks. Pick the shade you want, then pick the film for the heat.",
+      },
+    ],
     visualizer: "tint",
     hasTeslaVariant: true,
     packages: [
@@ -647,6 +696,7 @@ export const catalog: ServiceCategory[] = [
         name: "Monthly Plan",
         tagline: "One visit per month.",
         features: ["Basic wash & vacuum monthly", "Priority scheduling", "10% off add-on services"],
+        excludes: ["Deep interior cleaning", "Paint correction"],
         pricing: { type: "fixed", byVehicleSize: { sedan: 40, suv: 48, truck: 55 } },
         durationMinutes: 45,
       },
@@ -655,6 +705,7 @@ export const catalog: ServiceCategory[] = [
         name: "Bi-Weekly Plan",
         tagline: "Every two weeks.",
         features: ["Basic wash & vacuum every 2 weeks", "Priority scheduling", "15% off add-on services"],
+        excludes: ["Deep interior cleaning", "Paint correction"],
         pricing: { type: "fixed", byVehicleSize: { sedan: 35, suv: 42, truck: 48 } },
         durationMinutes: 45,
       },
@@ -664,10 +715,10 @@ export const catalog: ServiceCategory[] = [
     slug: "fleet-detailing",
     name: "Fleet Detailing",
     shortName: "Fleet",
-    summary: "Recurring detailing for business & rental fleets.",
+    summary: "Multi-vehicle and recurring detailing, at volume pricing.",
     description:
       "Volume pricing and recurring scheduling for companies with multiple vehicles — rideshare, rental, delivery, and corporate fleets.",
-    tagline: "Volume detailing for businesses that run on their vehicles.",
+    tagline: "Volume detailing for businesses - and households - with more than one vehicle.",
     heroImage: "/services/fleet-hero.jpg",
     cardImage: "/services/fleet-hero.jpg",
     valueProp:
