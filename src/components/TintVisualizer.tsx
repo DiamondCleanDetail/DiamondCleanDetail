@@ -61,7 +61,7 @@ export default function TintVisualizer({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 24 }}
                 transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] as const }}
-                className="pointer-events-none select-none absolute bottom-[68%] right-[10%] z-0 text-7xl sm:text-9xl font-black text-neutral-900/25 leading-none"
+                className="pointer-events-none select-none absolute bottom-[68%] right-[3%] z-0 text-6xl sm:text-8xl font-black text-neutral-900/25 leading-none"
               >
                 {level.label}
               </motion.span>

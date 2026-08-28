@@ -43,8 +43,8 @@ export default function WindowTintingClient() {
     <div>
       <ServiceHero
         eyebrow="Window Tinting"
-        title="See Your Shade Before You Book."
-        tagline="Preview how each tint shade looks, then choose your coverage and book online."
+        title="Cooler, Darker, Better Protected."
+        tagline="Ceramic film that blocks up to 95% of infrared heat and over 99% of UV rays — precision-cut and installed to last."
         video="/video/window-tinting.mp4"
         image="/services/window-tinting-hero.webp"
       />

@@ -383,10 +383,10 @@ export const catalog: ServiceCategory[] = [
     slug: "window-tinting",
     name: "Window Tinting",
     shortName: "Window Tint",
-    summary: "See how each shade looks before you book.",
+    summary: "Blocks heat and UV, adds privacy, and finishes the look.",
     description:
-      "Preview different tint shades on your vehicle before committing, then choose the darkness level that fits your style and your state's legal limits.",
-    tagline: "See your shade before you commit.",
+      "Ceramic and dyed window films that cut cabin heat, block UV, and add privacy — precision-cut and installed on every window, with shade and coverage options for any vehicle.",
+    tagline: "Cooler cabin, less glare, better protected.",
     valueProp:
       "Window tint film blocks UV rays and heat, adds privacy, and gives your vehicle a finished look. Preview each darkness level and coverage option before booking, with separate pricing for Tesla's glass and installation requirements.",
     stats: [
@@ -399,7 +399,7 @@ export const catalog: ServiceCategory[] = [
       { title: "A finished look", description: "Tint is one of the highest-impact, most affordable upgrades for a vehicle's appearance." },
     ],
     process: [
-      { title: "Preview your shade", description: "Use the tint level and coverage tools above to see your options before booking." },
+      { title: "Pick your film and shade", description: "We confirm the film type and darkness level that suit your vehicle and how you use it." },
       { title: "Glass cleaning", description: "Every window is thoroughly cleaned before film is applied." },
       { title: "Film application", description: "Film is precision-cut and applied to each window, then squeegeed to remove air and moisture." },
       { title: "Cure time", description: "Tint should not be rolled down for a few days while it fully cures." },
