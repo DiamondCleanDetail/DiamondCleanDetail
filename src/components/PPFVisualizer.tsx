@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Package } from "@/data/catalog";
 import { priceLabel } from "@/data/catalog";
+import SegmentedTabs from "@/components/SegmentedTabs";
 
 const images: Record<string, string> = {
   barrier: "/services/ppf-visualizer-barrier.png",
@@ -49,34 +50,14 @@ export default function PPFVisualizer({
 
       <div className="mx-auto max-w-6xl px-6">
         {/* Tier tabs */}
-        <div className="relative flex w-full rounded-full border border-border bg-surface p-1 shadow-[0_15px_40px_-20px_rgba(0,0,0,0.6)]">
-          {packages.map((p) => {
-            const isActive = p.slug === active;
-            return (
-              <button
-                type="button"
-                key={p.slug}
-                onClick={() => setActive(p.slug)}
-                className="relative flex-1 py-2.5 sm:py-3 text-center"
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="ppf-tab-highlight"
-                    className="absolute inset-0 chrome-chip rounded-full"
-                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-colors ${
-                    isActive ? "text-[color:var(--accent-foreground)]" : "text-muted hover:text-foreground"
-                  }`}
-                >
-                  {p.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <SegmentedTabs
+          items={packages.map((p) => ({ value: p.slug, label: p.name }))}
+          value={pkg.slug}
+          onChange={setActive}
+          layoutId="ppf-tab-highlight"
+          tone="dark"
+          className="w-full"
+        />
 
         {/* Content */}
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[3fr_2fr] gap-8 sm:gap-10 items-start">

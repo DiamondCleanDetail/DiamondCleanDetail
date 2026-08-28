@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { getCategory, vehicleSizeLabels, VehicleSize, priceForSize, Package } from "@/data/catalog";
+import SegmentedTabs from "@/components/SegmentedTabs";
 import WindshieldTintPreview from "@/components/WindshieldTintPreview";
 
 const category = getCategory("window-tinting")!;
@@ -21,34 +21,13 @@ export default function TintCoverageSelector({
     <div className="w-full">
       <div className="mx-auto max-w-6xl px-6">
         {/* Coverage package tabs */}
-        <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1">
-          {category.packages.map((p) => {
-            const isActive = pkg.slug === p.slug;
-            return (
-              <button
-                type="button"
-                key={p.slug}
-                onClick={() => setPkg(p)}
-                className="relative flex-1 py-2.5 sm:py-3 text-center"
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="coverage-package-highlight"
-                    className="absolute inset-0 bg-neutral-200 rounded-full"
-                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-colors ${
-                    isActive ? "text-neutral-900" : "text-neutral-400 hover:text-neutral-700"
-                  }`}
-                >
-                  {p.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <SegmentedTabs
+          items={category.packages.map((p) => ({ value: p.slug, label: p.name }))}
+          value={pkg.slug}
+          onChange={(slug) => setPkg(category.packages.find((p) => p.slug === slug) ?? pkg)}
+          layoutId="coverage-package-highlight"
+          className="w-full"
+        />
 
         {/* Preview + details */}
         <div className="mt-10 sm:mt-14 grid sm:grid-cols-2 gap-8 sm:gap-10 items-center">

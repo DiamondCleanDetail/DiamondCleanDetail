@@ -4,6 +4,10 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { tintLevels, type TintLevel } from "@/data/tintLevels";
 import { vehicleSizeLabels, type VehicleSize } from "@/data/catalog";
+import SegmentedTabs from "@/components/SegmentedTabs";
+
+/** 80% is a windshield-visor-only shade, so it never appears in this bar. */
+const selectableLevels = tintLevels.filter((l) => !l.windshieldOnly);
 
 export default function TintVisualizer({
   level,
@@ -21,35 +25,16 @@ export default function TintVisualizer({
     <div className="relative w-full">
       <div className="relative">
         <div className="mx-auto max-w-6xl px-6">
-          {/* Level tabs */}
-          <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1">
-            {tintLevels.filter((l) => !l.windshieldOnly).map((l) => {
-              const isActive = l.value === level.value;
-              return (
-                <button
-                  type="button"
-                  key={l.value}
-                  onClick={() => setLevel(l)}
-                  className="relative flex-1 py-2.5 sm:py-3 text-center"
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="tint-tab-highlight"
-                      className="absolute inset-0 bg-neutral-200 rounded-full"
-                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                    />
-                  )}
-                  <span
-                    className={`relative z-10 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-colors ${
-                      isActive ? "text-[color:var(--accent-foreground)]" : "text-neutral-400 hover:text-neutral-700"
-                    }`}
-                  >
-                    {l.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          {/* Level tabs — every shade label is short ("Clear", "35%"), so this
+              one keeps the single capsule row at phone widths too. */}
+          <SegmentedTabs
+            items={selectableLevels.map((l) => ({ value: String(l.value), label: l.label }))}
+            value={String(level.value)}
+            onChange={(v) => setLevel(selectableLevels.find((l) => String(l.value) === v) ?? level)}
+            layoutId="tint-tab-highlight"
+            mobileLayout="row"
+            className="w-full"
+          />
 
           {/* Preview */}
           <div className="relative mt-10 sm:mt-14 aspect-[3054/955] w-full">

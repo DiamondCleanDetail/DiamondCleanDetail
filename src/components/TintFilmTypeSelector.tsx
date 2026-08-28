@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { filmTypes, type FilmType } from "@/data/filmTypes";
+import SegmentedTabs from "@/components/SegmentedTabs";
 
 export default function TintFilmTypeSelector({
   filmType,
@@ -13,34 +14,13 @@ export default function TintFilmTypeSelector({
   return (
     <div className="w-full">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1">
-          {filmTypes.map((f) => {
-            const isActive = filmType.slug === f.slug;
-            return (
-              <button
-                type="button"
-                key={f.slug}
-                onClick={() => setFilmType(f)}
-                className="relative flex-1 py-2.5 sm:py-3 text-center"
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="film-type-highlight"
-                    className="absolute inset-0 bg-neutral-200 rounded-full"
-                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-colors ${
-                    isActive ? "text-neutral-900" : "text-neutral-400 hover:text-neutral-700"
-                  }`}
-                >
-                  {f.name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <SegmentedTabs
+          items={filmTypes.map((f) => ({ value: f.slug, label: f.name }))}
+          value={filmType.slug}
+          onChange={(slug) => setFilmType(filmTypes.find((f) => f.slug === slug) ?? filmType)}
+          layoutId="film-type-highlight"
+          className="w-full"
+        />
 
         <div className="mt-10 sm:mt-14 grid sm:grid-cols-3 gap-4 sm:gap-5 items-start">
           {filmTypes.map((f) => {
