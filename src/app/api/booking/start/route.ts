@@ -6,7 +6,12 @@ import { getCategory, priceForSize } from "@/data/catalog";
 import { todayIso, isWeekend, parseTimeToMinutes, rangesOverlap, CLOSING_MINUTES } from "@/lib/scheduling";
 import { sendBookingEmails } from "@/lib/bookingEmails";
 
-type ItemInput = { serviceSlug: string; packageSlug: string; note?: string };
+type ItemInput = {
+  serviceSlug: string;
+  packageSlug: string;
+  addOnSlugs?: string[];
+  note?: string;
+};
 
 type StartBookingBody = {
   items: ItemInput[];
@@ -89,10 +94,25 @@ export async function POST(req: NextRequest) {
   }
 
   const rows = resolved.map(({ item, category, pkg }) => {
-    const price = priceForSize(pkg!, body.vehicleSize) ?? 0;
+    const basePrice = priceForSize(pkg!, body.vehicleSize) ?? 0;
+    // Resolve add-ons from the catalog rather than trusting any price the
+    // client sent, and ignore any the package already covers.
+    const addOns = (category!.addOns ?? []).filter(
+      (a) =>
+        (item.addOnSlugs ?? []).includes(a.slug) && !a.includedIn?.includes(pkg!.slug)
+    );
+    const addOnsTotal = addOns.reduce((n, a) => n + a.price, 0);
+    const price = basePrice + addOnsTotal;
     const depositPercent = pkg!.depositPercent ?? 0;
-    const deposit = depositPercent > 0 ? Math.round((price * depositPercent) / 100) : 0;
-    const chargeAmount = pkg!.pricing.type === "quote" ? 0 : deposit > 0 ? deposit : price;
+    const deposit = depositPercent > 0 ? Math.round((basePrice * depositPercent) / 100) : 0;
+    // Quote-only packages charge nothing up front, add-ons included — they get
+    // quoted with the job. Otherwise add-ons are charged in full alongside the
+    // deposit, matching what the wizard showed.
+    const chargeAmount =
+      pkg!.pricing.type === "quote"
+        ? 0
+        : (deposit > 0 ? deposit : basePrice) + addOnsTotal;
+    const addOnNote = addOns.length > 0 ? ` + Add-ons: ${addOns.map((a) => a.name).join(", ")}` : "";
     return {
       category: category!,
       pkg: pkg!,
@@ -102,7 +122,7 @@ export async function POST(req: NextRequest) {
         service_slug: category!.slug,
         package_slug: pkg!.slug,
         vehicle_size: body.vehicleSize,
-        vehicle_info: `${body.vehicleInfo}${item.note ?? ""}`,
+        vehicle_info: `${body.vehicleInfo}${item.note ?? ""}${addOnNote}`,
         customer_name: body.name,
         customer_phone: body.phone,
         customer_email: body.email || null,

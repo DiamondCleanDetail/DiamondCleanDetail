@@ -27,6 +27,21 @@ export type Package = {
   group?: string;
 };
 
+/** An optional extra bought alongside a package — e.g. PPF on door edges.
+ * Prices are flat (not vehicle-size dependent) since these are small,
+ * fixed-area pieces. */
+export type AddOn = {
+  slug: string;
+  name: string;
+  description: string;
+  /** PLACEHOLDER PRICING — replace with Farhan's real numbers before launch. */
+  price: number;
+  /** Photo of the add-on applied. Null renders a placeholder tile. */
+  image?: string | null;
+  /** Packages that already cover this area, so it isn't sold twice. */
+  includedIn?: string[];
+};
+
 export type Benefit = { title: string; description: string };
 export type ProcessStep = { title: string; description: string };
 
@@ -71,6 +86,8 @@ export type ServiceCategory = {
   /** Slugs of other categories to surface as "Related Services" on this page. */
   relatedSlugs?: string[];
   packages: Package[];
+  /** Optional extras offered with this service, selectable at checkout. */
+  addOns?: AddOn[];
   visualizer?: "tint" | "ppf";
   hasTeslaVariant?: boolean;
   isQuoteOnly?: boolean;
@@ -381,6 +398,53 @@ export const catalog: ServiceCategory[] = [
       { title: "Final inspection", description: "Every edge and seam is checked before the vehicle is handed back." },
     ],
     visualizer: "ppf",
+    // Small fixed-area pieces sold alongside a coverage tier. Anything a
+    // package already wraps is marked includedIn so it can't be bought twice.
+    addOns: [
+      {
+        slug: "door-edge-guards",
+        name: "Door Edge PPF",
+        description: "Wraps the door edges — the first place paint chips when a door taps a wall or another car.",
+        price: 89,
+        image: null,
+      },
+      {
+        slug: "door-cups",
+        name: "Door Handle Cups",
+        description: "Covers the recess behind each handle, where fingernails and rings wear the clear coat.",
+        price: 99,
+        image: null,
+        includedIn: ["full-protection"],
+      },
+      {
+        slug: "headlight-ppf",
+        name: "Headlight Protection",
+        description: "Clear film over the headlights to stop pitting, hazing, and stone chips.",
+        price: 149,
+        image: null,
+      },
+      {
+        slug: "fog-light-ppf",
+        name: "Fog Light Protection",
+        description: "Same protection for the lower lights, which take the worst of the road spray.",
+        price: 79,
+        image: null,
+      },
+      {
+        slug: "door-sill-guards",
+        name: "Door Sill Guards",
+        description: "Protects the painted sill under the door from shoe scuffs getting in and out.",
+        price: 89,
+        image: null,
+      },
+      {
+        slug: "fuel-door-ppf",
+        name: "Fuel Door",
+        description: "A small piece around the fuel door, where nozzle scratches build up over time.",
+        price: 49,
+        image: null,
+      },
+    ],
     packages: [
       {
         slug: "barrier",

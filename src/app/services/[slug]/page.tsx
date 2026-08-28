@@ -14,10 +14,12 @@ import StatCallouts from "@/components/StatCallouts";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
+import AddOnSelector from "@/components/AddOnSelector";
+import DiamondDivider from "@/components/DiamondDivider";
 
 export function generateStaticParams() {
   return catalog
-    .filter((c) => c.slug !== "window-tinting" && c.slug !== "specialty-vehicles")
+    .filter((c) => c.slug !== "window-tinting" && c.slug !== "specialty-vehicles" && c.slug !== "mobile-detailing")
     .map((c) => ({ slug: c.slug }));
 }
 
@@ -133,6 +135,8 @@ export default async function ServiceCategoryPage({
         </section>
       )}
 
+      <DiamondDivider />
+
       {/* Benefits */}
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
@@ -181,6 +185,24 @@ export default async function ServiceCategoryPage({
           </FadeIn>
         </section>
       )}
+
+      {/* Add-ons — small extra pieces, selectable at checkout */}
+      {category.addOns && category.addOns.length > 0 && (
+        <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
+          <FadeIn>
+            <SectionHeading
+              eyebrow="Optional Extras"
+              title="Popular"
+              accent="Add-Ons"
+              subtitle="Small, high-wear areas most packages don't cover. Add any of these when you book."
+              className="mb-8 sm:mb-10"
+            />
+            <AddOnSelector addOns={category.addOns} readOnly />
+          </FadeIn>
+        </section>
+      )}
+
+      <DiamondDivider />
 
       {/* Process */}
       <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
@@ -273,6 +295,8 @@ export default async function ServiceCategoryPage({
       </section>
       )}
 
+      <DiamondDivider />
+
       {/* Related services */}
       {related && related.length > 0 && (
         <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
@@ -297,6 +321,8 @@ export default async function ServiceCategoryPage({
           </StaggerGrid>
         </section>
       )}
+
+      <DiamondDivider />
 
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-6 pb-10 sm:pb-16">

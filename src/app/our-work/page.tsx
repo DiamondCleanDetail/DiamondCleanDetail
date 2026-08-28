@@ -3,6 +3,7 @@ import FadeIn from "@/components/FadeIn";
 import WorkGallery from "@/components/WorkGallery";
 import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
+import DiamondDivider from "@/components/DiamondDivider";
 
 export const metadata: Metadata = {
   title: "Our Work",
@@ -23,6 +24,8 @@ export default function OurWorkPage() {
           className="mb-8 sm:mb-12"
         />
       </FadeIn>
+
+      <DiamondDivider />
 
       <WorkGallery />
 

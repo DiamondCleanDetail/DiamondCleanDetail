@@ -14,6 +14,7 @@ import TintVisualizer from "@/components/TintVisualizer";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import PPFVisualizer from "@/components/PPFVisualizer";
 import VehiclePicker from "@/components/VehiclePicker";
+import AddOnSelector from "@/components/AddOnSelector";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
 import { todayIso, isWeekend, availableSlotsFor, type BookedRange } from "@/lib/scheduling";
@@ -33,6 +34,7 @@ const phaseOrder: Phase[] = ["select", "configure", "vehicle", "datetime", "deta
 type ServiceSelection = {
   serviceSlug: string;
   packageSlug: string;
+  addOnSlugs?: string[];
   tintLevelValue?: number;
   filmSlug?: string;
   isTesla?: boolean;
@@ -192,10 +194,18 @@ export default function BookingWizard({
       selections.map((s) => {
         const category = getCategory(s.serviceSlug)!;
         const pkg = category.packages.find((p) => p.slug === s.packageSlug) ?? category.packages[0];
-        return { ...s, category, pkg };
+        // Drop any add-on the chosen package already covers, so switching to a
+        // fuller tier can't leave a duplicate charge behind.
+        const addOns = (category.addOns ?? []).filter(
+          (a) => (s.addOnSlugs ?? []).includes(a.slug) && !a.includedIn?.includes(pkg.slug)
+        );
+        return { ...s, category, pkg, addOns };
       }),
     [selections]
   );
+
+  const addOnsTotalFor = (addOns: { price: number }[]) =>
+    addOns.reduce((n, a) => n + a.price, 0);
 
   const current = resolved[configureIndex];
   const totalDuration = resolved.reduce((sum, r) => sum + (r.pkg.durationMinutes ?? 60), 0) || 60;
@@ -205,11 +215,17 @@ export default function BookingWizard({
     [bookedRanges, totalDuration, weekend]
   );
 
-  const subtotal = resolved.reduce((sum, r) => sum + (priceForSize(r.pkg, vehicleSize) ?? 0), 0);
+  const subtotal = resolved.reduce(
+    (sum, r) => sum + (priceForSize(r.pkg, vehicleSize) ?? 0) + addOnsTotalFor(r.addOns),
+    0
+  );
   const totalDeposit = resolved.reduce((sum, r) => {
     const price = priceForSize(r.pkg, vehicleSize) ?? 0;
     const deposit = r.pkg.depositPercent ? Math.round((price * r.pkg.depositPercent) / 100) : 0;
-    return sum + (r.pkg.pricing.type === "quote" ? 0 : deposit > 0 ? deposit : price);
+    // Quote-only packages stay at $0 — their add-ons get quoted with the job
+    // rather than charged against a price we haven't given yet.
+    if (r.pkg.pricing.type === "quote") return sum;
+    return sum + (deposit > 0 ? deposit : price) + addOnsTotalFor(r.addOns);
   }, 0);
   const hasQuoteItem = resolved.some((r) => r.pkg.pricing.type === "quote");
   const allQuoteItems = resolved.length > 0 && resolved.every((r) => r.pkg.pricing.type === "quote");
@@ -222,6 +238,21 @@ export default function BookingWizard({
       const category = getCategory(slug)!;
       return [...prev, { serviceSlug: slug, packageSlug: category.packages[0].slug }];
     });
+  }
+
+  function toggleAddOn(slug: string) {
+    setSelections((prev) =>
+      prev.map((s, i) => {
+        if (i !== configureIndex) return s;
+        const current = s.addOnSlugs ?? [];
+        return {
+          ...s,
+          addOnSlugs: current.includes(slug)
+            ? current.filter((x) => x !== slug)
+            : [...current, slug],
+        };
+      })
+    );
   }
 
   function updateCurrentSelection(patch: Partial<ServiceSelection>) {
@@ -270,7 +301,7 @@ export default function BookingWizard({
           r.category.visualizer === "tint"
             ? ` — ${(tintLevels.find((l) => l.value === (r.tintLevelValue ?? 35)) ?? tintLevels.find((l) => l.value === 35)!).label} tint, ${(filmTypes.find((f) => f.slug === r.filmSlug) ?? filmTypes[1]).name}${r.isTesla ? ", Tesla (confirm pricing)" : ""}`
             : "";
-        return { serviceSlug: r.category.slug, packageSlug: r.pkg.slug, note: tintNote };
+        return { serviceSlug: r.category.slug, packageSlug: r.pkg.slug, addOnSlugs: r.addOnSlugs ?? [], note: tintNote };
       });
       const res = await fetch("/api/booking/start", {
         method: "POST",
@@ -479,6 +510,22 @@ export default function BookingWizard({
               </button>
             ))}
           </div>
+
+          {current.category.addOns && current.category.addOns.length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-semibold">Add-Ons</h3>
+              <p className="text-sm text-muted mt-1 mb-4">
+                Optional extras for high-wear areas. Anything your package already covers is
+                marked as included.
+              </p>
+              <AddOnSelector
+                addOns={current.category.addOns}
+                selected={current.addOnSlugs ?? []}
+                onToggle={toggleAddOn}
+                packageSlug={current.pkg.slug}
+              />
+            </div>
+          )}
         </div>
       )}
 

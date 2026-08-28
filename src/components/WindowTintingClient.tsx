@@ -18,6 +18,7 @@ import StatCallouts from "@/components/StatCallouts";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import ServiceGallery from "@/components/ServiceGallery";
 import SectionHeading from "@/components/SectionHeading";
+import DiamondDivider from "@/components/DiamondDivider";
 
 const category = getCategory("window-tinting")!;
 
@@ -170,6 +171,8 @@ export default function WindowTintingClient() {
         </FadeIn>
       </section>
 
+      <DiamondDivider />
+
       <section className="mx-auto max-w-6xl px-6 pb-14 sm:pb-20">
         <FadeIn>
           <SectionHeading title="Why It's" accent="Worth It" className="mb-8 sm:mb-10" />
@@ -227,6 +230,8 @@ export default function WindowTintingClient() {
           ))}
         </div>
       </section>
+
+      <DiamondDivider />
 
       <section className="mx-auto max-w-3xl px-6 pb-14 sm:pb-20">
         <FadeIn>

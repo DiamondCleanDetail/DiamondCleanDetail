@@ -9,6 +9,7 @@ import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
 import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
+import DiamondDivider from "@/components/DiamondDivider";
 import FaqAccordion from "@/components/FaqAccordion";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
@@ -121,6 +122,8 @@ export default function SpecialtyVehiclesPage() {
         </div>
       </section>
 
+      <DiamondDivider />
+
       {/* How It Works */}
       <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
         <FadeIn>
@@ -142,6 +145,8 @@ export default function SpecialtyVehiclesPage() {
           ))}
         </div>
       </section>
+
+      <DiamondDivider />
 
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-6 pb-10 sm:pb-16">

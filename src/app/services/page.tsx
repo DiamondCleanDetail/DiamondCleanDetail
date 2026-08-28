@@ -5,6 +5,7 @@ import { catalog, priceLabel } from "@/data/catalog";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import SectionHeading from "@/components/SectionHeading";
+import DiamondDivider from "@/components/DiamondDivider";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -25,6 +26,8 @@ export default function ServicesPage() {
           className="mb-8 sm:mb-12"
         />
       </FadeIn>
+
+      <DiamondDivider />
 
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {catalog.map((category) => {

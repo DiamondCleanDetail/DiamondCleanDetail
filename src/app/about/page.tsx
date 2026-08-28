@@ -3,6 +3,7 @@ import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
+import DiamondDivider from "@/components/DiamondDivider";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -39,6 +40,8 @@ export default function AboutPage() {
         </FadeIn>
       </section>
 
+      <DiamondDivider />
+
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
           <div className="grid sm:grid-cols-2 gap-6 sm:gap-10 items-center">
@@ -58,6 +61,8 @@ export default function AboutPage() {
         </FadeIn>
       </section>
 
+      <DiamondDivider />
+
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
           <SectionHeading title="What We" accent="Stand For" className="mb-8 sm:mb-10" />
@@ -74,6 +79,8 @@ export default function AboutPage() {
           ))}
         </StaggerGrid>
       </section>
+
+      <DiamondDivider />
 
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
