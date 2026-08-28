@@ -8,6 +8,18 @@ import { navGroups } from "@/data/navGroups";
 import { serviceArea } from "@/data/serviceArea";
 import ServicesDropdown from "@/components/ServicesDropdown";
 
+// The wordmark never fits beside the logo and the menu button at phone
+// widths — "Diamond Clean Detail" wants 308px against the 252px it gets at
+// 390px. It used to be clipped with `truncate`, which added an ellipsis, and
+// the trailing "..." implied text was missing rather than reading as a
+// deliberately short mark. So drop to just "Diamond Clean" below sm instead:
+// same wording, cut at a word boundary, no dots, and no shrinking the font or
+// wrapping to a second line. Two spans rather than one with a nested
+// <span> — `chrome-text` paints its gradient with background-clip: text, and
+// giving each phrase its own element keeps that off the edge cases.
+const wordmarkClass =
+  "font-wordmark text-[26px] sm:text-[30px] leading-none chrome-text whitespace-nowrap overflow-hidden pt-1";
+
 const links = [
   { href: "/our-work", label: "Our Work" },
   { href: "/booking", label: "Book Now" },
@@ -35,11 +47,19 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto max-w-6xl px-6 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 min-w-0" onClick={() => setOpen(false)}>
-          <Image src="/brand/logo.png" alt="Diamond Clean Detail" width={36} height={36} className="h-9 w-9 shrink-0" />
-          <span className="font-wordmark text-[26px] sm:text-[30px] leading-none chrome-text truncate pt-1">
-            Diamond Clean Detail
-          </span>
+        <Link
+          href="/"
+          aria-label="Diamond Clean Detail"
+          className="flex items-center gap-2.5 min-w-0"
+          onClick={() => setOpen(false)}
+        >
+          {/* Decorative: the link carries the full name via aria-label. */}
+          <Image src="/brand/logo.png" alt="" width={36} height={36} className="h-9 w-9 shrink-0" />
+          {/* Below 360px even "Diamond Clean" runs out of room (212px wanted
+              against 182px at a 320px viewport) and would be sliced mid-word,
+              so it steps down one size there — and only there. */}
+          <span className={`${wordmarkClass} max-[359px]:text-[22px] sm:hidden`}>Diamond Clean</span>
+          <span className={`${wordmarkClass} hidden sm:inline`}>Diamond Clean Detail</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-6 text-sm shrink-0">
