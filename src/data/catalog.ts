@@ -448,7 +448,14 @@ export const catalog: ServiceCategory[] = [
         src: "/services/ppf-rock-chips.webp",
         alt: "Dozens of small light-coloured stone chips scattered across the grey metallic paint of a car's hood, beside the headlight",
       },
-      null,
+      // TODO(placeholder): stock/supplier image, not our work — swap when
+      // Farhan has his own correction shot. Low resolution at source
+      // (640x480), so it is the softest image on the page; a real photo
+      // would be a visible upgrade, not just an authenticity one.
+      {
+        src: "/services/ppf-self-healing-placeholder-stock.webp",
+        alt: "A dark green car panel under a work light, the left half clouded with fine swirl marks and the right half polished clear",
+      },
       null,
     ],
     valueProp:
