@@ -2,11 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCategory } from "@/data/catalog";
+import { getCategory, getFaqs } from "@/data/catalog";
 import { specialtyVehicleBreakdown } from "@/data/specialtyVehicles";
 import ServiceGallery from "@/components/ServiceGallery";
 import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
+import FaqAccordion from "@/components/FaqAccordion";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 const category = getCategory("specialty-vehicles");
@@ -142,6 +143,14 @@ export default function SpecialtyVehiclesPage() {
             </FadeIn>
           ))}
         </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="mx-auto max-w-3xl px-6 pb-10 sm:pb-16">
+        <FadeIn>
+          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Common Questions</h2>
+          <FaqAccordion items={getFaqs(category)} />
+        </FadeIn>
       </section>
 
       {/* Final CTA */}

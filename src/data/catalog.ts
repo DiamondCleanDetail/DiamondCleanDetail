@@ -49,6 +49,10 @@ export type ServiceCategory = {
   heroImageMobile?: string;
   /** Optional explainer image shown beside the "What It Is" copy, e.g. "/services/ceramic-coating-diagram.jpg". */
   valuePropImage?: string;
+  /** One photo per benefit card, same order as `benefits`. A missing or
+   * null entry renders a "coming soon" placeholder for that card instead
+   * of leaving it text-only. */
+  benefitImages?: (string | null)[];
   /** Drag-to-compare before/after photos shown beside the "What It Is" copy instead of valuePropImage. Null values render a "coming soon" placeholder. */
   beforeAfter?: { before: string | null; after: string | null; beforeLabel?: string; afterLabel?: string };
   /** Slideshow of application/process photos or video (e.g. applying ceramic coating, water beading on finished paint). Set to an empty array or omit to render a "coming soon" placeholder. */
@@ -65,6 +69,18 @@ export type ServiceCategory = {
   visualizer?: "tint" | "ppf";
   hasTeslaVariant?: boolean;
   isQuoteOnly?: boolean;
+  /** One short factual number per card, shown as a bold stat callout below
+   * the benefits — e.g. a real spec, not a vague marketing claim. Omit
+   * entirely for a category with no verified number to show; don't invent
+   * one just to fill the slot. */
+  stats?: { value: string; label: string }[];
+  /** Overrides the 3 auto-generated FAQ entries (booking/duration/mobile-
+   * service) for this category. Only needed when the generic answers don't
+   * fit — most categories should leave this unset. */
+  faqs?: { q: string; a: string }[];
+  /** Whether this service is delivered on-site at the customer's location.
+   * Defaults to true — every current category is mobile. */
+  isMobileService?: boolean;
 };
 
 export const catalog: ServiceCategory[] = [
@@ -373,6 +389,10 @@ export const catalog: ServiceCategory[] = [
     tagline: "See your shade before you commit.",
     valueProp:
       "Window tint film blocks UV rays and heat, adds privacy, and gives your vehicle a finished look. Preview each darkness level and coverage option before booking, with separate pricing for Tesla's glass and installation requirements.",
+    stats: [
+      { value: "99%+", label: "UV rays blocked, every film we install" },
+      { value: "95%", label: "Infrared heat blocked with Diamond Ceramic RX1" },
+    ],
     benefits: [
       { title: "Heat & UV rejection", description: "Tint film blocks the sun's heat and UV rays, keeping the cabin cooler and protecting interior surfaces." },
       { title: "More privacy", description: "Darker shades make it harder to see inside the vehicle when parked or driving." },
@@ -619,4 +639,44 @@ export function priceForSize(pkg: Package, size: VehicleSize): number | null {
   if (pkg.pricing.type === "fixed") return pkg.pricing.byVehicleSize[size];
   if (pkg.pricing.type === "starting-at") return pkg.pricing.amount;
   return null;
+}
+
+/** 3 short, honest FAQ entries derived from data already on the category —
+ * booking process, how long it takes, and whether it's mobile — so every
+ * page gets a useful FAQ without hand-writing (and risking fabricating)
+ * answers for each one. Pass `faqs` on the category to override any/all
+ * of these when the generic answer doesn't fit. */
+export function getFaqs(category: ServiceCategory): { q: string; a: string }[] {
+  if (category.faqs) return category.faqs;
+
+  const durations = category.packages.map((p) => p.durationMinutes).filter((d): d is number => Boolean(d));
+  const durationAnswer =
+    durations.length > 0
+      ? (() => {
+          const min = Math.min(...durations);
+          const max = Math.max(...durations);
+          const fmt = (m: number) => (m < 60 ? `${m} min` : `${(m / 60).toFixed(m % 60 === 0 ? 0 : 1)} hr`);
+          return min === max
+            ? `Most ${category.shortName.toLowerCase()} appointments run about ${fmt(min)}, depending on your vehicle.`
+            : `Most ${category.shortName.toLowerCase()} appointments run ${fmt(min)}–${fmt(max)}, depending on the package and vehicle size.`;
+        })()
+      : `Timing depends on the scope of the job — we'll confirm during your quote.`;
+
+  const mobile = category.isMobileService ?? true;
+
+  return [
+    {
+      q: `How do I book ${category.shortName}?`,
+      a: category.isQuoteOnly
+        ? `Request a quote with your vehicle details — we'll follow up to confirm price and schedule your appointment.`
+        : `Pick a package above, choose an available date and time, and pay online — no call needed.`,
+    },
+    { q: "How long does it take?", a: durationAnswer },
+    {
+      q: mobile ? "Do you come to me?" : "Where does the work happen?",
+      a: mobile
+        ? "Yes — this is mobile service. We come to your home or office anywhere in the Denver Metro Area."
+        : "This service is completed at our facility — we'll confirm details when you book.",
+    },
+  ];
 }

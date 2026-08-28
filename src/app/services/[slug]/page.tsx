@@ -2,13 +2,15 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { catalog, getCategory, priceLabel } from "@/data/catalog";
+import { catalog, getCategory, getFaqs, priceLabel } from "@/data/catalog";
 import PPFVisualizer from "@/components/PPFVisualizer";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import ProcessSlideshow from "@/components/ProcessSlideshow";
 import ServiceGallery from "@/components/ServiceGallery";
 import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
+import FaqAccordion from "@/components/FaqAccordion";
+import StatCallouts from "@/components/StatCallouts";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 export function generateStaticParams() {
@@ -104,10 +106,17 @@ export default async function ServiceCategoryPage({
           </FadeIn>
         </section>
       ) : (
-        <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16 text-center">
+        <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
           <FadeIn>
-            <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">What It Is</span>
-            <p className="text-lg sm:text-xl mt-3 leading-relaxed">{category.valueProp}</p>
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-10 items-center">
+              <div className="aspect-square w-full max-w-[380px] mx-auto rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
+                <p className="text-sm text-muted text-center px-6">Photo coming soon — {category.name}</p>
+              </div>
+              <div>
+                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">What It Is</span>
+                <p className="text-lg sm:text-xl mt-3 leading-relaxed">{category.valueProp}</p>
+              </div>
+            </div>
           </FadeIn>
         </section>
       )}
@@ -128,16 +137,38 @@ export default async function ServiceCategoryPage({
           <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Why It&apos;s Worth It</h2>
         </FadeIn>
         <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
-          {category.benefits.map((b, i) => (
-            <StaggerItem key={b.title}>
-              <div className="card-lift h-full bg-surface border border-border rounded-xl p-5">
-                <span className="chrome-text text-3xl font-black">{String(i + 1).padStart(2, "0")}</span>
-                <h3 className="font-semibold mt-3">{b.title}</h3>
-                <p className="text-sm text-muted mt-2">{b.description}</p>
-              </div>
-            </StaggerItem>
-          ))}
+          {category.benefits.map((b, i) => {
+            const image = category.benefitImages?.[i];
+            return (
+              <StaggerItem key={b.title}>
+                <div className="card-lift h-full bg-surface border border-border rounded-xl overflow-hidden">
+                  <div className="relative aspect-[4/3] bg-surface-2">
+                    {image ? (
+                      <Image src={image} alt={b.title} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <p className="text-xs text-muted text-center px-4">Photo coming soon</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <span className="chrome-text text-3xl font-black">{String(i + 1).padStart(2, "0")}</span>
+                    <h3 className="font-semibold mt-3">{b.title}</h3>
+                    <p className="text-sm text-muted mt-2">{b.description}</p>
+                  </div>
+                </div>
+              </StaggerItem>
+            );
+          })}
         </StaggerGrid>
+
+        {category.stats && (
+          <FadeIn>
+            <div className="mt-4 sm:mt-5">
+              <StatCallouts stats={category.stats} />
+            </div>
+          </FadeIn>
+        )}
       </section>
 
       {/* Visualizer, if applicable */}
@@ -258,6 +289,14 @@ export default async function ServiceCategoryPage({
           </StaggerGrid>
         </section>
       )}
+
+      {/* FAQ */}
+      <section className="mx-auto max-w-3xl px-6 pb-10 sm:pb-16">
+        <FadeIn>
+          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Common Questions</h2>
+          <FaqAccordion items={getFaqs(category)} />
+        </FadeIn>
+      </section>
 
       {/* Final CTA */}
       <section className="mx-auto max-w-4xl px-6 pb-16 sm:pb-24 text-center">

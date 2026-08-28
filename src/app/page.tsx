@@ -2,6 +2,7 @@ import Link from "next/link";
 import Hero from "@/components/Hero";
 import FadeIn from "@/components/FadeIn";
 import ServiceMosaic from "@/components/ServiceMosaic";
+import PartnerStrip from "@/components/PartnerStrip";
 import BeforeAfterGallery from "@/components/BeforeAfterGallery";
 import Testimonials from "@/components/Testimonials";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
@@ -11,6 +12,8 @@ export default function Home() {
   return (
     <div>
       <Hero />
+
+      <PartnerStrip />
 
       <section className="mx-auto max-w-6xl px-6 pt-12 sm:pt-20 pb-12 sm:pb-24">
         <FadeIn>

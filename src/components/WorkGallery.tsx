@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import Lightbox, { type LightboxSlide } from "@/components/Lightbox";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import { workItems } from "@/data/work";
@@ -21,7 +21,20 @@ export default function WorkGallery() {
     <>
       <StaggerGrid className="columns-2 lg:columns-3 gap-3 sm:gap-5">
         {workItems.map((item, i) => (
-          <StaggerItem key={item.slug} className="mb-3 sm:mb-5 break-inside-avoid">
+          <div key={item.slug} style={{ breakInside: "avoid" }}>
+            {item.brand !== workItems[i - 1]?.brand && (
+              <div
+                className="flex items-center gap-3 mb-3 sm:mb-5"
+                style={{ columnSpan: "all" } as CSSProperties}
+              >
+                <span className="h-px flex-1 bg-gradient-to-r from-transparent to-border" />
+                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted shrink-0">
+                  {item.brand}
+                </span>
+                <span className="h-px flex-1 bg-gradient-to-l from-transparent to-border" />
+              </div>
+            )}
+          <StaggerItem className="mb-3 sm:mb-5 break-inside-avoid">
             <figure className="card-lift bg-surface border border-border rounded-xl overflow-hidden">
               {item.images.length === 0 ? (
                 <div className="relative aspect-square bg-surface-2 flex items-center justify-center text-xs text-muted px-4 text-center">
@@ -92,6 +105,7 @@ export default function WorkGallery() {
               </figcaption>
             </figure>
           </StaggerItem>
+          </div>
         ))}
       </StaggerGrid>
 

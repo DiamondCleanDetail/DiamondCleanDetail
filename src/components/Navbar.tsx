@@ -8,6 +8,7 @@ import { navGroups } from "@/data/navGroups";
 import ServicesDropdown from "@/components/ServicesDropdown";
 
 const links = [
+  { href: "/about", label: "About Us" },
   { href: "/our-work", label: "Our Work" },
   { href: "/booking", label: "Book Now" },
 ];

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getCategory, priceForSize, Package, VehicleSize } from "@/data/catalog";
+import { getCategory, getFaqs, priceForSize, Package, VehicleSize } from "@/data/catalog";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
 import ServiceHero from "@/components/ServiceHero";
@@ -11,6 +11,8 @@ import TintVisualizer from "@/components/TintVisualizer";
 import TintCoverageSelector from "@/components/TintCoverageSelector";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import FadeIn from "@/components/FadeIn";
+import FaqAccordion from "@/components/FaqAccordion";
+import StatCallouts from "@/components/StatCallouts";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import ServiceGallery from "@/components/ServiceGallery";
 
@@ -128,6 +130,13 @@ export default function WindowTintingClient() {
               </StaggerItem>
             ))}
           </StaggerGrid>
+          {category.stats && (
+            <FadeIn>
+              <div className="mt-4 sm:mt-5">
+                <StatCallouts stats={category.stats} light />
+              </div>
+            </FadeIn>
+          )}
         </section>
 
         {/* How It Works */}
@@ -150,6 +159,14 @@ export default function WindowTintingClient() {
               </FadeIn>
             ))}
           </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="mx-auto max-w-3xl px-6 pb-10 sm:pb-16">
+          <FadeIn>
+            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center text-neutral-900">Common Questions</h2>
+            <FaqAccordion items={getFaqs(category)} light />
+          </FadeIn>
         </section>
 
         <section className="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
