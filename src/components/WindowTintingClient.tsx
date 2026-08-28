@@ -10,6 +10,7 @@ import ServiceHero from "@/components/ServiceHero";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintCoverageSelector from "@/components/TintCoverageSelector";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
+import TintStepSection from "@/components/TintStepSection";
 import FadeIn from "@/components/FadeIn";
 import FaqAccordion from "@/components/FaqAccordion";
 import StatCallouts from "@/components/StatCallouts";
@@ -46,13 +47,33 @@ export default function WindowTintingClient() {
         image="/services/window-tinting-hero.webp"
       />
 
+      {/* ---- Configurator: light block, one band per step ---- */}
       <div className="bg-white text-neutral-900">
-        {/* Visualizer + booking steps come first — see and configure before reading about it */}
-        <section className="w-full pt-6 sm:pt-10">
-          <TintVisualizer level={level} setLevel={setLevel} vehicleSize={vehicleSize} />
+        <section className="mx-auto max-w-3xl px-6 pt-14 sm:pt-20 pb-2 text-center">
+          <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-neutral-500">
+            Build Your Tint
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-black tracking-tight mt-3 text-balance">
+            Three steps to your <span className="chrome-text-dark">exact</span> tint.
+          </h2>
+          <p className="text-sm sm:text-base text-neutral-500 mt-4">
+            See the shade, size your vehicle, pick your film. Your price updates as you go.
+          </p>
         </section>
 
-        <section className="w-full pb-6 sm:pb-10">
+        <TintStepSection
+          step={1}
+          title="Choose Your Tint Level"
+          subtitle="Preview how each shade looks before you book."
+        >
+          <TintVisualizer level={level} setLevel={setLevel} vehicleSize={vehicleSize} />
+        </TintStepSection>
+
+        <TintStepSection
+          step={2}
+          title="Choose Your Coverage"
+          subtitle="Tell us your vehicle and how much glass you want covered."
+        >
           <TintCoverageSelector
             vehicleSize={vehicleSize}
             setVehicleSize={setVehicleSize}
@@ -63,117 +84,160 @@ export default function WindowTintingClient() {
             pkg={pkg}
             setPkg={setPkg}
           />
-        </section>
+        </TintStepSection>
 
-        <section className="w-full pb-6 sm:pb-10">
+        <TintStepSection
+          step={3}
+          title="Choose Your Film Type"
+          subtitle="Every shade above is available in each of these three films. Tap a card to see what it does."
+        >
           <TintFilmTypeSelector filmType={filmType} setFilmType={setFilmType} />
-        </section>
+        </TintStepSection>
 
-        <section className="mx-auto max-w-4xl px-6 pb-12 sm:pb-24">
-          <div className="bg-neutral-50 border-2 border-neutral-300 rounded-xl p-6 sm:p-8 text-center">
-            <p className="text-xs uppercase tracking-widest text-neutral-500">Your Selection</p>
-            <p className="text-lg font-semibold text-neutral-900 mt-2">
-              {level.label} tint &middot; {pkg.name} &middot; {filmType.name}
-            </p>
-            <p className="text-sm text-neutral-500 mt-1">
-              {isTesla ? "Tesla" : "Standard vehicle"} — from{" "}
-              <span className="font-semibold text-neutral-900">${price}</span>
-              {filmType.slug !== "diamond-smoke" && " (film upgrade priced separately — we'll confirm exact total)"}
-            </p>
-            <Link
-              href={bookingHref}
-              className="inline-block mt-5 px-6 py-2.5 rounded-lg font-semibold text-sm bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
-            >
-              Book This
-            </Link>
-          </div>
+        {/* Payoff: everything chosen above, resolved into one price */}
+        <section className="border-t-2 border-neutral-300 bg-neutral-100">
+          <div className="mx-auto max-w-4xl px-6 py-14 sm:py-24">
+            <div className="relative overflow-hidden rounded-2xl bg-neutral-900 px-6 py-10 sm:px-10 sm:py-12 text-center shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_20rem_at_50%_-20%,rgba(236,238,240,0.16),transparent_70%)]"
+              />
+              <div className="relative">
+                <p className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-white/45">
+                  Your Selection
+                </p>
+                <p className="text-2xl sm:text-4xl font-bold text-white mt-4 text-balance">
+                  {level.label} tint &middot; {pkg.name}
+                </p>
+                <p className="text-sm sm:text-base text-white/55 mt-2">
+                  {filmType.name} &middot; {isTesla ? "Tesla" : "Standard vehicle"}
+                </p>
 
-          <div className="mt-6 bg-neutral-50 border-2 border-neutral-300 rounded-xl p-5 text-sm text-neutral-500">
-            Tesla vehicles use different glass and film-application techniques.
-            The price above reflects our standard install — we&apos;ll confirm
-            with you before your appointment if Tesla glass changes that total.
-          </div>
-        </section>
+                <p className="text-[10px] uppercase tracking-[0.25em] text-white/45 mt-8">
+                  Starting From
+                </p>
+                <p className="chrome-text text-5xl sm:text-6xl font-black leading-none mt-2">
+                  ${price}
+                </p>
 
-        {/* What It Is */}
-        <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16 text-center">
-          <FadeIn>
-            <span className="text-[10px] sm:text-xs uppercase tracking-widest text-neutral-500">What It Is</span>
-            <p className="text-lg sm:text-xl mt-3 leading-relaxed">{category.valueProp}</p>
-          </FadeIn>
-        </section>
+                <Link
+                  href={bookingHref}
+                  className="chrome-btn inline-block mt-8 px-8 py-3.5 rounded-lg font-bold text-base"
+                >
+                  Book This &rarr;
+                </Link>
 
-        {/* Why It's Worth It */}
-        <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
-          <FadeIn>
-            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Why It&apos;s Worth It</h2>
-          </FadeIn>
-          <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
-            {category.benefits.map((b, i) => (
-              <StaggerItem key={b.title}>
-                <div className="h-full bg-neutral-50 border-2 border-neutral-300 rounded-xl overflow-hidden">
-                  <div className="relative aspect-[4/3] bg-neutral-200">
-                    <Image
-                      src={benefitImages[i]}
-                      alt={b.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 33vw"
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="p-5">
-                    <span className="chrome-text-dark text-3xl font-black">{String(i + 1).padStart(2, "0")}</span>
-                    <h3 className="font-semibold mt-3 text-neutral-900">{b.title}</h3>
-                    <p className="text-sm text-neutral-500 mt-2">{b.description}</p>
-                  </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerGrid>
-          {category.stats && (
-            <FadeIn>
-              <div className="mt-4 sm:mt-5">
-                <StatCallouts stats={category.stats} light />
+                {filmType.slug !== "diamond-smoke" && (
+                  <p className="text-xs text-white/45 mt-5">
+                    Film upgrade priced separately — we&apos;ll confirm your exact total.
+                  </p>
+                )}
               </div>
-            </FadeIn>
-          )}
-        </section>
+            </div>
 
-        {/* How It Works */}
-        <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
-          <FadeIn>
-            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">How It Works</h2>
-          </FadeIn>
-          <div className="space-y-4">
-            {category.process.map((step, i) => (
-              <FadeIn key={step.title} delay={i * 0.06}>
-                <div className="flex gap-4 bg-neutral-50 border-2 border-neutral-300 rounded-xl p-5">
-                  <span className="shrink-0 w-8 h-8 rounded-full bg-white border-2 border-neutral-300 flex items-center justify-center text-sm font-semibold chrome-text-dark">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-semibold text-neutral-900">{step.title}</h3>
-                    <p className="text-sm text-neutral-500 mt-1">{step.description}</p>
-                  </div>
-                </div>
-              </FadeIn>
-            ))}
+            <p className="mt-6 text-sm text-neutral-500 text-center max-w-2xl mx-auto">
+              Tesla vehicles use different glass and film-application techniques. The price above
+              reflects our standard install — we&apos;ll confirm with you before your appointment if
+              Tesla glass changes that total.
+            </p>
           </div>
-        </section>
-
-        {/* FAQ */}
-        <section className="mx-auto max-w-3xl px-6 pb-10 sm:pb-16">
-          <FadeIn>
-            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center text-neutral-900">Common Questions</h2>
-            <FaqAccordion items={getFaqs(category)} light />
-          </FadeIn>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center text-neutral-900">From Recent Jobs</h2>
-          <ServiceGallery images={category.galleryImages} light />
         </section>
       </div>
+
+      {/* Hand-off from the light configurator back into the dark page */}
+      <div aria-hidden className="h-20 sm:h-32 bg-gradient-to-b from-neutral-100 to-background" />
+
+      {/* ---- Learn more: back on dark so it reads as a separate part of the page ---- */}
+      <section className="mx-auto max-w-4xl px-6 pb-14 sm:pb-20 text-center">
+        <FadeIn>
+          <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted">
+            What It Is
+          </span>
+          <p className="text-lg sm:text-2xl mt-4 leading-relaxed text-balance">
+            {category.valueProp}
+          </p>
+        </FadeIn>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-14 sm:pb-20">
+        <FadeIn>
+          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-8 sm:mb-10 text-center">
+            Why It&apos;s <span className="chrome-text">Worth It</span>
+          </h2>
+        </FadeIn>
+        <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
+          {category.benefits.map((b, i) => (
+            <StaggerItem key={b.title}>
+              <div className="card-lift h-full bg-surface border border-border rounded-xl overflow-hidden">
+                <div className="relative aspect-[4/3] bg-surface-2">
+                  <Image
+                    src={benefitImages[i]}
+                    alt={b.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 33vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-5">
+                  <span className="chrome-text text-3xl font-black">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="font-semibold mt-3">{b.title}</h3>
+                  <p className="text-sm text-muted mt-2">{b.description}</p>
+                </div>
+              </div>
+            </StaggerItem>
+          ))}
+        </StaggerGrid>
+        {category.stats && (
+          <FadeIn>
+            <div className="mt-4 sm:mt-5">
+              <StatCallouts stats={category.stats} />
+            </div>
+          </FadeIn>
+        )}
+      </section>
+
+      <section className="mx-auto max-w-4xl px-6 pb-14 sm:pb-20">
+        <FadeIn>
+          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-8 sm:mb-10 text-center">
+            How It <span className="chrome-text">Works</span>
+          </h2>
+        </FadeIn>
+        <div className="space-y-4">
+          {category.process.map((step, i) => (
+            <FadeIn key={step.title} delay={i * 0.06}>
+              <div className="flex gap-4 bg-surface border border-border rounded-xl p-5">
+                <span className="shrink-0 w-9 h-9 rounded-full bg-surface-2 border border-border flex items-center justify-center text-sm font-bold chrome-text">
+                  {i + 1}
+                </span>
+                <div>
+                  <h3 className="font-semibold">{step.title}</h3>
+                  <p className="text-sm text-muted mt-1">{step.description}</p>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-14 sm:pb-20">
+        <FadeIn>
+          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-8 sm:mb-10 text-center">
+            Common <span className="chrome-text">Questions</span>
+          </h2>
+          <FaqAccordion items={getFaqs(category)} />
+        </FadeIn>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
+        <FadeIn>
+          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-8 sm:mb-10 text-center">
+            From Recent <span className="chrome-text">Jobs</span>
+          </h2>
+        </FadeIn>
+        <ServiceGallery images={category.galleryImages} />
+      </section>
     </div>
   );
 }

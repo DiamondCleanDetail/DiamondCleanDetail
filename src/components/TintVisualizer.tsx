@@ -19,17 +19,7 @@ export default function TintVisualizer({
   const image = level.images[size];
   return (
     <div className="relative w-full">
-      <div className="relative py-14 sm:py-20">
-        <div className="mx-auto max-w-3xl px-6 text-center mb-10">
-          <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-widest text-blue-700 bg-white border-2 border-neutral-900 rounded-full px-3 py-1">
-            Step 1
-          </span>
-          <h3 className="font-semibold text-lg sm:text-xl text-neutral-900 mt-3">Choose Your Tint Level</h3>
-          <p className="text-xs sm:text-sm text-neutral-500 mt-2">
-            Preview how each shade looks before you book.
-          </p>
-        </div>
-
+      <div className="relative">
         <div className="mx-auto max-w-6xl px-6">
           {/* Level tabs */}
           <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1">
