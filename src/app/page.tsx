@@ -7,6 +7,8 @@ import BeforeAfterGallery from "@/components/BeforeAfterGallery";
 import Testimonials from "@/components/Testimonials";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
 import DiamondDivider from "@/components/DiamondDivider";
+import SectionHeading from "@/components/SectionHeading";
+import CtaCard from "@/components/CtaCard";
 
 export default function Home() {
   return (
@@ -17,9 +19,12 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-6 pt-12 sm:pt-20 pb-12 sm:pb-24">
         <FadeIn>
-          <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-center mb-6 sm:mb-10">
-            Services We <span className="chrome-text">Offer</span>
-          </h2>
+          <SectionHeading
+            eyebrow="What We Do"
+            title="Services We"
+            accent="Offer"
+            className="mb-8 sm:mb-12"
+          />
         </FadeIn>
         <FadeIn delay={0.1}>
           <ServiceMosaic />
@@ -56,6 +61,19 @@ export default function Home() {
       <DiamondDivider />
       <Testimonials />
       <ServiceAreaMap />
+
+      <section className="mx-auto max-w-4xl px-6 pb-16 sm:pb-24">
+        <FadeIn>
+          <CtaCard
+            eyebrow="Ready When You Are"
+            title="Let's Get Your Car"
+            accent="Looking New"
+            subtitle="Compare packages, preview your options, and book online in minutes — we come to you."
+            href="/services"
+            cta="View Services →"
+          />
+        </FadeIn>
+      </section>
     </div>
   );
 }

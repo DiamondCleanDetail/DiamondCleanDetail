@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import SectionHeading from "@/components/SectionHeading";
 import { serviceArea } from "@/data/serviceArea";
 
 function PinIcon() {
@@ -48,12 +49,14 @@ export default function ServiceAreaMap() {
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-2">
-        We Serve All of {serviceArea.region}
-      </h2>
-      <p className="text-muted mb-6 sm:mb-8 text-sm">
-        Mobile detailing that comes to you, wherever you are in the metro.
-      </p>
+      <SectionHeading
+        align="left"
+        eyebrow="Where We Work"
+        title="We Serve All of"
+        accent={serviceArea.region}
+        subtitle="Mobile detailing that comes to you, wherever you are in the metro."
+        className="mb-8 sm:mb-10"
+      />
 
       <div className="grid sm:grid-cols-2 gap-6">
         <div className="bg-surface border border-border rounded-xl p-6 space-y-5">

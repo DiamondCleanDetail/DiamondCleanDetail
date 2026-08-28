@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { catalog, priceLabel } from "@/data/catalog";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
+import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -13,11 +14,15 @@ export default function ServicesPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
       <FadeIn>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Services</h1>
-        <p className="text-sm sm:text-base text-muted mb-6 sm:mb-10 max-w-2xl">
-          Every service we offer, with real packages and pricing. Pick a
-          category to compare options and book online.
-        </p>
+        <SectionHeading
+          as="h1"
+          align="left"
+          eyebrow="What We Do"
+          title="Every Service We"
+          accent="Offer"
+          subtitle="Real packages, real pricing. Pick a category to compare options and book online."
+          className="mb-8 sm:mb-12"
+        />
       </FadeIn>
 
       <StaggerGrid className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">

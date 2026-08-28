@@ -12,6 +12,8 @@ import FadeIn from "@/components/FadeIn";
 import FaqAccordion from "@/components/FaqAccordion";
 import StatCallouts from "@/components/StatCallouts";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
+import SectionHeading from "@/components/SectionHeading";
+import CtaCard from "@/components/CtaCard";
 
 export function generateStaticParams() {
   return catalog
@@ -125,7 +127,7 @@ export default async function ServiceCategoryPage({
       {category.processMedia !== undefined && (
         <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
           <FadeIn>
-            <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">See It Applied</h2>
+            <SectionHeading title="See It" accent="Applied" className="mb-8 sm:mb-10" />
             <ProcessSlideshow items={category.processMedia} />
           </FadeIn>
         </section>
@@ -134,7 +136,7 @@ export default async function ServiceCategoryPage({
       {/* Benefits */}
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Why It&apos;s Worth It</h2>
+          <SectionHeading title="Why It's" accent="Worth It" className="mb-8 sm:mb-10" />
         </FadeIn>
         <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
           {category.benefits.map((b, i) => {
@@ -183,7 +185,7 @@ export default async function ServiceCategoryPage({
       {/* Process */}
       <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">How It Works</h2>
+          <SectionHeading title="How It" accent="Works" className="mb-8 sm:mb-10" />
         </FadeIn>
         <div className="space-y-4">
           {category.process.map((step, i) => (
@@ -206,7 +208,7 @@ export default async function ServiceCategoryPage({
       {category.visualizer !== "ppf" && (
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Packages &amp; Pricing</h2>
+          <SectionHeading title="Packages &amp;" accent="Pricing" className="mb-8 sm:mb-10" />
         </FadeIn>
         <div className="grid gap-4 sm:gap-5">
           {category.packages.map((pkg, i) => (
@@ -269,7 +271,7 @@ export default async function ServiceCategoryPage({
       {related && related.length > 0 && (
         <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
           <FadeIn>
-            <h2 className="text-xl sm:text-2xl font-semibold mb-6">Related Services</h2>
+            <SectionHeading title="Related" accent="Services" align="left" className="mb-8 sm:mb-10" />
           </FadeIn>
           <StaggerGrid className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {related.map((r) => (
@@ -293,7 +295,7 @@ export default async function ServiceCategoryPage({
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Common Questions</h2>
+          <SectionHeading title="Common" accent="Questions" className="mb-8 sm:mb-10" />
           <FaqAccordion items={getFaqs(category)} />
         </FadeIn>
       </section>
@@ -301,25 +303,21 @@ export default async function ServiceCategoryPage({
       {/* Final CTA */}
       <section className="mx-auto max-w-4xl px-6 pb-16 sm:pb-24 text-center">
         <FadeIn>
-          <div className="bg-surface border border-border rounded-2xl p-8 sm:p-10">
-            <h2 className="text-xl sm:text-2xl font-bold">Ready to Book {category.shortName}?</h2>
-            <p className="text-sm sm:text-base text-muted mt-2">
-              Pick your package, choose a time, and pay online in minutes.
-            </p>
-            <Link
-              href={`/booking?service=${category.slug}`}
-              className="chrome-btn inline-block mt-5 px-6 py-3 rounded-lg font-semibold"
-            >
-              Book Now
-            </Link>
-          </div>
+          <CtaCard
+            eyebrow="Ready When You Are"
+            title="Book Your"
+            accent={category.shortName}
+            subtitle="Pick your package, choose a time, and pay online in minutes."
+            href={`/booking?service=${category.slug}`}
+            cta="Book Now →"
+          />
         </FadeIn>
       </section>
 
       {/* Gallery — past jobs of this service type */}
       <section className="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">From Recent Jobs</h2>
+          <SectionHeading title="From Recent" accent="Jobs" className="mb-8 sm:mb-10" />
           <ServiceGallery images={category.galleryImages} />
         </FadeIn>
       </section>

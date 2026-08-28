@@ -1,5 +1,6 @@
 import { testimonials } from "@/data/testimonials";
 import FadeIn from "@/components/FadeIn";
+import SectionHeading from "@/components/SectionHeading";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 function Stars({ rating }: { rating: number }) {
@@ -17,10 +18,7 @@ export default function Testimonials() {
       <FadeIn>
         <div className="flex items-baseline justify-between gap-3 mb-4 sm:mb-6">
           <div>
-            <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
-              Certified Brilliance
-            </span>
-            <h2 className="text-xl sm:text-2xl font-semibold mt-1">Brilliant Reviews</h2>
+            <SectionHeading align="left" eyebrow="Certified Brilliance" title="Brilliant" accent="Reviews" />
           </div>
           <span className="text-xs sm:text-sm text-muted shrink-0">From Google</span>
         </div>

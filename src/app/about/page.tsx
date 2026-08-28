@@ -1,7 +1,8 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
+import SectionHeading from "@/components/SectionHeading";
+import CtaCard from "@/components/CtaCard";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -28,12 +29,13 @@ export default function AboutPage() {
     <div>
       <section className="mx-auto max-w-4xl px-6 pt-10 sm:pt-16 pb-10 sm:pb-16 text-center">
         <FadeIn>
-          <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">About Us</span>
-          <h1 className="text-3xl sm:text-4xl font-bold mt-3">Built Around the Details</h1>
-          <p className="text-muted mt-4 max-w-xl mx-auto">
-            Diamond Clean Detail brings premium mobile detailing, protection, and tinting to the Denver Metro
-            Area — built to feel like a dealership-level experience, wherever your car is parked.
-          </p>
+          <SectionHeading
+            as="h1"
+            eyebrow="About Us"
+            title="Built Around the"
+            accent="Details"
+            subtitle="Diamond Clean Detail brings premium mobile detailing, protection, and tinting to the Denver Metro Area — built to feel like a dealership-level experience, wherever your car is parked."
+          />
         </FadeIn>
       </section>
 
@@ -58,7 +60,7 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">What We Stand For</h2>
+          <SectionHeading title="What We" accent="Stand For" className="mb-8 sm:mb-10" />
         </FadeIn>
         <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
           {values.map((v, i) => (
@@ -93,15 +95,14 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-4xl px-6 pb-16 sm:pb-24 text-center">
         <FadeIn>
-          <div className="bg-surface border border-border rounded-2xl p-8 sm:p-10">
-            <h2 className="text-xl sm:text-2xl font-bold">See What We Can Do for Your Car</h2>
-            <p className="text-sm sm:text-base text-muted mt-2">
-              Compare packages, preview your options, and book online in minutes.
-            </p>
-            <Link href="/services" className="chrome-btn inline-block mt-5 px-6 py-3 rounded-lg font-semibold">
-              View Services
-            </Link>
-          </div>
+          <CtaCard
+            eyebrow="Ready When You Are"
+            title="See What We Can Do for"
+            accent="Your Car"
+            subtitle="Compare packages, preview your options, and book online in minutes."
+            href="/services"
+            cta="View Services →"
+          />
         </FadeIn>
       </section>
     </div>

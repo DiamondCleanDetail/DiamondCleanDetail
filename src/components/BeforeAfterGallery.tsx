@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import FadeIn from "@/components/FadeIn";
+import SectionHeading from "@/components/SectionHeading";
 import Lightbox, { type LightboxSlide } from "@/components/Lightbox";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import { beforeAfterHomePairs } from "@/data/beforeAfterHome";
@@ -63,10 +64,13 @@ export default function BeforeAfterGallery() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
       <FadeIn>
-        <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
-          The Diamond Standard
-        </span>
-        <h2 className="text-xl sm:text-2xl font-semibold mt-1 mb-6 sm:mb-8">Before &amp; After</h2>
+        <SectionHeading
+          align="left"
+          eyebrow="The Diamond Standard"
+          title="Before &"
+          accent="After"
+          className="mb-8 sm:mb-10"
+        />
       </FadeIn>
       {/* Mobile: swipeable row with shorter tiles so the pairs don't take
           several screens of scroll. sm+: normal grid. */}

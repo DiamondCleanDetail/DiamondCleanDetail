@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import FadeIn from "@/components/FadeIn";
 import WorkGallery from "@/components/WorkGallery";
+import SectionHeading from "@/components/SectionHeading";
+import CtaCard from "@/components/CtaCard";
 
 export const metadata: Metadata = {
   title: "Our Work",
@@ -11,14 +13,31 @@ export default function OurWorkPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
       <FadeIn>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Our Work</h1>
-        <p className="text-sm sm:text-base text-muted mb-6 sm:mb-10">
-          A look at recent jobs, straight from real customers. Tap any photo to
-          see it full size.
-        </p>
+        <SectionHeading
+          as="h1"
+          align="left"
+          eyebrow="Portfolio"
+          title="Our"
+          accent="Work"
+          subtitle="A look at recent jobs, straight from real customers. Tap any photo to see it full size."
+          className="mb-8 sm:mb-12"
+        />
       </FadeIn>
 
       <WorkGallery />
+
+      <div className="mt-16 sm:mt-24">
+        <FadeIn>
+          <CtaCard
+            eyebrow="Ready When You Are"
+            title="Want Yours to Look"
+            accent="Like This?"
+            subtitle="Compare packages, preview your options, and book online in minutes."
+            href="/services"
+            cta="View Services →"
+          />
+        </FadeIn>
+      </div>
     </div>
   );
 }

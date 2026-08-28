@@ -7,6 +7,8 @@ import { specialtyVehicleBreakdown } from "@/data/specialtyVehicles";
 import ServiceGallery from "@/components/ServiceGallery";
 import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
+import SectionHeading from "@/components/SectionHeading";
+import CtaCard from "@/components/CtaCard";
 import FaqAccordion from "@/components/FaqAccordion";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
@@ -44,7 +46,7 @@ export default function SpecialtyVehiclesPage() {
       {/* Why It's Worth It */}
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Why It&apos;s Worth It</h2>
+          <SectionHeading title="Why It's" accent="Worth It" className="mb-8 sm:mb-10" />
         </FadeIn>
         <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
           {category.benefits.map((b, i) => (
@@ -62,17 +64,13 @@ export default function SpecialtyVehiclesPage() {
       {/* Per-vehicle-type breakdown — the core of this page */}
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <span className="block text-center text-[10px] sm:text-xs uppercase tracking-widest text-muted">
-            What's Involved
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mt-2 mb-4">
-            Built for Every Vehicle Type
-          </h2>
-          <p className="text-sm sm:text-base text-muted text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-            RVs, boats, and aircraft each demand a different process, different
-            products, and a different amount of time. Here&apos;s exactly what
-            goes into each one.
-          </p>
+          <SectionHeading
+            eyebrow="What's Involved"
+            title="Built for Every"
+            accent="Vehicle Type"
+            subtitle="RVs, boats, and aircraft each demand a different process, different products, and a different amount of time. Here's exactly what goes into each one."
+            className="mb-10 sm:mb-14"
+          />
         </FadeIn>
 
         <div className="space-y-16 sm:space-y-24">
@@ -126,7 +124,7 @@ export default function SpecialtyVehiclesPage() {
       {/* How It Works */}
       <section className="mx-auto max-w-4xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">How It Works</h2>
+          <SectionHeading title="How It" accent="Works" className="mb-8 sm:mb-10" />
         </FadeIn>
         <div className="space-y-4">
           {category.process.map((step, i) => (
@@ -148,7 +146,7 @@ export default function SpecialtyVehiclesPage() {
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">Common Questions</h2>
+          <SectionHeading title="Common" accent="Questions" className="mb-8 sm:mb-10" />
           <FaqAccordion items={getFaqs(category)} />
         </FadeIn>
       </section>
@@ -156,25 +154,21 @@ export default function SpecialtyVehiclesPage() {
       {/* Final CTA */}
       <section className="mx-auto max-w-4xl px-6 pb-16 sm:pb-24 text-center">
         <FadeIn>
-          <div className="bg-surface border border-border rounded-2xl p-8 sm:p-10">
-            <h2 className="text-xl sm:text-2xl font-bold">Ready to Book {category.shortName}?</h2>
-            <p className="text-sm sm:text-base text-muted mt-2">
-              Every job is quoted individually — tell us what you&apos;ve got and we&apos;ll take it from there.
-            </p>
-            <Link
-              href={`/booking?service=${category.slug}`}
-              className="chrome-btn inline-block mt-5 px-6 py-3 rounded-lg font-semibold"
-            >
-              Request a Quote
-            </Link>
-          </div>
+          <CtaCard
+            eyebrow="Ready When You Are"
+            title="Book Your"
+            accent={category.shortName}
+            subtitle="Every job is quoted individually — tell us what you've got and we'll take it from there."
+            href={`/booking?service=${category.slug}`}
+            cta="Request a Quote →"
+          />
         </FadeIn>
       </section>
 
       {/* Gallery — past jobs of this service type */}
       <section className="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
         <FadeIn>
-          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">From Recent Jobs</h2>
+          <SectionHeading title="From Recent" accent="Jobs" className="mb-8 sm:mb-10" />
           <ServiceGallery images={category.galleryImages} />
         </FadeIn>
       </section>

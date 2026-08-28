@@ -16,6 +16,7 @@ import FaqAccordion from "@/components/FaqAccordion";
 import StatCallouts from "@/components/StatCallouts";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import ServiceGallery from "@/components/ServiceGallery";
+import SectionHeading from "@/components/SectionHeading";
 
 const category = getCategory("window-tinting")!;
 
@@ -161,9 +162,7 @@ export default function WindowTintingClient() {
 
       <section className="mx-auto max-w-6xl px-6 pb-14 sm:pb-20">
         <FadeIn>
-          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-8 sm:mb-10 text-center">
-            Why It&apos;s <span className="chrome-text">Worth It</span>
-          </h2>
+          <SectionHeading title="Why It's" accent="Worth It" className="mb-8 sm:mb-10" />
         </FadeIn>
         <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
           {category.benefits.map((b, i) => (
@@ -200,9 +199,7 @@ export default function WindowTintingClient() {
 
       <section className="mx-auto max-w-4xl px-6 pb-14 sm:pb-20">
         <FadeIn>
-          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-8 sm:mb-10 text-center">
-            How It <span className="chrome-text">Works</span>
-          </h2>
+          <SectionHeading title="How It" accent="Works" className="mb-8 sm:mb-10" />
         </FadeIn>
         <div className="space-y-4">
           {category.process.map((step, i) => (
@@ -223,18 +220,14 @@ export default function WindowTintingClient() {
 
       <section className="mx-auto max-w-3xl px-6 pb-14 sm:pb-20">
         <FadeIn>
-          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-8 sm:mb-10 text-center">
-            Common <span className="chrome-text">Questions</span>
-          </h2>
+          <SectionHeading title="Common" accent="Questions" className="mb-8 sm:mb-10" />
           <FaqAccordion items={getFaqs(category)} />
         </FadeIn>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-16 sm:pb-24">
         <FadeIn>
-          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-8 sm:mb-10 text-center">
-            From Recent <span className="chrome-text">Jobs</span>
-          </h2>
+          <SectionHeading title="From Recent" accent="Jobs" className="mb-8 sm:mb-10" />
         </FadeIn>
         <ServiceGallery images={category.galleryImages} />
       </section>
