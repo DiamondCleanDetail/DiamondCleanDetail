@@ -252,15 +252,18 @@ export default async function ServiceCategoryPage({
               : "grid gap-4 sm:gap-5"
           }
         >
+          {/* Wrapper is a flex column, not plain h-full: it may also hold a
+              group heading ("Glass Coating"), and an h-full card inside it
+              overflowed past the wrapper and collided with that heading. */}
           {category.packages.map((pkg, i) => (
-            <div key={pkg.slug} className="h-full">
+            <div key={pkg.slug} className="h-full flex flex-col">
               {pkg.group && pkg.group !== category.packages[i - 1]?.group && (
                 <h3 className="text-sm font-semibold uppercase tracking-widest text-muted mb-3 mt-2 first:mt-0">
                   {pkg.group}
                 </h3>
               )}
             <div
-              className={`card-lift relative h-full flex flex-col bg-surface border rounded-xl p-5 sm:p-6 ${
+              className={`card-lift relative flex-1 flex flex-col bg-surface border rounded-xl p-5 sm:p-6 ${
                 pkg.featured ? "border-accent" : "border-border"
               }`}
             >
@@ -319,11 +322,12 @@ export default async function ServiceCategoryPage({
       </section>
       )}
 
-      <DiamondDivider />
-
-      {/* Related services */}
+      {/* Related services — divider lives inside the conditional so a category
+          with no related services doesn't render two dividers back to back. */}
       {related && related.length > 0 && (
-        <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
+        <>
+          <DiamondDivider />
+          <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
           <FadeIn>
             <SectionHeading title="Related" accent="Services" align="left" className="mb-8 sm:mb-10" />
           </FadeIn>
@@ -342,8 +346,9 @@ export default async function ServiceCategoryPage({
                 </Link>
               </StaggerItem>
             ))}
-          </StaggerGrid>
-        </section>
+            </StaggerGrid>
+          </section>
+        </>
       )}
 
       <DiamondDivider />
