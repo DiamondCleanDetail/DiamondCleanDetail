@@ -21,12 +21,13 @@ export default function Testimonials() {
             <SectionHeading align="left" eyebrow="Certified Brilliance" title="Brilliant" accent="Reviews" />
           </div>
           <div className="shrink-0 text-right">
-            <p className="flex items-baseline justify-end gap-2">
+            {/* div, not p — Stars renders a div, which is invalid inside a p. */}
+            <div className="flex items-baseline justify-end gap-2">
               <span className="chrome-text text-3xl sm:text-4xl font-black leading-none tabular-nums">
                 {reviewsAverage.toFixed(1)}
               </span>
               <Stars rating={Math.round(reviewsAverage)} />
-            </p>
+            </div>
             <p className="text-xs text-muted mt-1">
               {reviewsCount} Google review{reviewsCount === 1 ? "" : "s"}
             </p>
