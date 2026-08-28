@@ -103,7 +103,7 @@ export default function WindowTintingClient() {
           step={4}
           totalSteps={4}
           title="Choose Your Film Type"
-          subtitle="Every shade above is available in each of these three films. Tap a card to see what it does."
+          subtitle="Every shade above is available in each of these three films. Tap a card to choose yours."
         >
           <TintFilmTypeSelector filmType={filmType} setFilmType={setFilmType} />
         </TintStepSection>
