@@ -15,6 +15,7 @@ import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
 import AddOnSelector from "@/components/AddOnSelector";
+import PackagePrices from "@/components/PackagePrices";
 import DiamondDivider from "@/components/DiamondDivider";
 
 export function generateStaticParams() {
@@ -43,6 +44,8 @@ export default async function ServiceCategoryPage({
   if (slug === "window-tinting") redirect("/window-tinting");
   const category = getCategory(slug);
   if (!category) notFound();
+
+  const hasGroupedPackages = category.packages.some((p) => Boolean(p.group));
 
   const related = category.relatedSlugs
     ?.map((s) => getCategory(s))
@@ -232,16 +235,31 @@ export default async function ServiceCategoryPage({
         <FadeIn>
           <SectionHeading title="Packages &amp;" accent="Pricing" className="mb-8 sm:mb-10" />
         </FadeIn>
-        <div className="grid gap-4 sm:gap-5">
+        {/* Tiers sit side by side so they read as a comparison. Grouped sets
+            (e.g. ceramic's wheel/glass coatings) stay stacked, since their
+            subheadings only make sense in a single column. */}
+        <div
+          className={
+            !hasGroupedPackages && category.packages.length <= 3
+              ? `grid gap-4 sm:gap-5 items-stretch ${
+                  category.packages.length === 3
+                    ? "md:grid-cols-3"
+                    : category.packages.length === 2
+                      ? "sm:grid-cols-2"
+                      : ""
+                }`
+              : "grid gap-4 sm:gap-5"
+          }
+        >
           {category.packages.map((pkg, i) => (
-            <div key={pkg.slug}>
+            <div key={pkg.slug} className="h-full">
               {pkg.group && pkg.group !== category.packages[i - 1]?.group && (
                 <h3 className="text-sm font-semibold uppercase tracking-widest text-muted mb-3 mt-2 first:mt-0">
                   {pkg.group}
                 </h3>
               )}
             <div
-              className={`relative bg-surface border rounded-xl p-5 sm:p-6 ${
+              className={`card-lift relative h-full flex flex-col bg-surface border rounded-xl p-5 sm:p-6 ${
                 pkg.featured ? "border-accent" : "border-border"
               }`}
             >
@@ -252,7 +270,7 @@ export default async function ServiceCategoryPage({
               )}
               {/* Stacked top-to-bottom: details, then price and CTA, so the card
                   reads as one column instead of splitting left/right. */}
-              <div className="flex flex-col">
+              <div className="flex flex-col flex-1">
                 <h3 className="text-lg font-semibold">{pkg.name}</h3>
                 <p className="text-sm text-muted mt-1">{pkg.tagline}</p>
                 <ul className="mt-3 space-y-1">
@@ -271,15 +289,8 @@ export default async function ServiceCategoryPage({
                   </p>
                 )}
 
-                <div className="mt-5 pt-5 border-t border-border flex flex-col gap-3">
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.25em] text-muted">
-                      {pkg.pricing.type === "quote" ? "Pricing" : "Starting From"}
-                    </p>
-                    <p className="font-bold chrome-text text-3xl leading-tight mt-1">
-                      {priceLabel(pkg, "sedan")}
-                    </p>
-                  </div>
+                <div className="mt-auto pt-5 border-t border-border flex flex-col gap-3">
+                  <PackagePrices pkg={pkg} />
                   <Link
                     href={`/booking?service=${category.slug}&package=${pkg.slug}`}
                     className="chrome-btn w-full text-center px-5 py-3 rounded-lg font-bold"

@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCategory, getFaqs, priceLabel } from "@/data/catalog";
+import { getCategory, getFaqs } from "@/data/catalog";
 import ServiceHero from "@/components/ServiceHero";
 import ServiceGallery from "@/components/ServiceGallery";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
@@ -12,6 +12,7 @@ import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
 import MembershipCard from "@/components/MembershipCard";
 import MoreServices from "@/components/MoreServices";
+import PackagePrices from "@/components/PackagePrices";
 import DiamondDivider from "@/components/DiamondDivider";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
@@ -50,7 +51,7 @@ export default function MobileDetailingPage() {
             eyebrow="Book a Detail"
             title="Pick Your"
             accent="Package"
-            subtitle="Real pricing for a sedan — larger vehicles priced at checkout. Pay online, no call needed."
+            subtitle="Every price below is the real price for your vehicle size. Pay online, no call needed."
             className="mb-8 sm:mb-12"
           />
         </FadeIn>
@@ -79,10 +80,7 @@ export default function MobileDetailingPage() {
                     ))}
                   </ul>
                   <div className="mt-6 pt-5 border-t border-border">
-                    <p className="text-[10px] uppercase tracking-[0.25em] text-muted">Starting From</p>
-                    <p className="chrome-text text-4xl font-black leading-tight mt-1">
-                      {priceLabel(pkg, "sedan").replace(/^From /, "")}
-                    </p>
+                    <PackagePrices pkg={pkg} />
                     {pkg.durationMinutes && (
                       <p className="text-xs text-muted mt-2">
                         ~{Math.round(pkg.durationMinutes / 60)} hr
