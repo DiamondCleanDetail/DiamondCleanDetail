@@ -80,7 +80,7 @@ export default function PPFVisualizer({
 
         {/* Content */}
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[3fr_2fr] gap-8 sm:gap-10 items-start">
-          <div className="relative aspect-[1438/703] w-full">
+          <div className="relative aspect-[1412/678] w-full">
             {image ? (
               <div className="absolute inset-0">
                 <Image
