@@ -124,6 +124,14 @@ export default function BookingWizard({
 
   const hasResumedRef = useRef(false);
 
+  // Scroll back to the top of the wizard whenever the step changes — on
+  // mobile, a long step otherwise leaves the next one opening mid-scroll,
+  // which reads as "nothing happened". Skipped on first render so landing
+  // on /booking doesn't yank the page. scroll-mt on the root keeps the top
+  // clear of the sticky navbar.
+  const wizardTopRef = useRef<HTMLDivElement>(null);
+  const hasRenderedRef = useRef(false);
+
   // Resume an in-progress booking (e.g. after canceling out of Stripe or an
   // accidental reload) once mounted on the client. Any saved draft wins over
   // a fresh URL's pre-selection — it reflects more progress than a bare link
@@ -331,8 +339,16 @@ export default function BookingWizard({
 
   const phaseIndex = phaseOrder.indexOf(phase);
 
+  useEffect(() => {
+    if (!hasRenderedRef.current) {
+      hasRenderedRef.current = true;
+      return;
+    }
+    wizardTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [phase, configureIndex]);
+
   return (
-    <div>
+    <div ref={wizardTopRef} className="scroll-mt-24">
       {/* Progress — compact on mobile, full stepper from sm up */}
       <div className="sm:hidden mb-6">
         <div className="flex items-baseline justify-between mb-2">
@@ -665,6 +681,17 @@ export default function BookingWizard({
                       {r.isTesla ? " · Tesla" : ""}
                     </p>
                   )}
+                  {/* Add-ons are part of the charge, so they must be itemized
+                      here — otherwise the listed prices don't sum to the total. */}
+                  {r.addOns.length > 0 && (
+                    <ul className="mt-1 space-y-0.5">
+                      {r.addOns.map((a) => (
+                        <li key={a.slug} className="text-muted text-xs">
+                          + {a.name} · ${a.price}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <span className="sm:text-right shrink-0">
                   {r.pkg.pricing.type === "quote" ? "Priced after assessment" : `$${priceForSize(r.pkg, vehicleSize)}`}
@@ -709,7 +736,7 @@ export default function BookingWizard({
             </div>
           ) : (
             <div className="rounded-lg border border-dashed border-border p-4 text-xs text-muted">
-              You&apos;ll be taken to Stripe&apos;s secure checkout to complete payment (test mode).
+              You&apos;ll be taken to Stripe&apos;s secure checkout to complete payment.
               {hasQuoteItem && " Quote-only services above won't be charged."}
             </div>
           )}
