@@ -2,27 +2,16 @@
 
 import { motion } from "framer-motion";
 import { getCategory, vehicleSizeLabels, VehicleSize, priceForSize, Package } from "@/data/catalog";
-import VehiclePicker from "@/components/VehiclePicker";
 import WindshieldTintPreview from "@/components/WindshieldTintPreview";
 
 const category = getCategory("window-tinting")!;
 
 export default function TintCoverageSelector({
   vehicleSize,
-  setVehicleSize,
-  vehicleInfo,
-  setVehicleInfo,
-  isTesla,
-  setIsTesla,
   pkg,
   setPkg,
 }: {
   vehicleSize: VehicleSize;
-  setVehicleSize: (v: VehicleSize) => void;
-  vehicleInfo: string;
-  setVehicleInfo: (v: string) => void;
-  isTesla: boolean;
-  setIsTesla: (v: boolean) => void;
   pkg: Package;
   setPkg: (p: Package) => void;
 }) {
@@ -31,35 +20,7 @@ export default function TintCoverageSelector({
   return (
     <div className="w-full">
       <div className="mx-auto max-w-6xl px-6">
-        {/* Vehicle picker — auto-detects Sedan/SUV/Truck pricing from year/make/model
-            so nobody has to guess which bucket their car falls into. */}
-        <p className="text-xs text-neutral-500 mb-2">Your Vehicle</p>
-        <div className="mb-6 bg-neutral-50 border-2 border-neutral-300 rounded-xl p-5">
-          <VehiclePicker
-            vehicleSize={vehicleSize}
-            setVehicleSize={setVehicleSize}
-            vehicleInfo={vehicleInfo}
-            setVehicleInfo={setVehicleInfo}
-            light
-          />
-          <label className="mt-4 flex items-center gap-2.5 text-sm text-neutral-700 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={isTesla}
-              onChange={(e) => setIsTesla(e.target.checked)}
-              className="h-4 w-4 rounded border-2 border-neutral-300 accent-neutral-900"
-            />
-            This is a Tesla
-          </label>
-          {isTesla && (
-            <p className="mt-2 text-xs text-neutral-500">
-              Tesla glass uses a different installation process — we&apos;ll confirm exact pricing before your appointment.
-            </p>
-          )}
-        </div>
-
         {/* Coverage package tabs */}
-        <p className="text-xs text-neutral-500 mb-2">Coverage</p>
         <div className="relative flex w-full rounded-full border-2 border-neutral-300 bg-neutral-100 p-1">
           {category.packages.map((p) => {
             const isActive = pkg.slug === p.slug;

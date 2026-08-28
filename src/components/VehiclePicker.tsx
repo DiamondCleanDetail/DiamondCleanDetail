@@ -23,12 +23,20 @@ export default function VehiclePicker({
   const [model, setModel] = useState("");
   const [manual, setManual] = useState(false);
 
+  // Native select arrows render inconsistently across browsers/OS themes, so the
+  // control is stripped and given a chevron that matches the surrounding theme.
+  const chevron = (hex: string) =>
+    `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23${hex}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`;
+  const selectStyle = {
+    backgroundImage: chevron(light ? "737373" : "9a9ca2"),
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "right 0.75rem center",
+    backgroundSize: "1rem",
+  } as const;
+
   const selectClass = light
-    ? "w-full bg-white border-2 border-neutral-300 rounded-lg px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-500 transition-colors"
-    : "w-full bg-surface-2 border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-accent transition-colors";
-  const labelClass = light
-    ? "block text-xs uppercase tracking-widest text-neutral-500 mb-1.5"
-    : "block text-xs uppercase tracking-widest text-muted mb-1.5";
+    ? "w-full appearance-none bg-white border border-neutral-300 rounded-lg pl-3 pr-10 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-neutral-900 transition-colors"
+    : "w-full appearance-none bg-surface-2 border border-border rounded-lg pl-3 pr-10 py-2.5 text-sm focus:outline-none focus:border-accent transition-colors";
   const linkClass = light
     ? "text-xs text-neutral-500 hover:text-neutral-900 transition-colors underline underline-offset-4"
     : "text-xs text-muted hover:text-foreground transition-colors underline underline-offset-4";
@@ -105,45 +113,51 @@ export default function VehiclePicker({
 
   return (
     <div className="space-y-4">
+      {/* No visible labels — each select's placeholder already names it. */}
       <div className="grid sm:grid-cols-3 gap-3">
-        <div>
-          <label className={labelClass}>Year</label>
-          <select value={year} onChange={(e) => handleYearChange(e.target.value)} className={selectClass}>
-            <option value="">Year</option>
-            {vehicleYears.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={labelClass}>Make</label>
-          <select value={make} onChange={(e) => handleMakeChange(e.target.value)} className={selectClass}>
-            <option value="">Make</option>
-            {vehicleMakes.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={labelClass}>Model</label>
-          <select
-            value={model}
-            onChange={(e) => handleModelChange(e.target.value)}
-            disabled={!make}
-            className={selectClass + " disabled:opacity-50"}
-          >
-            <option value="">{make ? "Model" : "Choose a make first"}</option>
-            {models.map((m) => (
-              <option key={m.name} value={m.name}>
-                {m.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <select
+          aria-label="Year"
+          value={year}
+          onChange={(e) => handleYearChange(e.target.value)}
+          className={selectClass}
+          style={selectStyle}
+        >
+          <option value="">Year</option>
+          {vehicleYears.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+        <select
+          aria-label="Make"
+          value={make}
+          onChange={(e) => handleMakeChange(e.target.value)}
+          className={selectClass}
+          style={selectStyle}
+        >
+          <option value="">Make</option>
+          {vehicleMakes.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
+        </select>
+        <select
+          aria-label="Model"
+          value={model}
+          onChange={(e) => handleModelChange(e.target.value)}
+          disabled={!make}
+          className={selectClass + " disabled:opacity-50"}
+          style={selectStyle}
+        >
+          <option value="">{make ? "Model" : "Choose a make first"}</option>
+          {models.map((m) => (
+            <option key={m.name} value={m.name}>
+              {m.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {detectedCategory && (

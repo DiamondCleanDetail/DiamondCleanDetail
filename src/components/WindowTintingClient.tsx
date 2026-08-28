@@ -9,6 +9,7 @@ import { filmTypes } from "@/data/filmTypes";
 import ServiceHero from "@/components/ServiceHero";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintCoverageSelector from "@/components/TintCoverageSelector";
+import TintVehicleSelector from "@/components/TintVehicleSelector";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import TintStepSection from "@/components/TintStepSection";
 import FadeIn from "@/components/FadeIn";
@@ -56,15 +57,32 @@ export default function WindowTintingClient() {
             Build Your Tint
           </span>
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight mt-3 text-balance">
-            Three steps to your <span className="chrome-text-dark">exact</span> tint.
+            Four steps to your <span className="chrome-text-dark">exact</span> tint.
           </h2>
           <p className="text-sm sm:text-base text-neutral-500 mt-4">
-            See the shade, size your vehicle, pick your film. Your price updates as you go.
+            Your vehicle, your shade, your coverage, your film. The price updates as you go.
           </p>
         </section>
 
         <TintStepSection
           step={1}
+          totalSteps={4}
+          title="Tell Us Your Vehicle"
+          subtitle="We use it to price your tint and show the right preview."
+        >
+          <TintVehicleSelector
+            vehicleSize={vehicleSize}
+            setVehicleSize={setVehicleSize}
+            vehicleInfo={vehicleInfo}
+            setVehicleInfo={setVehicleInfo}
+            isTesla={isTesla}
+            setIsTesla={setIsTesla}
+          />
+        </TintStepSection>
+
+        <TintStepSection
+          step={2}
+          totalSteps={4}
           title="Choose Your Tint Level"
           subtitle="Preview how each shade looks before you book."
         >
@@ -72,24 +90,17 @@ export default function WindowTintingClient() {
         </TintStepSection>
 
         <TintStepSection
-          step={2}
+          step={3}
+          totalSteps={4}
           title="Choose Your Coverage"
-          subtitle="Tell us your vehicle and how much glass you want covered."
+          subtitle="Pick how much glass you want covered."
         >
-          <TintCoverageSelector
-            vehicleSize={vehicleSize}
-            setVehicleSize={setVehicleSize}
-            vehicleInfo={vehicleInfo}
-            setVehicleInfo={setVehicleInfo}
-            isTesla={isTesla}
-            setIsTesla={setIsTesla}
-            pkg={pkg}
-            setPkg={setPkg}
-          />
+          <TintCoverageSelector vehicleSize={vehicleSize} pkg={pkg} setPkg={setPkg} />
         </TintStepSection>
 
         <TintStepSection
-          step={3}
+          step={4}
+          totalSteps={4}
           title="Choose Your Film Type"
           subtitle="Every shade above is available in each of these three films. Tap a card to see what it does."
         >
