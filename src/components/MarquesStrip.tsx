@@ -11,24 +11,54 @@ const marques = Array.from(new Set(workItems.map((w) => w.brand))).filter(
   (b) => !excluded.has(b)
 );
 
+/** Keeps the scroll speed constant as marques are added, rather than the lap
+ * time being fixed and the strip getting faster with every new one. */
+const SECONDS_PER_MARQUE = 3.5;
+
+function MarqueeCopy({ duplicate = false }: { duplicate?: boolean }) {
+  return (
+    <ul
+      // The second copy exists only to make the loop seamless, so it is hidden
+      // from assistive tech — otherwise the whole list is announced twice.
+      aria-hidden={duplicate || undefined}
+      className={`flex shrink-0 items-center gap-x-10 pr-10 sm:gap-x-16 sm:pr-16 ${
+        duplicate ? "marquee-copy-duplicate" : ""
+      }`}
+    >
+      {marques.map((m) => (
+        <li
+          key={m}
+          className="whitespace-nowrap text-sm sm:text-base font-semibold uppercase tracking-[0.15em] text-muted/70"
+        >
+          {m}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function MarquesStrip() {
   if (marques.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
+    <section className="pb-10 sm:pb-16">
       <FadeIn>
-        <p className="text-center text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted mb-6">
-          Trusted With
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 sm:gap-x-10">
-          {marques.map((m) => (
-            <span
-              key={m}
-              className="text-sm sm:text-base font-semibold uppercase tracking-[0.15em] text-muted/70 transition-colors hover:text-foreground"
-            >
-              {m}
-            </span>
-          ))}
+        <div className="mx-auto max-w-6xl px-6">
+          <p className="text-center text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted mb-6">
+            Trusted With
+          </p>
+        </div>
+        {/* Deliberately outside the page's max-width and padding: the strip
+            runs off both edges, with the mask in globals.css fading it out
+            rather than ending on a hard cut. */}
+        <div
+          className="marquee-viewport"
+          style={{ ["--marquee-duration" as string]: `${marques.length * SECONDS_PER_MARQUE}s` }}
+        >
+          <div className="marquee-track">
+            <MarqueeCopy />
+            <MarqueeCopy duplicate />
+          </div>
         </div>
       </FadeIn>
     </section>

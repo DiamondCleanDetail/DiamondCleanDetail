@@ -189,3 +189,51 @@ body::after {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Continuous brand marquee.
+   The track holds two identical copies of the list and shifts by exactly half
+   its own width, so the second copy arrives precisely where the first began
+   and the loop has no visible seam. Each copy carries its own trailing gap,
+   which is what makes "half" exact — put the gap on the track instead and the
+   halfway point lands half a gap out, which shows up as a stutter every lap. */
+.marquee-viewport {
+  /* Also the reason this can't scroll the page: the track is far wider than
+     the screen, and this is what stops that becoming horizontal page scroll. */
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll var(--marquee-duration, 40s) linear infinite;
+}
+
+/* Let someone stop it to actually read a name. */
+.marquee-viewport:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Falls back to a row you scroll yourself, with the duplicate copy dropped
+     so the list doesn't read as though every marque is listed twice. */
+  .marquee-track {
+    animation: none;
+  }
+  .marquee-viewport {
+    overflow-x: auto;
+  }
+  .marquee-copy-duplicate {
+    display: none;
+  }
+}
