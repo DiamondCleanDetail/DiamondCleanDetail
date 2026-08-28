@@ -146,11 +146,9 @@ export default function WindowTintingClient() {
         </section>
       </div>
 
-      {/* Hand-off from the light configurator back into the dark page */}
-      <div aria-hidden className="h-20 sm:h-32 bg-gradient-to-b from-neutral-100 to-background" />
-
-      {/* ---- Learn more: back on dark so it reads as a separate part of the page ---- */}
-      <section className="mx-auto max-w-4xl px-6 pb-14 sm:pb-20 text-center">
+      {/* ---- Learn more: back on dark so it reads as a separate part of the page.
+           Hard edge (no gradient) so the switch from light to dark is a clean cut. ---- */}
+      <section className="mx-auto max-w-4xl px-6 pt-16 sm:pt-24 pb-14 sm:pb-20 text-center">
         <FadeIn>
           <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted">
             What It Is
