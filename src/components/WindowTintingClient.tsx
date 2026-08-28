@@ -45,6 +45,7 @@ export default function WindowTintingClient() {
         eyebrow="Window Tinting"
         title="See Your Shade Before You Book."
         tagline="Preview how each tint shade looks, then choose your coverage and book online."
+        video="/video/window-tinting.mp4"
         image="/services/window-tinting-hero.webp"
       />
 
