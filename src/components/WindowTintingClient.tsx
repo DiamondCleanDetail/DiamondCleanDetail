@@ -117,17 +117,46 @@ export default function WindowTintingClient() {
                 className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_20rem_at_50%_-20%,rgba(236,238,240,0.16),transparent_70%)]"
               />
               <div className="relative">
-                <p className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-white/45">
-                  Your Selection
-                </p>
-                <p className="text-2xl sm:text-4xl font-bold text-white mt-4 text-balance">
+                {/* This names the whole card, but it used to be set in exactly
+                    the same faint eyebrow style as "Starting From" below —
+                    which labels a single field. With both at the same weight
+                    nothing marked one as the heading, and the card's title was
+                    the easiest thing on it to miss. Promote it to a chip and
+                    give it a rule to sit above, borrowing the hairline-plus-
+                    brand-mark idiom from DiamondDivider so it reads as part of
+                    the same system. "Starting From" deliberately stays an
+                    eyebrow: the difference between them is now what tells you
+                    which is the card's title and which is a field label. */}
+                <div className="flex justify-center">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.07] px-4 py-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-white/85">
+                    {/* Inline rather than the logo image: next/image lazy-loads,
+                        and a 14px decorative mark that pops in late (or not at
+                        all) is worse than no mark. This also takes its colour
+                        from the chip, so it stays in the silver palette. */}
+                    <svg
+                      viewBox="0 0 10 10"
+                      width="9"
+                      height="9"
+                      aria-hidden
+                      className="shrink-0 fill-current opacity-80"
+                    >
+                      <path d="M5 0l5 5-5 5-5-5z" />
+                    </svg>
+                    Your Selection
+                  </span>
+                </div>
+                <div
+                  aria-hidden
+                  className="mt-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                />
+                <p className="text-2xl sm:text-4xl font-bold text-white mt-6 text-balance">
                   {level.label} tint &middot; {pkg.name}
                 </p>
-                <p className="text-sm sm:text-base text-white/55 mt-2">
+                <p className="text-sm sm:text-base text-white/60 mt-2">
                   {filmType.name} &middot; {isTesla ? "Tesla" : "Standard vehicle"}
                 </p>
 
-                <p className="text-[10px] uppercase tracking-[0.25em] text-white/45 mt-8">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-white/55 mt-8">
                   Starting From
                 </p>
                 <p className="chrome-text text-5xl sm:text-6xl font-black leading-none mt-2">
@@ -142,7 +171,7 @@ export default function WindowTintingClient() {
                 </Link>
 
                 {filmType.slug !== "diamond-smoke" && (
-                  <p className="text-xs text-white/45 mt-5">
+                  <p className="text-xs text-white/55 mt-5">
                     Film upgrade priced separately — we&apos;ll confirm your exact total.
                   </p>
                 )}
