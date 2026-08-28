@@ -210,9 +210,30 @@ body::after {
   animation: marquee-scroll var(--marquee-duration, 40s) linear infinite;
 }
 
-/* Let someone stop it to actually read a name. */
-.marquee-viewport:hover .marquee-track {
+/* Let someone stop it to actually read a name — or, now that each logo
+   links to that marque on the work page, to actually aim at one. Pausing is
+   what makes the strip clickable at all: you cannot reliably hit a target
+   that is still moving. */
+.marquee-viewport:hover .marquee-track,
+.marquee-viewport:focus-within .marquee-track {
   animation-play-state: paused;
+}
+
+/* Hover picks one logo out of the row. Because every logo is a mask filled
+   with currentColor, "brighter" is just a colour change — it works the same
+   for the traced PNG as for the SVGs, which an image filter would not have.
+   The lift is small on purpose: the row is dense, and a large one would push
+   neighbours out of alignment. */
+.marque-link {
+  color: inherit;
+  transition: color 0.2s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: center;
+}
+
+.marque-link:hover,
+.marque-link:focus-visible {
+  color: var(--foreground);
+  transform: scale(1.12);
 }
 
 @keyframes marquee-scroll {
@@ -235,6 +256,15 @@ body::after {
   }
   .marquee-copy-duplicate {
     display: none;
+  }
+  /* Keep the hover brighten — a colour change is not motion — but drop the
+     lift and the easing. */
+  .marque-link {
+    transition: color 0.2s ease;
+  }
+  .marque-link:hover,
+  .marque-link:focus-visible {
+    transform: none;
   }
 }
 

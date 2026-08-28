@@ -1,5 +1,6 @@
+import Link from "next/link";
 import FadeIn from "@/components/FadeIn";
-import { workItems } from "@/data/work";
+import { workItems, brandAnchor } from "@/data/work";
 
 /** Marques actually represented in the portfolio, pulled from the work data
  * rather than hand-listed, so it can never claim a car we haven't detailed.
@@ -27,32 +28,35 @@ const marques = Array.from(
  * `Logo` below.
  */
 const logos: Record<string, { file: string; aspect: number; scale: number }> = {
-  Audi: { file: "audi.svg", aspect: 2.88, scale: 0.66 },
-  Bentley: { file: "bentley.svg", aspect: 3.17, scale: 0.7 },
-  BMW: { file: "bmw.svg", aspect: 1, scale: 1.25 },
-  Ferrari: { file: "ferrari.svg", aspect: 5.52, scale: 0.5 },
-  Jaguar: { file: "jaguar.svg", aspect: 2.15, scale: 1 },
+  Acura: { file: "acura.svg", aspect: 0.99, scale: 1.25 },
+  Audi: { file: "audi.svg", aspect: 2.88, scale: 0.73 },
+  Bentley: { file: "bentley.svg", aspect: 3.17, scale: 0.77 },
+  BMW: { file: "bmw.svg", aspect: 1.0, scale: 1.25 },
+  Ferrari: { file: "ferrari.svg", aspect: 5.52, scale: 0.51 },
+  Jaguar: { file: "jaguar.svg", aspect: 2.15, scale: 1.1 },
+  Jeep: { file: "jeep.svg", aspect: 2.48, scale: 0.8 },
   Lamborghini: { file: "lamborghini.svg", aspect: 0.86, scale: 1.25 },
-  "Land Rover": { file: "land-rover.png", aspect: 1.9, scale: 0.91 },
-  "Mercedes-Benz": { file: "mercedes-benz.svg", aspect: 1, scale: 1.25 },
+  "Land Rover": { file: "land-rover.png", aspect: 1.9, scale: 1.0 },
+  Lexus: { file: "lexus.svg", aspect: 5.9, scale: 0.54 },
+  "Mercedes-Benz": { file: "mercedes-benz.svg", aspect: 1.0, scale: 1.25 },
   Porsche: { file: "porsche.svg", aspect: 0.78, scale: 1.25 },
 };
 
 /**
  * Every logo is painted as a mask filled with `currentColor` rather than drawn
- * as an image. That is what makes nine logos from two file formats — eight
+ * as an image. That is what makes twelve logos from two file formats — eleven
  * SVGs and a PNG traced off a photo — land on exactly one colour: whatever the
  * strip's text colour is. Nothing here has to know which format it came from,
- * and changing the strip's colour changes all nine.
+ * and it is also what lets hover brighten a logo, since brightening is then
+ * just a colour change.
  *
  * Sizing is by ink area, not by height. Matching heights would have made the
- * Ferrari wordmark (5.26:1) read as roughly five times the Porsche crest
- * (0.78:1) sitting beside it. Each logo was rendered, its opaque pixels
- * counted, and `scale` set to bring that count to the median — so they carry
- * the same visual weight even though the Lamborghini bull stands about three
- * times taller than the Ferrari letters. `aspect` is the measured ink box, so
- * the element is exactly the size of the mark with no dead padding to gap the
- * row unevenly.
+ * Lexus wordmark (5.9:1) read as roughly six times the Porsche crest (0.8:1)
+ * sitting beside it. Each logo was rendered, its opaque pixels counted, and
+ * `scale` set to bring that count to the median — so they carry the same
+ * visual weight even though the Lamborghini bull stands about twice as tall
+ * as the Lexus letters. `aspect` is the measured ink box, so the element is
+ * exactly the size of the mark with no dead padding to gap the row unevenly.
  */
 function Logo({ brand }: { brand: string }) {
   const logo = logos[brand];
@@ -105,7 +109,16 @@ function MarqueeCopy({ duplicate = false }: { duplicate?: boolean }) {
     >
       {marques.map((m) => (
         <li key={m} className="flex shrink-0 items-center">
-          <Logo brand={m} />
+          <Link
+            href={`/our-work#${brandAnchor(m)}`}
+            // The duplicate copy is scenery, not navigation: leaving its links
+            // in the tab order would make every marque a second tab stop that
+            // goes nowhere new.
+            tabIndex={duplicate ? -1 : undefined}
+            className="marque-link flex items-center"
+          >
+            <Logo brand={m} />
+          </Link>
         </li>
       ))}
     </ul>

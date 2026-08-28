@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import Lightbox, { type LightboxSlide } from "@/components/Lightbox";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
-import { workItems, workMedia, type WorkItem, type WorkMedia } from "@/data/work";
+import { workItems, workMedia, brandAnchor, type WorkItem, type WorkMedia } from "@/data/work";
 
 /** Jobs grouped by marque, preserving the order they appear in the data. */
 function groupByBrand(items: WorkItem[]): { brand: string; items: WorkItem[] }[] {
@@ -241,7 +241,10 @@ export default function WorkGallery() {
         {groups.map((group) => {
           const solo = group.items.length === 1;
           return (
-            <section key={group.brand}>
+            // The id is what the "Trusted With" logo strip links to, and
+            // scroll-mt keeps the marque heading clear of the fixed header
+            // when someone lands on it rather than tucked underneath.
+            <section key={group.brand} id={brandAnchor(group.brand)} className="scroll-mt-24 sm:scroll-mt-28">
               <div className="flex items-center gap-3 mb-4 sm:mb-6">
                 <span className="h-px flex-1 bg-gradient-to-r from-transparent to-border" />
                 <h2 className="text-[10px] sm:text-xs uppercase tracking-widest text-muted shrink-0">

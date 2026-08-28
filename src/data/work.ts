@@ -269,3 +269,12 @@ export const workItems: WorkItem[] = [
     },
   },
 ];
+
+/** Anchor id for a marque's section on /our-work.
+ *
+ * Shared so the "Trusted With" strip and the gallery cannot drift apart: the
+ * strip links to `#${brandAnchor(brand)}` and the gallery renders the matching
+ * id, both derived from the same brand string in this file. */
+export function brandAnchor(brand: string): string {
+  return "marque-" + brand.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
