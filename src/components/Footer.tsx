@@ -9,18 +9,30 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-6 pb-6">
         <SocialLinks />
       </div>
-      <div className="mx-auto max-w-6xl px-6 pb-6 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-sm text-muted">
-        <a href={`tel:${serviceArea.phoneHref}`} className="hover:text-foreground transition-colors">
+      {/* Calling is how most people will actually get in touch, but the number
+          used to share a line, a size and a colour with the email address and
+          the opening hours, so it read as one of three equal footnotes. It now
+          leads, in the same silver the site gives its prices and figures, with
+          the email and hours settling underneath it as secondary detail. */}
+      <div className="mx-auto max-w-6xl px-6 pb-6 flex flex-col items-center gap-2 text-center">
+        <a
+          href={`tel:${serviceArea.phoneHref}`}
+          /* py-2 is for the thumb, not the look: as the primary way to reach
+             the business from a phone, the line of text on its own was only a
+             24px tap target. */
+          className="chrome-text inline-block py-2 text-2xl sm:text-3xl font-bold tracking-tight leading-none transition-opacity hover:opacity-75"
+        >
           {serviceArea.phone}
         </a>
-        <span className="hidden sm:inline text-border">&bull;</span>
-        <a href={`mailto:${serviceArea.email}`} className="hover:text-foreground transition-colors">
-          {serviceArea.email}
-        </a>
-        <span className="hidden sm:inline text-border">&bull;</span>
-        <span>
-          {serviceArea.hours[0].days}: {serviceArea.hours[0].time}
-        </span>
+        <div className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-4 text-sm text-muted">
+          <a href={`mailto:${serviceArea.email}`} className="hover:text-foreground transition-colors">
+            {serviceArea.email}
+          </a>
+          <span className="hidden sm:inline text-border">&bull;</span>
+          <span>
+            {serviceArea.hours[0].days}: {serviceArea.hours[0].time}
+          </span>
+        </div>
       </div>
       <div className="mx-auto max-w-6xl px-6 pb-8 text-center text-xs text-muted tracking-wide">
         A cut above every car wash.
