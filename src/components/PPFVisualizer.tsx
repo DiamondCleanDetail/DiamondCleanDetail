@@ -81,22 +81,38 @@ export default function PPFVisualizer({
         {/* Content */}
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[3fr_2fr] gap-8 sm:gap-10 items-start">
           <div className="relative aspect-[1412/678] w-full">
-            {image ? (
-              <div className="absolute inset-0">
-                <Image
-                  src={image}
-                  alt={`${pkg.name} PPF coverage`}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-contain"
-                />
-              </div>
-            ) : (
-              <div className="absolute inset-0 rounded-xl border border-dashed border-border/60 flex items-center justify-center">
-                <p className="text-sm text-muted">Coverage photo coming soon</p>
-              </div>
-            )}
+            <AnimatePresence initial={false}>
+              {image ? (
+                <motion.div
+                  key={image}
+                  className="absolute inset-0"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] as const }}
+                >
+                  <Image
+                    src={image}
+                    alt={`${pkg.name} PPF coverage`}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    className="object-contain"
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="placeholder"
+                  className="absolute inset-0 rounded-xl border border-dashed border-border/60 flex items-center justify-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] as const }}
+                >
+                  <p className="text-sm text-muted">Coverage photo coming soon</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <AnimatePresence mode="wait">
