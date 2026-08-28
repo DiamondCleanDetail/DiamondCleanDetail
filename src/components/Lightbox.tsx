@@ -10,6 +10,10 @@ export type LightboxSlide = {
   src: string;
   /** Shown under the image, e.g. "Before" or the job title. */
   caption?: string;
+  /** Video slides play inline here rather than opening anything. */
+  kind?: "image" | "video";
+  /** First frame, so a video slide has something to show before it decodes. */
+  poster?: string;
 };
 
 type Props = {
@@ -159,14 +163,32 @@ export default function Lightbox({ slides, index, onClose, onIndexChange }: Prop
               the layout width collapses before the browser picks from the
               srcset, so it lands on the smallest candidate. */}
           <div className="relative w-[88vw] h-[72vh] sm:w-[78vw] sm:h-[78vh]">
-            <Image
-              src={slide.src}
-              alt={slide.caption ?? "Detailing photo"}
-              fill
-              sizes="90vw"
-              className="rounded-lg object-contain"
-              priority
-            />
+            {slide.kind === "video" ? (
+              // Muted and looping so it can start by itself — a clip that made
+              // noise the moment a gallery opened would be hostile — with
+              // controls so the sound is there if it is wanted.
+              <video
+                key={slide.src}
+                src={slide.src}
+                poster={slide.poster}
+                className="h-full w-full rounded-lg object-contain"
+                controls
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+              />
+            ) : (
+              <Image
+                src={slide.src}
+                alt={slide.caption ?? "Detailing photo"}
+                fill
+                sizes="90vw"
+                className="rounded-lg object-contain"
+                priority
+              />
+            )}
           </div>
           {(slide.caption || slides.length > 1) && (
             <figcaption className="text-xs sm:text-sm text-muted text-center">

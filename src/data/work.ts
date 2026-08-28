@@ -7,11 +7,31 @@ export type WorkItem = {
    * /public/work, e.g. "/work/jose-1.webp". An empty array renders a
    * "photo coming soon" placeholder. */
   images: string[];
+  /** Clips from the same job. Each needs a poster: the grid shows the poster
+   * and only fetches the video once someone asks to play it, so a job with a
+   * clip costs a still's worth of bandwidth until then. */
+  videos?: { src: string; poster: string }[];
+  /** Kept out of the published grid until the details are confirmed. */
+  draft?: boolean;
   testimonial?: {
     name: string;
     quote: string;
   };
 };
+
+/** One playable or viewable thing from a job. */
+export type WorkMedia =
+  | { kind: "image"; src: string }
+  | { kind: "video"; src: string; poster: string };
+
+/** A job's media in display order. Clips lead: the card shows the first item,
+ * and a video is the strongest thing a job has to show. */
+export function workMedia(item: WorkItem): WorkMedia[] {
+  return [
+    ...(item.videos ?? []).map((v) => ({ kind: "video" as const, src: v.src, poster: v.poster })),
+    ...item.images.map((src) => ({ kind: "image" as const, src })),
+  ];
+}
 
 export const workItems: WorkItem[] = [
   {
@@ -88,6 +108,32 @@ export const workItems: WorkItem[] = [
       "/work/porsche-macan-orange-3.webp",
       "/work/porsche-macan-orange-4.webp",
       "/work/porsche-macan-orange-5.webp",
+    ],
+  },
+  {
+    // DRAFT — not published. `draft: true` keeps this out of the grid until
+    // Farhan confirms the details, so nothing here can go live as fact.
+    //
+    // The vehicle is read off the clip itself: the side script says GT3 RS,
+    // and the swan-neck wing, bonnet ducts and front-fender louvres match a
+    // 992 GT3 RS. Satin black with red wheels and red decals, filmed on a
+    // brick driveway, pavers still wet.
+    //
+    // TODO(farhan): confirm two things, then delete this comment and `draft`:
+    //   1. which service this was — the title below guesses "The Diamond
+    //      Detail", matching the other Porsche entries, but it could be any
+    //      package;
+    //   2. that this is our own job rather than a supplied clip.
+    slug: "porsche-911-gt3rs-walkaround",
+    title: "The Diamond Detail — Porsche 911 GT3 RS",
+    brand: "Porsche",
+    draft: true,
+    images: [],
+    videos: [
+      {
+        src: "/work/porsche-911-gt3rs-walkaround.mp4",
+        poster: "/work/porsche-911-gt3rs-poster.webp",
+      },
     ],
   },
   {

@@ -7,9 +7,11 @@ import { workItems } from "@/data/work";
  * proof, not an adjective. */
 const excluded = new Set(["More Vehicles", "Motorcycles"]);
 
-const marques = Array.from(new Set(workItems.map((w) => w.brand))).filter(
-  (b) => !excluded.has(b)
-);
+// Draft jobs are excluded too: an unpublished entry must not be able to put
+// a marque on the public list before the job itself is confirmed.
+const marques = Array.from(
+  new Set(workItems.filter((w) => !w.draft).map((w) => w.brand))
+).filter((b) => !excluded.has(b));
 
 /** Keeps the scroll speed constant as marques are added, rather than the lap
  * time being fixed and the strip getting faster with every new one. */

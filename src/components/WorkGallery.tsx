@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import Lightbox, { type LightboxSlide } from "@/components/Lightbox";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
-import { workItems, type WorkItem } from "@/data/work";
+import { workItems, workMedia, type WorkItem, type WorkMedia } from "@/data/work";
 
 /** Jobs grouped by marque, preserving the order they appear in the data. */
 function groupByBrand(items: WorkItem[]): { brand: string; items: WorkItem[] }[] {
@@ -33,6 +33,53 @@ function Caption({ item }: { item: WorkItem }) {
   );
 }
 
+/** One tile of a job's media.
+ *
+ * A clip shows its poster rather than the video: the grid would otherwise
+ * pull down megabytes of footage nobody has asked to watch. The play badge is
+ * what says it is a clip, and the video itself is only fetched when the
+ * lightbox opens it. */
+function MediaTile({
+  media,
+  alt,
+  sizes,
+  badge,
+}: {
+  media: WorkMedia;
+  alt: string;
+  sizes: string;
+  badge?: "large" | "small";
+}) {
+  return (
+    <>
+      <Image
+        src={media.kind === "video" ? media.poster : media.src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className="object-cover transition-transform duration-300 group-hover:scale-105"
+      />
+      {media.kind === "video" && <PlayBadge size={badge ?? "large"} />}
+    </>
+  );
+}
+
+function PlayBadge({ size }: { size: "large" | "small" }) {
+  const large = size === "large";
+  return (
+    <span
+      aria-hidden
+      className={`pointer-events-none absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-black/55 text-white ring-1 ring-white/40 backdrop-blur-sm ${
+        large ? "h-14 w-14" : "h-8 w-8"
+      }`}
+    >
+      <svg viewBox="0 0 24 24" width={large ? 22 : 13} height={large ? 22 : 13} fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+    </span>
+  );
+}
+
 function PhotoCountBadge({ count }: { count: number }) {
   if (count < 2) return null;
   return (
@@ -44,9 +91,10 @@ function PhotoCountBadge({ count }: { count: number }) {
 
 /** The standard tall card used when a marque has several jobs to stack. */
 function StackedCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => void }) {
+  const media = workMedia(item);
   return (
     <figure className="card-lift bg-surface border border-border rounded-xl overflow-hidden">
-      {item.images.length === 0 ? (
+      {media.length === 0 ? (
         <div className="relative aspect-square bg-surface-2 flex items-center justify-center text-xs text-muted px-4 text-center">
           Photo coming soon — {item.title}
         </div>
@@ -55,38 +103,31 @@ function StackedCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => 
           <button
             type="button"
             onClick={() => onOpen(0)}
-            aria-label={`View photos from ${item.title}`}
+            aria-label={`View media from ${item.title}`}
             className="group relative block w-full aspect-square bg-surface-2 cursor-zoom-in overflow-hidden"
           >
-            <Image
-              src={item.images[0]}
-              alt={item.title}
-              fill
-              sizes="(max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            <PhotoCountBadge count={item.images.length} />
+            <MediaTile media={media[0]} alt={item.title} sizes="(max-width: 1024px) 50vw, 33vw" />
+            <PhotoCountBadge count={media.length} />
           </button>
 
-          {item.images.length > 1 && (
+          {media.length > 1 && (
             <div
               className="grid gap-px bg-border"
-              style={{ gridTemplateColumns: `repeat(${item.images.length - 1}, minmax(0, 1fr))` }}
+              style={{ gridTemplateColumns: `repeat(${media.length - 1}, minmax(0, 1fr))` }}
             >
-              {item.images.slice(1).map((src, j) => (
+              {media.slice(1).map((m, j) => (
                 <button
-                  key={src}
+                  key={m.src}
                   type="button"
                   onClick={() => onOpen(j + 1)}
-                  aria-label={`View photo ${j + 2} from ${item.title}`}
+                  aria-label={`View ${m.kind === "video" ? "clip" : "photo"} ${j + 2} from ${item.title}`}
                   className="group relative aspect-[4/3] bg-surface-2 cursor-zoom-in overflow-hidden"
                 >
-                  <Image
-                    src={src}
-                    alt={`${item.title} — photo ${j + 2}`}
-                    fill
+                  <MediaTile
+                    media={m}
+                    alt={`${item.title} — ${m.kind === "video" ? "clip" : "photo"} ${j + 2}`}
                     sizes="(max-width: 1024px) 25vw, 17vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    badge="small"
                   />
                 </button>
               ))}
@@ -106,12 +147,13 @@ function FeatureCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => 
   // Capped at four so the strip always fills its row exactly — a fixed
   // column count left ragged empty cells whenever the count wasn't a
   // multiple of it. Any remainder is surfaced on the last tile.
-  const extras = item.images.slice(1, 5);
-  const hidden = Math.max(0, item.images.length - 5);
+  const media = workMedia(item);
+  const extras = media.slice(1, 5);
+  const hidden = Math.max(0, media.length - 5);
 
   return (
     <figure className="card-lift bg-surface border border-border rounded-xl overflow-hidden sm:grid sm:grid-cols-[3fr_2fr]">
-      {item.images.length === 0 ? (
+      {media.length === 0 ? (
         <div className="relative aspect-[4/3] sm:aspect-auto sm:min-h-[280px] bg-surface-2 flex items-center justify-center text-xs text-muted px-4 text-center">
           Photo coming soon — {item.title}
         </div>
@@ -119,17 +161,11 @@ function FeatureCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => 
         <button
           type="button"
           onClick={() => onOpen(0)}
-          aria-label={`View photos from ${item.title}`}
+          aria-label={`View media from ${item.title}`}
           className="group relative block w-full aspect-[4/3] sm:aspect-auto sm:min-h-[280px] bg-surface-2 cursor-zoom-in overflow-hidden"
         >
-          <Image
-            src={item.images[0]}
-            alt={item.title}
-            fill
-            sizes="(max-width: 640px) 100vw, 55vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-          <PhotoCountBadge count={item.images.length} />
+          <MediaTile media={media[0]} alt={item.title} sizes="(max-width: 640px) 100vw, 55vw" />
+          <PhotoCountBadge count={media.length} />
         </button>
       )}
 
@@ -141,23 +177,22 @@ function FeatureCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => 
             className="grid gap-px bg-border border-t border-border"
             style={{ gridTemplateColumns: `repeat(${extras.length}, minmax(0, 1fr))` }}
           >
-            {extras.map((src, j) => (
+            {extras.map((m, j) => (
               <button
-                key={src}
+                key={m.src}
                 type="button"
                 onClick={() => onOpen(j + 1)}
-                aria-label={`View photo ${j + 2} from ${item.title}`}
+                aria-label={`View ${m.kind === "video" ? "clip" : "photo"} ${j + 2} from ${item.title}`}
                 // Fixed height rather than an aspect ratio: with one extra
                 // photo an aspect-ratio tile ballooned to fill the column,
                 // making the strip's size vary wildly between cards.
                 className="group relative h-20 sm:h-24 bg-surface-2 cursor-zoom-in overflow-hidden"
               >
-                <Image
-                  src={src}
-                  alt={`${item.title} — photo ${j + 2}`}
-                  fill
+                <MediaTile
+                  media={m}
+                  alt={`${item.title} — ${m.kind === "video" ? "clip" : "photo"} ${j + 2}`}
                   sizes="(max-width: 640px) 33vw, 15vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  badge="small"
                 />
                 {/* If the job has more shots than fit here, the last tile says so. */}
                 {j === extras.length - 1 && hidden > 0 && (
@@ -178,13 +213,23 @@ export default function WorkGallery() {
   const [slides, setSlides] = useState<LightboxSlide[]>([]);
   const [index, setIndex] = useState<number | null>(null);
 
-  function openJob(item: WorkItem, photoIndex: number) {
-    if (item.images.length === 0) return;
-    setSlides(item.images.map((src) => ({ src, caption: item.title })));
-    setIndex(photoIndex);
+  function openJob(item: WorkItem, mediaIndex: number) {
+    const media = workMedia(item);
+    if (media.length === 0) return;
+    setSlides(
+      media.map((m) => ({
+        src: m.src,
+        caption: item.title,
+        kind: m.kind,
+        poster: m.kind === "video" ? m.poster : undefined,
+      }))
+    );
+    setIndex(mediaIndex);
   }
 
-  const groups = groupByBrand(workItems);
+  // Entries still awaiting confirmation of what the job actually was stay out
+  // of the published grid rather than going live with a guessed title.
+  const groups = groupByBrand(workItems.filter((w) => !w.draft));
 
   return (
     <>
