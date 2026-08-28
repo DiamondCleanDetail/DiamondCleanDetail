@@ -71,7 +71,11 @@ export default function MobileDetailingPage() {
                   </span>
                 )}
                 <div className="p-6 flex flex-col flex-1">
-                  <h3 className="text-xl font-bold">{pkg.name}</h3>
+                  {/* The badge is pinned to the card's top-right corner, so the
+                      title has to reserve room for it or it gets covered — at
+                      every width, not just on phones: "The Diamond Detail Plus"
+                      ran its last word straight under the badge even at 1280px. */}
+                  <h3 className={`text-xl font-bold ${pkg.featured ? "pr-32" : ""}`}>{pkg.name}</h3>
                   <p className="text-sm text-muted mt-2">{pkg.tagline}</p>
                   <ul className="mt-4 space-y-1.5 flex-1">
                     {pkg.features.map((f) => (
