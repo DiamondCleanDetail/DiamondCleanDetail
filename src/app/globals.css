@@ -237,3 +237,25 @@ body::after {
     display: none;
   }
 }
+
+/* PPF coverage stack.
+   Every tier's image is mounted at once and cross-faded by opacity, rather
+   than one <Image> being torn down and a new one mounted on each switch —
+   which left a blank frame while the incoming file was still being fetched.
+   Because all the layers are present and decoded, there is nothing to wait
+   for at switch time. */
+.ppf-coverage-layer {
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ppf-coverage-layer[data-shown="true"] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* A cross-fade is still motion — swap instantly instead. */
+  .ppf-coverage-layer {
+    transition: none;
+  }
+}

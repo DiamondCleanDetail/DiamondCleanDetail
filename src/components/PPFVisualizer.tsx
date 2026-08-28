@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -32,7 +32,51 @@ export default function PPFVisualizer({
   categorySlug: string;
   showCta?: boolean;
 }) {
-  const [active, setActive] = useState(packages[0]?.slug ?? "");
+  const firstSlug = packages[0]?.slug ?? "";
+  const [active, setActive] = useState(firstSlug);
+  /**
+   * Which layer is actually on screen.
+   *
+   * Kept apart from `active` so the tier copy, price and CTA can update the
+   * instant someone picks a tier, while the image only advances once its
+   * file has loaded. All the layers are eager, so in practice that has
+   * already happened — but on a slow enough connection a click can still
+   * land first, and this is what makes a blank frame impossible rather than
+   * merely unlikely: the outgoing image stays until the incoming one can
+   * replace it.
+   */
+  const [shown, setShown] = useState(firstSlug);
+  const stackRef = useRef<HTMLDivElement>(null);
+  // `active` only ever changes through selectTier, so this mirror stays in
+  // step without writing to a ref during render.
+  const activeRef = useRef(firstSlug);
+
+  function selectTier(slug: string) {
+    setActive(slug);
+    activeRef.current = slug;
+
+    // Ask the DOM whether that layer's file has arrived, rather than tracking
+    // it through React's onLoad: these images are eager and typically finish
+    // before hydration, so the event has already been and gone by the time a
+    // handler is attached. `complete` is synchronous and cannot be missed.
+    const img = stackRef.current?.querySelector<HTMLImageElement>(
+      `[data-slug="${slug}"] img`
+    );
+    if (!img || img.complete) {
+      setShown(slug);
+      return;
+    }
+    // Still in flight: hold the outgoing image until this one can replace it,
+    // so the swap is never to an empty layer.
+    img.addEventListener(
+      "load",
+      () => {
+        if (activeRef.current === slug) setShown(slug);
+      },
+      { once: true }
+    );
+  }
+
   const pkg = packages.find((p) => p.slug === active) ?? packages[0];
   if (!pkg) return null;
 
@@ -53,7 +97,7 @@ export default function PPFVisualizer({
         <SegmentedTabs
           items={packages.map((p) => ({ value: p.slug, label: p.name }))}
           value={pkg.slug}
-          onChange={setActive}
+          onChange={selectTier}
           layoutId="ppf-tab-highlight"
           tone="dark"
           className="w-full"
@@ -61,39 +105,42 @@ export default function PPFVisualizer({
 
         {/* Content */}
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[3fr_2fr] gap-8 sm:gap-10 items-start">
-          <div className="relative aspect-[1600/768] w-full">
-            <AnimatePresence initial={false}>
-              {image ? (
-                <motion.div
-                  key={image}
-                  className="absolute inset-0"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] as const }}
+          {/* Fixed aspect box holding every tier's image at once. The box
+              owns the height, so swapping layers cannot shift the layout. */}
+          <div ref={stackRef} className="relative aspect-[1600/768] w-full">
+            {packages.map((p) => {
+              const src = images[p.slug];
+              if (!src) return null;
+              const isShown = p.slug === shown;
+              return (
+                <div
+                  key={p.slug}
+                  data-slug={p.slug}
+                  data-shown={isShown}
+                  aria-hidden={!isShown}
+                  className="ppf-coverage-layer absolute inset-0"
                 >
                   <Image
-                    src={image}
-                    alt={`${pkg.name} PPF coverage`}
+                    src={src}
+                    alt={isShown ? `${p.name} PPF coverage` : ""}
                     fill
-                    priority
+                    // Every layer is fetched up front — that is the whole
+                    // point — but only the one on screen at mount competes
+                    // for priority with the rest of the page.
+                    priority={p.slug === firstSlug}
+                    loading="eager"
                     sizes="(max-width: 1024px) 100vw, 60vw"
                     className="object-contain"
+
                   />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="placeholder"
-                  className="absolute inset-0 rounded-xl border border-dashed border-border/60 flex items-center justify-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] as const }}
-                >
-                  <p className="text-sm text-muted">Coverage photo coming soon</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+              );
+            })}
+            {!image && (
+              <div className="absolute inset-0 rounded-xl border border-dashed border-border/60 flex items-center justify-center">
+                <p className="text-sm text-muted">Coverage photo coming soon</p>
+              </div>
+            )}
           </div>
 
           <AnimatePresence mode="wait">
