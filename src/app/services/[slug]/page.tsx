@@ -27,6 +27,7 @@ const HAS_OWN_PAGE = new Set([
   "specialty-vehicles",
   "mobile-detailing",
   "ceramic-coating",
+  "maintenance-plans",
 ]);
 
 export function generateStaticParams() {

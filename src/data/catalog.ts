@@ -954,15 +954,19 @@ export const catalog: ServiceCategory[] = [
     tagline: "Consistently clean, without thinking about it.",
     valueProp:
       "Maintenance plans put your detailing on autopilot. We schedule recurring visits on your driveway, so your vehicle stays consistently clean at a lower per-visit price than booking one-off appointments, with priority scheduling and discounts on any add-ons.",
+    // Wording checked against what the site actually does. Checkout runs in
+    // Stripe's one-time payment mode, not subscription — there is no standing
+    // order and nothing bills itself. Claiming visits "are scheduled
+    // automatically" promised a mechanism that does not exist.
     benefits: [
-      { title: "Lower per-visit price", description: "Recurring plans cost less per visit than booking one-off appointments." },
-      { title: "Priority scheduling", description: "Plan members get first access to available time slots." },
-      { title: "One less thing to remember", description: "Visits are scheduled automatically on your plan's cadence." },
+      { title: "A lower rate per visit", description: "The member rate is below what the same visit costs as a one-off booking." },
+      { title: "First pick of the calendar", description: "Members get first access to weekend slots before they open up generally." },
+      { title: "A rhythm, not a decision", description: "You settle on a cadence once, then keep the same rate every time you book." },
     ],
     process: [
-      { title: "Pick your cadence", description: "Choose monthly or bi-weekly based on how your vehicle gets used." },
-      { title: "We schedule the visits", description: "Recurring appointments are set up automatically on your plan." },
-      { title: "We show up & detail", description: "Same reliable wash and vacuum, every time, at your discounted rate." },
+      { title: "Pick your cadence", description: "Monthly or every two weeks, depending on how hard the car works." },
+      { title: "Book your first visit", description: "Choose a weekend slot and pay the member rate for that visit." },
+      { title: "We come to you, and repeat", description: "Same wash and vacuum each time — we'll set the next one up while we're there." },
     ],
     packages: [
       {
