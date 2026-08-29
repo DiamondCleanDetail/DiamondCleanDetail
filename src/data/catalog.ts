@@ -853,6 +853,9 @@ export const catalog: ServiceCategory[] = [
     slug: "maintenance-plans",
     name: "Maintenance Plans",
     shortName: "Maintenance Plans",
+    // Same footage as Mobile Detailing on purpose — a plan is that same visit
+    // on a schedule, and it beats an empty hero until dedicated footage exists.
+    heroVideo: "/video/mobile-detailing.mp4",
     summary: "Recurring detailing on a schedule, at a member price.",
     description:
       "Keep your vehicle consistently clean with a recurring plan — scheduled visits, priority booking, and lower per-visit pricing than one-off bookings.",
