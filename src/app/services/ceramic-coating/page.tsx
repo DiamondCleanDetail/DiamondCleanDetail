@@ -92,24 +92,31 @@ export default function CeramicCoatingPage() {
             className="mb-8 sm:mb-12"
           />
         </FadeIn>
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 items-start">
+        {/* Both tiles run 16:9 and fill their column, so they read as a pair.
+            The copy spans underneath rather than stacking under one of them —
+            hung off the right column it left the shorter left one sitting
+            above 166px of nothing. */}
+        <div className="grid lg:grid-cols-2 gap-5 sm:gap-6">
           <FadeIn>
             <ProcessSlideshow items={category.processMedia} />
           </FadeIn>
           <FadeIn delay={0.1}>
-            <div>
-              {category.beforeAfter && (
-                <BeforeAfterSlider
-                  before={category.beforeAfter.before}
-                  after={category.beforeAfter.after}
-                  beforeLabel="Uncoated"
-                  afterLabel="Coated"
-                />
-              )}
-              <p className="text-sm text-muted mt-4 leading-relaxed">{category.valueProp}</p>
-            </div>
+            {category.beforeAfter && (
+              <BeforeAfterSlider
+                before={category.beforeAfter.before}
+                after={category.beforeAfter.after}
+                beforeLabel="Uncoated"
+                afterLabel="Coated"
+                aspect="video"
+              />
+            )}
           </FadeIn>
         </div>
+        <FadeIn delay={0.15}>
+          <p className="text-sm sm:text-base text-muted mt-6 sm:mt-8 max-w-3xl mx-auto text-center leading-relaxed">
+            {category.valueProp}
+          </p>
+        </FadeIn>
 
         {/* The three benefits, compressed into one row of real photos. On the
             template these were three tall cards with "photo coming soon" in

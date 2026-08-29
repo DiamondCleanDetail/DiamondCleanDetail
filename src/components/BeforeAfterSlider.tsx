@@ -8,12 +8,24 @@ export default function BeforeAfterSlider({
   after,
   beforeLabel = "Uncoated",
   afterLabel = "Coated",
+  aspect = "square",
 }: {
   before: string | null;
   after: string | null;
   beforeLabel?: string;
   afterLabel?: string;
+  /** "square" is the default and what the shared service template uses, where
+   * this sits beside a column of copy. "video" fills its column at 16:9, for
+   * laying it alongside other media that also runs full width — a square
+   * capped at 380px next to a full-width clip reads as two unrelated sizes. */
+  aspect?: "square" | "video";
 }) {
+  const frameClass =
+    aspect === "video" ? "aspect-video w-full" : "aspect-square w-full max-w-[380px] mx-auto";
+  // The wide variant fills a grid column, so the square variant's 380px hint
+  // would have the browser fetch an image too small for it.
+  const sizesAttr =
+    aspect === "video" ? "(max-width: 1024px) 100vw, 550px" : "(max-width: 640px) 100vw, 380px";
   const [pos, setPos] = useState(50); // percent, 0 = all "before", 100 = all "after"
   const containerRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
@@ -50,7 +62,7 @@ export default function BeforeAfterSlider({
 
   if (!before || !after) {
     return (
-      <div className="relative aspect-square w-full max-w-[380px] mx-auto rounded-xl border border-dashed border-border/60 flex items-center justify-center">
+      <div className={`relative ${frameClass} rounded-xl border border-dashed border-border/60 flex items-center justify-center`}>
         <p className="text-sm text-muted text-center px-6">
           Drag-to-compare {beforeLabel.toLowerCase()} vs {afterLabel.toLowerCase()} photos coming soon.
         </p>
@@ -67,7 +79,7 @@ export default function BeforeAfterSlider({
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(pos)}
-      className="relative aspect-square w-full max-w-[380px] mx-auto rounded-xl overflow-hidden select-none cursor-ew-resize bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      className={`relative ${frameClass} rounded-xl overflow-hidden select-none cursor-ew-resize bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent`}
       onMouseDown={(e) => {
         draggingRef.current = true;
         updateFromClientX(e.clientX);
@@ -97,7 +109,7 @@ export default function BeforeAfterSlider({
         src={after}
         alt={afterLabel}
         fill
-        sizes="(max-width: 640px) 100vw, 380px"
+        sizes={sizesAttr}
         className="object-cover pointer-events-none"
       />
       <span className="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-widest bg-black/60 text-white px-2 py-1 rounded pointer-events-none">
@@ -114,7 +126,7 @@ export default function BeforeAfterSlider({
           src={before}
           alt={beforeLabel}
           fill
-          sizes="(max-width: 640px) 100vw, 380px"
+          sizes={sizesAttr}
           className="object-cover pointer-events-none"
         />
         <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest bg-black/60 text-white px-2 py-1 rounded pointer-events-none">

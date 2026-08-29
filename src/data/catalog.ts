@@ -469,9 +469,9 @@ export const catalog: ServiceCategory[] = [
     // Real work, and specifically ceramic work: every one of these is from a
     // Diamond Detail Pro job, the tier that includes a ceramic coating.
     benefitImages: [
-      { src: "/work/mercedes-amg-gt-1.webp", alt: "A coated Mercedes-AMG GT, the finish still sharp under workshop lighting" },
-      { src: "/work/ferrari-488-1.webp", alt: "Deep, wet-looking gloss on the flank of a coated Ferrari 488 Spider" },
-      { src: "/work/bentley-1.webp", alt: "A coated Bentley, clean and beading after a wash" },
+      { src: "/work/mercedes-amg-gt-2.webp", alt: "The rear quarter of a coated silver Mercedes-AMG GT, paint still crisp" },
+      { src: "/work/bmw-x5-1.webp", alt: "A coated black BMW X5 reflecting its surroundings like a mirror" },
+      { src: "/work/lamborghini-huracan-2.webp", alt: "A coated wheel and yellow brake caliper on a Lamborghini Huracán, clear of brake dust" },
     ],
     benefits: [
       { title: "Years of protection", description: "Bonds to the surface instead of sitting on top, so it doesn't wash or wear off in weeks." },
@@ -489,25 +489,19 @@ export const catalog: ServiceCategory[] = [
     // so every car here really was coated. Captions keep the job's own name
     // rather than relabelling it "Ceramic Coating", which would imply the
     // booking was coating alone.
+    //
+    // Those jobs run to eighteen photos between them, but twelve are interior
+    // — seats, steering wheels, door cards. A coating goes on paint, wheels
+    // and glass, so an interior shot proves nothing here however good the
+    // photo is. Only the exterior frames are listed; the rest still carry
+    // their jobs on Our Work, where the whole detail is the subject.
     galleryImages: [
-      { src: "/work/ferrari-488-1.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
-      { src: "/work/ferrari-488-2.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
-      { src: "/work/ferrari-488-3.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
-      { src: "/work/ferrari-488-4.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
-      { src: "/work/ferrari-488-5.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
-      { src: "/work/lamborghini-huracan-1.webp", caption: "The Diamond Detail Pro — Lamborghini Huracán" },
-      { src: "/work/lamborghini-huracan-2.webp", caption: "The Diamond Detail Pro — Lamborghini Huracán" },
-      { src: "/work/bentley-1.webp", caption: "The Diamond Detail Pro — Bentley" },
-      { src: "/work/bentley-2.webp", caption: "The Diamond Detail Pro — Bentley" },
-      { src: "/work/bentley-3.webp", caption: "The Diamond Detail Pro — Bentley" },
-      { src: "/work/mercedes-amg-gt-1.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
-      { src: "/work/mercedes-amg-gt-2.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
-      { src: "/work/mercedes-amg-gt-3.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
-      { src: "/work/mercedes-amg-gt-4.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
-      { src: "/work/mercedes-amg-gt-5.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
-      { src: "/work/mercedes-amg-gt-6.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
       { src: "/work/bmw-x5-1.webp", caption: "The Diamond Detail Pro — BMW X5" },
       { src: "/work/lexus-rx-1.webp", caption: "The Diamond Detail Pro — Lexus RX" },
+      { src: "/work/mercedes-amg-gt-1.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/mercedes-amg-gt-2.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/lamborghini-huracan-2.webp", caption: "The Diamond Detail Pro — Lamborghini Huracán" },
+      { src: "/work/ferrari-488-5.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
     ],
     packages: [
       {
