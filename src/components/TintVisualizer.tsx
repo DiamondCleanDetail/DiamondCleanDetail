@@ -36,8 +36,15 @@ export default function TintVisualizer({
             className="w-full"
           />
 
-          {/* Preview */}
-          <div className="relative mt-10 sm:mt-14 aspect-[3054/955] w-full">
+          {/* Preview.
+              The box is cut for the tallest vehicle, not the sedan. Every
+              vehicle render runs bumper to bumper across its own full width,
+              so they all draw at the same scale as each other — which means a
+              G-Wagen needs the extra height, and an M3 simply leaves air above
+              itself. Sizing the box to the sedan instead would force the taller
+              vehicles to shrink to fit, and a G63 would end up drawn smaller
+              than an M3 it is actually the same length as. */}
+          <div className="relative mt-10 sm:mt-14 aspect-[3054/1357] w-full">
             <AnimatePresence mode="popLayout">
               <motion.span
                 key={level.value}
@@ -60,7 +67,10 @@ export default function TintVisualizer({
                   fill
                   priority
                   sizes="(max-width: 640px) 100vw, 1152px"
-                  className="object-contain"
+                  // Bottom-aligned so every vehicle stands on the same ground
+                  // line. Centred, a shorter vehicle would float in the middle
+                  // of a box sized for a taller one.
+                  className="object-contain object-bottom"
                 />
               ) : (
                 <div className="absolute inset-0 rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center">
