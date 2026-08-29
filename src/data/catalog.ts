@@ -251,7 +251,7 @@ export const catalog: ServiceCategory[] = [
       { src: "/work/porsche-cayenne-1.webp", caption: "The Diamond Detail — Porsche Cayenne" },
       { src: "/work/mercedes-amg-gt-1.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
       { src: "/work/mercedes-amg-gt-3.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
-      { src: "/work/bmw-m3-1.webp", caption: "The Diamond Detail — BMW M3 Competition" },
+      { src: "/work/bmw-m3-2.webp", caption: "The Diamond Detail — BMW M3 Competition" },
       { src: "/work/bmw-x5-1.webp", caption: "The Diamond Detail Pro — BMW X5" },
       { src: "/work/velar-1.webp", caption: "The Diamond Detail Plus — Range Rover Velar" },
       { src: "/work/range-rover-black-1.webp", caption: "The Diamond Detail Plus — Range Rover" },
@@ -501,7 +501,6 @@ export const catalog: ServiceCategory[] = [
       { src: "/work/mercedes-amg-gt-1.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
       { src: "/work/mercedes-amg-gt-2.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
       { src: "/work/lamborghini-huracan-2.webp", caption: "The Diamond Detail Pro — Lamborghini Huracán" },
-      { src: "/work/ferrari-488-5.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
     ],
     packages: [
       {
@@ -937,6 +936,10 @@ export const catalog: ServiceCategory[] = [
     // Same footage as Mobile Detailing on purpose — a plan is that same visit
     // on a schedule, and it beats an empty hero until dedicated footage exists.
     heroVideo: "/video/mobile-detailing.mp4",
+    // Two of Farhan's own photos spliced on a diagonal — the Cayenne mid-wash
+    // and a finished cargo area. A plan covers both sides of the car, and no
+    // single frame we have says that; the cut lets one card carry both.
+    cardImage: "/services/maintenance-plans-card.webp",
     summary: "Recurring detailing on a schedule, at a member price.",
     description:
       "Keep your vehicle consistently clean with a recurring plan — scheduled visits, priority booking, and lower per-visit pricing than one-off bookings.",

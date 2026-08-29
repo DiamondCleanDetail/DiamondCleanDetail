@@ -38,12 +38,29 @@ export const workItems: WorkItem[] = [
     slug: "ferrari-488-spider-detail",
     title: "The Diamond Detail Pro — Ferrari 488 Spider",
     brand: "Ferrari",
+    // The orange-interior car. Two 488 Spiders were mixed into one entry —
+    // this one and a beige-interior car below — which is why photos 4 and 5
+    // used to show a different cabin from photos 1 to 3.
     images: [
       "/work/ferrari-488-1.webp",
       "/work/ferrari-488-2.webp",
       "/work/ferrari-488-3.webp",
-      "/work/ferrari-488-4.webp",
-      "/work/ferrari-488-5.webp",
+    ],
+  },
+  {
+    // The beige-interior 488. Its third photo was filed as "bmw-m3-1" and sat
+    // on the M3's card, where a "488 SPIDER" badge on cream leather was
+    // fairly hard to mistake for a BMW.
+    //
+    // TODO: package unconfirmed. The title deliberately names no tier rather
+    // than borrowing the orange car's "Pro" — ask Farhan which this was.
+    slug: "ferrari-488-spider-beige-detail",
+    title: "Ferrari 488 Spider",
+    brand: "Ferrari",
+    images: [
+      "/work/ferrari-488-beige-1.webp",
+      "/work/ferrari-488-beige-2.webp",
+      "/work/ferrari-488-beige-3.webp",
     ],
   },
   {
@@ -159,7 +176,8 @@ export const workItems: WorkItem[] = [
     slug: "bmw-m3-competition-detail",
     title: "The Diamond Detail — BMW M3 Competition",
     brand: "BMW",
-    images: ["/work/bmw-m3-1.webp", "/work/bmw-m3-2.webp"],
+    // One photo, not two: the other was the beige Ferrari's, now filed with it.
+    images: ["/work/bmw-m3-2.webp"],
   },
   {
     slug: "velar-full-detail",
