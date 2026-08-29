@@ -12,7 +12,10 @@ export const proxy = clerkMiddleware(async (_auth, req) => {
     isAsset ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
-    pathname === "/coming-soon"
+    pathname === "/coming-soon" ||
+    // Legal pages stay reachable behind the gate: Google's OAuth consent
+    // screen links to the privacy policy and needs to resolve it.
+    pathname === "/privacy"
   ) {
     return NextResponse.next();
   }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import DiamondDivider from "@/components/DiamondDivider";
 import SocialLinks from "@/components/SocialLinks";
 import { serviceArea } from "@/data/serviceArea";
@@ -46,6 +47,10 @@ export default function Footer() {
       </div>
       <div className="mx-auto max-w-6xl px-6 pb-8 flex items-center justify-center gap-3 text-sm text-muted">
         <p>&copy; {new Date().getFullYear()} Diamond Clean Detail. All rights reserved.</p>
+        <span aria-hidden>&middot;</span>
+        <Link href="/privacy" className="hover:text-foreground transition-colors">
+          Privacy
+        </Link>
       </div>
     </footer>
   );
