@@ -36,17 +36,32 @@ export default function TintStepSection({
           alpha the ghost lands on #F1F1F1 over the white bands and #E7E7E7
           over the grey ones — the same contrast on paper, but visibly weaker
           on the brighter ground, which is why the odd-numbered steps looked
-          faded. These two values put both bands within a shade of #E5. */}
+          faded. These two values put both bands within a shade of #E5.
+
+          The offsets sit inside the band rather than bleeding above it. They
+          used to be negative, which put the ink 7px over the rule so every
+          numeral was sliced by the line at the top of its own section. They
+          also look inverted — a larger inset on the smaller screen — because
+          the padding that matters is measured from the ink, not the element:
+          a font's internal leading scales with its size, so the 176px numeral
+          already carries ~23px of its own clearance where the 96px one only
+          carries ~13. Both land ~20-27px clear of the rule. */}
       <span
         aria-hidden
-        className={`pointer-events-none select-none absolute -top-4 sm:-top-8 right-3 sm:right-10 text-[6rem] sm:text-[11rem] font-black leading-none tabular-nums tracking-tight ${
+        className={`pointer-events-none select-none absolute top-2 sm:top-1 right-3 sm:right-10 text-[6rem] sm:text-[11rem] font-black leading-none tabular-nums tracking-tight ${
           alt ? "text-neutral-900/[0.075]" : "text-neutral-900/[0.105]"
         }`}
       >
         {String(step).padStart(2, "0")}
       </span>
 
-      <div className="relative py-14 sm:py-24">
+      {/* Extra head room on phones, where the ghost numeral and the progress
+          rail are otherwise fighting for the same 40px: the numeral is wide
+          relative to a 375px screen and the rail is centred, so once the
+          numeral moved down off the rule it landed on the pips. On desktop
+          they never met — the numeral sits far right of a centred rail — so
+          that breakpoint keeps its original spacing. */}
+      <div className="relative pt-24 pb-14 sm:py-24">
         <header className="mx-auto max-w-3xl px-6 text-center mb-10 sm:mb-14">
           <div className="flex items-center justify-center gap-1.5 mb-6">
             {Array.from({ length: totalSteps }, (_, i) => (
