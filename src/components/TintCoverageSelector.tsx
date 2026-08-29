@@ -2,6 +2,8 @@
 
 import { getCategory, vehicleSizeLabels, VehicleSize, priceForSize, Package } from "@/data/catalog";
 import { teslaPriceForPackage, teslaModelFromVehicleInfo } from "@/data/teslaTint";
+import { coverageDiagram, COVERAGE_CANVAS } from "@/data/tintCoverage";
+import Image from "next/image";
 import SegmentedTabs from "@/components/SegmentedTabs";
 import WindshieldTintPreview from "@/components/WindshieldTintPreview";
 
@@ -31,6 +33,7 @@ export default function TintCoverageSelector({
       ? teslaPriceForPackage(pkg.slug, filmSlug, teslaModelFromVehicleInfo(vehicleInfo))
       : null;
   const price = teslaPrice?.price ?? priceForSize(pkg, vehicleSize);
+  const diagram = coverageDiagram(pkg.slug, vehicleSize);
 
   return (
     <div className="w-full">
@@ -46,8 +49,34 @@ export default function TintCoverageSelector({
 
         {/* Preview + details */}
         <div className="mt-10 sm:mt-14 grid sm:grid-cols-2 gap-8 sm:gap-10 items-center">
-          <div className="aspect-[3054/955] w-full rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center">
-            <p className="text-sm text-neutral-500">Coverage diagram coming soon</p>
+          {/* The box is cut to the diagram canvas, and the diagram is
+              bottom-aligned like the shade visualizer above it, so the three
+              vehicles stand on one ground line and switching size swaps the
+              car rather than moving it. Packages without a render yet keep
+              the placeholder rather than borrowing another package's diagram
+              — showing the wrong glass highlighted would be worse than
+              showing none, since naming the exact glass is this step's whole
+              job. */}
+          <div
+            className="relative w-full"
+            style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
+          >
+            {diagram ? (
+              <Image
+                src={diagram}
+                alt={`${pkg.name} tint coverage on a ${vehicleSizeLabels[vehicleSize]}`}
+                fill
+                priority
+                sizes="(max-width: 640px) 100vw, 50vw"
+                className="object-contain object-bottom"
+              />
+            ) : (
+              <div className="absolute inset-0 rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center">
+                <p className="text-sm text-neutral-500 text-center px-6">
+                  {pkg.name} diagram coming soon
+                </p>
+              </div>
+            )}
           </div>
 
           <div>
