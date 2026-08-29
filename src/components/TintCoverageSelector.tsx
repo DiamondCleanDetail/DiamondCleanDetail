@@ -127,12 +127,18 @@ export default function TintCoverageSelector({
               {/* Guarded rather than fed src="" — an empty src renders the
                   browser's broken-image glyph, which is exactly how the
                   unregistered diagram slipped through the first time. */}
+              {/* With nothing chosen the strip render stays up as a preview
+                  of what the options cover, but dimmed — at full strength the
+                  highlighted glass read as an active selection sitting next
+                  to a "None" that claimed otherwise. */}
               {coverageDiagram(
                 windshieldAddOns.includes("full-windshield") ? "full-windshield" : "windshield-strip",
                 vehicleSize
               ) ? (
                 <div
-                  className="relative w-full"
+                  className={`relative w-full transition-opacity ${
+                    windshieldAddOns.length === 0 ? "opacity-40 grayscale" : ""
+                  }`}
                   style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
                 >
                   <Image
@@ -163,12 +169,32 @@ export default function TintCoverageSelector({
                 </div>
               )}
 
-              <div className="space-y-3">
-                {(category.addOns ?? []).map((a) => {
-                  const selected = windshieldAddOns.includes(a.slug);
+              {/* A real radio trio, with "None" as an explicit first option.
+                  The earlier version relied on tapping the selected option
+                  again to clear it — mechanically true, but nothing said so,
+                  and radio circles read as "one of these is required". An
+                  option you can point at is the only affordance that
+                  actually communicates "you can have neither". */}
+              <div className="space-y-3" role="radiogroup" aria-label="Windshield tint">
+                {[
+                  {
+                    slug: null as string | null,
+                    name: "No windshield tint",
+                    price: null as number | null,
+                    description: "Just the coverage you picked above.",
+                  },
+                  ...(category.addOns ?? []).map((a) => ({
+                    slug: a.slug as string | null,
+                    name: a.name,
+                    price: a.price as number | null,
+                    description: a.description,
+                  })),
+                ].map((a) => {
+                  const selected =
+                    a.slug === null ? windshieldAddOns.length === 0 : windshieldAddOns.includes(a.slug);
                   return (
                     <label
-                      key={a.slug}
+                      key={a.slug ?? "none"}
                       className={`flex items-start gap-3 rounded-xl border-2 px-4 py-3.5 cursor-pointer transition-colors ${
                         selected
                           ? "border-neutral-900 bg-neutral-50"
@@ -176,26 +202,20 @@ export default function TintCoverageSelector({
                       }`}
                     >
                       <input
-                        type="checkbox"
+                        type="radio"
+                        name="windshield-tint-option"
                         checked={selected}
-                        // One-or-the-other: the full windshield already
-                        // covers the strip's glass, so these behave as a
-                        // radio pair — picking one replaces the other, and
-                        // tapping the selected one clears it (neither is
-                        // required, which a plain radio can't express).
-                        onChange={() => setWindshieldAddOns(selected ? [] : [a.slug])}
-                        // Styled as a radio because it behaves as one — a
-                        // square checkbox reads as "take both". Still a
-                        // checkbox underneath so re-tapping clears it, which
-                        // a real radio group cannot do.
+                        onChange={() => setWindshieldAddOns(a.slug === null ? [] : [a.slug])}
                         className="mt-1 h-4 w-4 appearance-none rounded-full border-2 border-neutral-300 checked:border-neutral-900 checked:bg-neutral-900 checked:shadow-[inset_0_0_0_3px_white] transition-colors"
                       />
                       <span className="flex-1 min-w-0">
                         <span className="flex items-baseline justify-between gap-3">
                           <span className="text-sm font-semibold text-neutral-900">{a.name}</span>
-                          <span className="text-sm font-bold text-neutral-900 tabular-nums shrink-0">
-                            +${a.price}
-                          </span>
+                          {a.price !== null && (
+                            <span className="text-sm font-bold text-neutral-900 tabular-nums shrink-0">
+                              +${a.price}
+                            </span>
+                          )}
                         </span>
                         <span className="block text-xs text-neutral-500 mt-1 leading-relaxed">
                           {a.description}
