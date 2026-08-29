@@ -4,6 +4,16 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
+/** The four the business leads with, in the order it leads with them —
+ * detailing first. Not generated from the catalog: that lists ten, and the
+ * point here is the short version. The full set is the mosaic below. */
+const heroServices = [
+  { label: "Detailing", href: "/services/mobile-detailing" },
+  { label: "Paint Protection Film", href: "/services/paint-protection-film" },
+  { label: "Ceramic Coating", href: "/services/ceramic-coating" },
+  { label: "Window Tinting", href: "/window-tinting" },
+];
+
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -74,9 +84,8 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.12, ease: [0.2, 0.8, 0.2, 1] as const }}
           className="mt-3 sm:mt-4 text-sm sm:text-base text-muted max-w-xl mx-auto text-balance"
         >
-          Premium mobile detailing, paint protection, and ceramic coatings.
-          See your options, visualize the results, and book online in
-          minutes.
+          Premium mobile detailing, paint protection, and ceramic coatings —
+          brought to your driveway in the Denver Metro Area.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -97,6 +106,43 @@ export default function Hero() {
             View Services
           </Link>
         </motion.div>
+
+        {/* The four headline services, named and linked.
+            "View Services" above is a door with no sign on it — this is what
+            makes the range legible without scrolling, and gives each service
+            its own way in. Deliberately plain text with separators rather than
+            pills: the trust chips directly below are already a pill row, and
+            stacking two would read as clutter. Keeping them light also keeps
+            them under "Book a Detail", so detailing stays the headline act. */}
+        <motion.nav
+          aria-label="Our services"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.36, ease: [0.2, 0.8, 0.2, 1] as const }}
+          className="mt-6 sm:mt-7"
+        >
+          <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-xs sm:text-sm">
+            {heroServices.map((s, i) => (
+              <li key={s.href} className="flex items-center gap-x-3">
+                {/* Dropped below sm, where the row wraps: a separator travels
+                    with the item it precedes, so on a phone the wrapped line
+                    began with a dangling dot. Above sm the four fit on one
+                    line and it can't happen. */}
+                {i > 0 && (
+                  <span aria-hidden className="hidden sm:inline text-muted/40 select-none">
+                    &middot;
+                  </span>
+                )}
+                <Link
+                  href={s.href}
+                  className="link-underline text-muted hover:text-foreground transition-colors whitespace-nowrap"
+                >
+                  {s.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </motion.nav>
       </div>
     </section>
   );

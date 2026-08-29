@@ -3,7 +3,6 @@ import Hero from "@/components/Hero";
 import FadeIn from "@/components/FadeIn";
 import ServiceMosaic from "@/components/ServiceMosaic";
 import MarquesStrip from "@/components/MarquesStrip";
-import TrustChips from "@/components/TrustChips";
 import BeforeAfterGallery from "@/components/BeforeAfterGallery";
 import Testimonials from "@/components/Testimonials";
 import ServiceAreaMap from "@/components/ServiceAreaMap";
@@ -15,8 +14,6 @@ export default function Home() {
   return (
     <div>
       <Hero />
-
-      <TrustChips />
 
       <MarquesStrip />
 
