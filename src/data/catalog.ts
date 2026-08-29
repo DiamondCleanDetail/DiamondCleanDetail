@@ -872,7 +872,10 @@ export const catalog: ServiceCategory[] = [
           "diamond-ceramic-rx": 379,
           "diamond-ceramic-rx1": 479,
         },
-        image: null,
+        // Shot from above rather than close-up: the roof is the one add-on
+        // whose extent you cannot judge from a detail crop — the point is
+        // how much glass it actually is.
+        image: "/services/tint-addon-pano-roof.webp",
       },
     ],
   },

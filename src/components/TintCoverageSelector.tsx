@@ -336,12 +336,31 @@ export default function TintCoverageSelector({
                     return (
                       <label
                         key={a.slug}
-                        className={`flex items-start gap-3 rounded-xl border-2 px-4 py-3.5 cursor-pointer transition-colors ${
+                        className={`block rounded-xl border-2 overflow-hidden cursor-pointer transition-colors ${
                           selected
                             ? "border-neutral-900 bg-neutral-50"
                             : "border-neutral-200 hover:border-neutral-400"
                         }`}
                       >
+                        {/* Same treatment as the windshield options above:
+                            muted until chosen, so the selected card is also
+                            the most vivid one. The roof is the add-on people
+                            most often picture wrongly — this is the whole
+                            panel, not a sunroof-sized square. */}
+                        {a.image && (
+                          <span className="relative block w-full aspect-[1000/560]">
+                            <Image
+                              src={a.image}
+                              alt={`The glass this covers on a Tesla, shown from above`}
+                              fill
+                              sizes="(max-width: 640px) 100vw, 50vw"
+                              className={`object-cover transition-[filter,opacity] ${
+                                selected ? "" : "grayscale-[35%] opacity-80"
+                              }`}
+                            />
+                          </span>
+                        )}
+                        <span className="flex items-start gap-3 px-4 py-3.5">
                         <input
                           type="checkbox"
                           checked={selected}
@@ -364,6 +383,7 @@ export default function TintCoverageSelector({
                           <span className="block text-xs text-neutral-500 mt-1 leading-relaxed">
                             {a.description}
                           </span>
+                        </span>
                         </span>
                       </label>
                     );
