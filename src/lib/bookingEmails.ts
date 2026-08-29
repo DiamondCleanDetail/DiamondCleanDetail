@@ -188,11 +188,11 @@ export async function sendBookingEmails(booking: ConfirmedBooking): Promise<void
   const ownerSend = resend.emails
     .send({
       from: EMAIL_FROM,
-      // diamondcleandetail.com is verified now, so this could deliver to
-      // serviceArea.email directly — but that address (info@) isn't a
-      // confirmed real mailbox yet, so this still overrides to somewhere
-      // known-good until Farhan's actual business inbox is confirmed. Drop
-      // OWNER_NOTIFICATION_EMAIL once it is.
+      // info@diamondcleandetail.com is now a confirmed, monitored mailbox, so
+      // the fallback here is the right destination and the override is no
+      // longer doing necessary work. It stays because it is still the way to
+      // point alerts somewhere else — a phone during a busy weekend, say —
+      // without a deploy. Unset OWNER_NOTIFICATION_EMAIL to use info@.
       to: process.env.OWNER_NOTIFICATION_EMAIL || serviceArea.email,
       subject: `New booking — ${booking.customerName} — ${booking.date} ${booking.time}`,
       html: renderEmailHtml({
