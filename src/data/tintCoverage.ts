@@ -41,6 +41,11 @@ const diagrams: Record<string, Partial<Record<VehicleSize, string>>> = {
     suv: "/tint-coverage/windshield-strip-suv.png",
     truck: "/tint-coverage/windshield-strip-truck.png",
   },
+  "full-windshield": {
+    sedan: "/tint-coverage/full-windshield-sedan.png",
+    suv: "/tint-coverage/full-windshield-suv.png",
+    truck: "/tint-coverage/full-windshield-truck.png",
+  },
 };
 
 export function coverageDiagram(packageSlug: string, size: VehicleSize): string | null {

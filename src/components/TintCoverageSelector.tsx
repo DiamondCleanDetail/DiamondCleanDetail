@@ -117,18 +117,38 @@ export default function TintCoverageSelector({
               Either option rides along with whichever coverage you picked above, in the same visit.
             </p>
 
+            {/* The diagram follows the selection: Full Windshield when it's
+                checked (its glass is the superset, so it's the honest picture
+                even with both ticked), the strip when only that is, and the
+                strip as the default invitation when neither is yet. Because
+                every variant is cut from one shared mask, the car itself never
+                moves — only the red does. */}
             <div className="mt-6 grid sm:grid-cols-2 gap-8 sm:gap-10 items-center">
               {/* Guarded rather than fed src="" — an empty src renders the
                   browser's broken-image glyph, which is exactly how the
                   unregistered diagram slipped through the first time. */}
-              {coverageDiagram("windshield-strip", vehicleSize) ? (
+              {coverageDiagram(
+                windshieldAddOns.includes("full-windshield") ? "full-windshield" : "windshield-strip",
+                vehicleSize
+              ) ? (
                 <div
                   className="relative w-full"
                   style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
                 >
                   <Image
-                    src={coverageDiagram("windshield-strip", vehicleSize)!}
-                    alt={`Windshield strip coverage on a ${vehicleSizeLabels[vehicleSize]}`}
+                    src={
+                      coverageDiagram(
+                        windshieldAddOns.includes("full-windshield")
+                          ? "full-windshield"
+                          : "windshield-strip",
+                        vehicleSize
+                      )!
+                    }
+                    alt={`${
+                      windshieldAddOns.includes("full-windshield")
+                        ? "Full windshield"
+                        : "Windshield strip"
+                    } coverage on a ${vehicleSizeLabels[vehicleSize]}`}
                     fill
                     sizes="(max-width: 640px) 100vw, 50vw"
                     className="object-contain object-bottom"
