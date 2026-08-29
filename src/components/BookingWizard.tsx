@@ -15,6 +15,7 @@ import {
 import Image from "next/image";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
+import TintCoverageSelector from "@/components/TintCoverageSelector";
 import PPFVisualizer from "@/components/PPFVisualizer";
 import VehiclePicker from "@/components/VehiclePicker";
 import AddOnSelector from "@/components/AddOnSelector";
@@ -578,10 +579,32 @@ export default function BookingWizard({
                 // product — Clear stays a comparison state on the service page.
                 allowClear={false}
               />
-              <TintFilmTypeSelector
-                filmType={filmTypes.find((f) => f.slug === current.filmSlug) ?? filmTypes[1]}
-                setFilmType={(f) => updateCurrentSelection({ filmSlug: f.slug })}
-              />
+
+              {/* The same coverage step the tint page runs, diagrams and all.
+                  It used to be missing here entirely: coverage fell through to
+                  the generic dark package list below, so the one choice with a
+                  picture explaining it was the one choice made blind. It also
+                  owns the windshield and roof add-ons, which is why the
+                  generic add-on grid is suppressed for tint. */}
+              <div className="border-t border-neutral-200 pt-8 mt-2">
+                <TintCoverageSelector
+                  vehicleSize={vehicleSize}
+                  pkg={current.pkg}
+                  setPkg={(p) => updateCurrentSelection({ packageSlug: p.slug })}
+                  isTesla={isTesla}
+                  filmSlug={current.filmSlug ?? filmTypes[1].slug}
+                  vehicleInfo={vehicleInfo}
+                  windshieldAddOns={current.addOnSlugs ?? []}
+                  setWindshieldAddOns={(slugs) => updateCurrentSelection({ addOnSlugs: slugs })}
+                />
+              </div>
+
+              <div className="border-t border-neutral-200 pt-8 mt-8">
+                <TintFilmTypeSelector
+                  filmType={filmTypes.find((f) => f.slug === current.filmSlug) ?? filmTypes[1]}
+                  setFilmType={(f) => updateCurrentSelection({ filmSlug: f.slug })}
+                />
+              </div>
               {/* No checkbox: the vehicle step precedes this one now, so a
                   Tesla is detected from the car the customer already named.
                   A Tesla prices on coverage x film rather than on vehicle
@@ -661,6 +684,11 @@ export default function BookingWizard({
               />
             </div>
           )}
+          {/* Only where nothing above already owns the package choice. Both
+              visualizers are the choice, not a preview of it — listing the
+              same tiers again underneath gave every service two controls for
+              one decision, and they could disagree. */}
+          {!current.category.visualizer && (
           <div className="grid gap-3">
             {current.category.packages.map((p) => (
               <button
@@ -688,8 +716,15 @@ export default function BookingWizard({
               </button>
             ))}
           </div>
+          )}
 
-          {current.category.addOns && current.category.addOns.length > 0 && (
+          {/* Tint's add-ons are the windshield and roof options, and the
+              coverage step above already presents them with the photos that
+              explain them. Showing them again here was the same three choices
+              twice on one screen. */}
+          {current.category.visualizer !== "tint" &&
+            current.category.addOns &&
+            current.category.addOns.length > 0 && (
             <div className="mt-8">
               <h3 className="font-semibold">Add-Ons</h3>
               <p className="text-sm text-muted mt-1 mb-4">

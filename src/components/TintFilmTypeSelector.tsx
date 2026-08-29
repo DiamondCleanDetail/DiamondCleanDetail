@@ -48,12 +48,17 @@ export default function TintFilmTypeSelector({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full @container">
       <div className="mx-auto max-w-6xl px-6">
+        {/* Three across only when the container is genuinely wide enough.
+            A viewport breakpoint was the wrong measure: this also renders in
+            the booking wizard, which is 720px inside a 1400px window, so
+            `sm:` was true while each card had barely 200px — enough to turn
+            the selected card's detail into a narrow ribbon of text. */}
         <div
           role="radiogroup"
           aria-label="Film type"
-          className="grid sm:grid-cols-3 gap-4 sm:gap-5 items-start"
+          className="grid @3xl:grid-cols-3 gap-4 sm:gap-5 items-start"
         >
           {filmTypes.map((f, i) => {
             const isSelected = filmType.slug === f.slug;
