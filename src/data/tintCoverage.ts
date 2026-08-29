@@ -14,16 +14,27 @@ import type { VehicleSize } from "@/data/catalog";
  * All three renders sit on one canvas at a shared ground line and a matched
  * scale, so changing vehicle size reads as swapping the car rather than
  * resizing the picture.
+ *
+ * Within a vehicle, the packages are the same render with different glass
+ * highlighted, and they are cut out and placed from a single shared mask —
+ * so the two are pixel-identical outside the glass and switching coverage
+ * changes only the red. Verified at build time: zero differing alpha pixels
+ * between full-* and front-two-* for all three sizes.
  */
 export const COVERAGE_CANVAS = { width: 2000, height: 1240 };
 
 const diagrams: Record<string, Partial<Record<VehicleSize, string>>> = {
+  "front-two": {
+    sedan: "/tint-coverage/front-two-sedan.png",
+    suv: "/tint-coverage/front-two-suv.png",
+    truck: "/tint-coverage/front-two-truck.png",
+  },
   "full-vehicle": {
     sedan: "/tint-coverage/full-sedan.png",
     suv: "/tint-coverage/full-suv.png",
     truck: "/tint-coverage/full-truck.png",
   },
-  // "front-two" and "windshield-strip" renders are still to come.
+  // "windshield-strip" renders are still to come.
 };
 
 export function coverageDiagram(packageSlug: string, size: VehicleSize): string | null {
