@@ -26,11 +26,24 @@ export default function TintStepSection({
         alt ? "bg-neutral-100" : "bg-white"
       }`}
     >
+      {/* Zero-padded, and not for decoration: a bare "1" is a plain vertical
+          bar 63px wide where "2", "3" and "4" are 101–111px of distinctive
+          shape, so at ghost opacity the first step read as a grey rectangle
+          rather than a numeral while the rest read fine. Padding gives every
+          step the same width and gives the 1 a form to be recognised by.
+
+          The alpha differs by band because the shade should not. At one fixed
+          alpha the ghost lands on #F1F1F1 over the white bands and #E7E7E7
+          over the grey ones — the same contrast on paper, but visibly weaker
+          on the brighter ground, which is why the odd-numbered steps looked
+          faded. These two values put both bands within a shade of #E5. */}
       <span
         aria-hidden
-        className="pointer-events-none select-none absolute -top-4 sm:-top-8 right-3 sm:right-10 text-[7rem] sm:text-[11rem] font-black leading-none text-neutral-900/[0.055]"
+        className={`pointer-events-none select-none absolute -top-4 sm:-top-8 right-3 sm:right-10 text-[6rem] sm:text-[11rem] font-black leading-none tabular-nums tracking-tight ${
+          alt ? "text-neutral-900/[0.075]" : "text-neutral-900/[0.105]"
+        }`}
       >
-        {step}
+        {String(step).padStart(2, "0")}
       </span>
 
       <div className="relative py-14 sm:py-24">
