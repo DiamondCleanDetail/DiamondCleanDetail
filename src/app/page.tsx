@@ -11,6 +11,41 @@ import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
 import HelpNudge from "@/components/HelpNudge";
 
+/** A whole-card link to a service you configure rather than just read about. */
+function PreviewCard({
+  href,
+  title,
+  accent,
+  body,
+  cta,
+}: {
+  href: string;
+  title: string;
+  accent: string;
+  body: string;
+  cta: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="card-lift group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-6 bg-surface border border-border rounded-2xl px-6 py-7 sm:px-8 sm:py-10"
+    >
+      <div>
+        <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
+          Interactive Preview
+        </span>
+        <h2 className="text-xl sm:text-3xl font-bold mt-2">
+          {title} — <span className="chrome-text">{accent}</span>
+        </h2>
+        <p className="text-sm sm:text-base text-muted mt-2 max-w-lg">{body}</p>
+      </div>
+      <span className="chrome-btn shrink-0 px-6 py-3 rounded-lg font-semibold whitespace-nowrap text-sm sm:text-base">
+        {cta} &rarr;
+      </span>
+    </Link>
+  );
+}
+
 export default function Home() {
   return (
     <div>
@@ -33,28 +68,27 @@ export default function Home() {
         <HelpNudge label="Not sure where to start?" className="max-w-2xl mx-auto" />
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">
+      {/* The two services you can see before you buy. Both pages open on a
+          configurator, so they earn a card apiece rather than sitting in the
+          grid above with the services you simply book. */}
+      <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24 grid gap-4 sm:gap-5">
         <FadeIn>
-          <Link
+          <PreviewCard
             href="/window-tinting"
-            className="card-lift group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-6 bg-surface border border-border rounded-2xl px-6 py-7 sm:px-8 sm:py-10"
-          >
-            <div>
-              <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
-                Interactive Preview
-              </span>
-              <h2 className="text-xl sm:text-3xl font-bold mt-2">
-                Window Tinting — <span className="chrome-text">See It Before You Book</span>
-              </h2>
-              <p className="text-sm sm:text-base text-muted mt-2 max-w-lg">
-                Preview real tint shades on an actual vehicle, then book the
-                darkness that fits you. Tesla pricing handled separately.
-              </p>
-            </div>
-            <span className="chrome-btn shrink-0 px-6 py-3 rounded-lg font-semibold whitespace-nowrap text-sm sm:text-base">
-              Preview Tints &rarr;
-            </span>
-          </Link>
+            title="Window Tinting"
+            accent="See It Before You Book"
+            body="Preview real tint shades on an actual vehicle, then book the darkness that fits you. Tesla pricing handled separately."
+            cta="Preview Tints"
+          />
+        </FadeIn>
+        <FadeIn delay={0.1}>
+          <PreviewCard
+            href="/services/paint-protection-film"
+            title="Paint Protection Film"
+            accent="See What's Covered"
+            body="Step through each coverage level on the car and watch the protected panels light up, so you know exactly what you're paying to cover."
+            cta="Preview Coverage"
+          />
         </FadeIn>
       </section>
 
