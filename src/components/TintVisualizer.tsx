@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import StackedImage from "@/components/StackedImage";
-import { previewAspect, tintLevels, type TintLevel } from "@/data/tintLevels";
+import { previewAspect, teslaPreviewAspect, tintLevels, type TintLevel } from "@/data/tintLevels";
 import { vehicleSizeLabels, type VehicleSize } from "@/data/catalog";
 import SegmentedTabs from "@/components/SegmentedTabs";
 
@@ -19,6 +19,7 @@ export default function TintVisualizer({
   setLevel,
   vehicleSize,
   allowClear = true,
+  isTesla = false,
 }: {
   level: TintLevel;
   setLevel: (l: TintLevel) => void;
@@ -26,16 +27,24 @@ export default function TintVisualizer({
   vehicleSize?: VehicleSize;
   /** False in purchase contexts, where Clear must not be selectable. */
   allowClear?: boolean;
+  /** Detected from the chosen vehicle. Teslas preview on a Model 3 instead of
+   * the generic car for their size bucket. */
+  isTesla?: boolean;
 }) {
   const selectableLevels = allowClear ? previewLevels : purchasableLevels;
   const size = vehicleSize ?? "sedan";
-  const image = level.images[size];
+  // Decided across the whole set, not per shade, so the frame keeps one shape
+  // however you step through it.
+  const useTeslaSet = isTesla && selectableLevels.every((l) => l.teslaImage);
+  const srcFor = (l: TintLevel) => (useTeslaSet ? l.teslaImage : l.images[size]);
+  const image = srcFor(level);
+  const aspect = useTeslaSet ? teslaPreviewAspect : previewAspect[size];
   // Every shade for this vehicle, held in the DOM together so picking one is
   // instant. Only this vehicle's set — loading all three sizes up front would
   // be three times the bytes to save a switch most people never make.
   const shadeVariants = selectableLevels
-    .filter((l) => l.images[size])
-    .map((l) => ({ key: String(l.value), src: l.images[size]! }));
+    .filter((l) => srcFor(l))
+    .map((l) => ({ key: String(l.value), src: srcFor(l)! }));
   return (
     <div className="relative w-full">
       <div className="relative">
@@ -63,7 +72,7 @@ export default function TintVisualizer({
             // A container so the watermark below can be sized as a share of
             // the frame. At a fixed pixel size it was a quarter of the frame's
             // height on a wide screen but nearly half of it on a small laptop.
-            style={{ aspectRatio: String(previewAspect[size]), containerType: "inline-size" }}
+            style={{ aspectRatio: String(aspect), containerType: "inline-size" }}
           >
             <AnimatePresence mode="popLayout">
               <motion.span
@@ -92,7 +101,7 @@ export default function TintVisualizer({
                   variants={shadeVariants}
                   active={String(level.value)}
                   priorityKey={String(level.value)}
-                  alt={`${level.label} tint preview on a ${vehicleSizeLabels[size]}`}
+                  alt={`${level.label} tint preview on a ${useTeslaSet ? "Tesla" : vehicleSizeLabels[size]}`}
                   sizes="(max-width: 640px) 100vw, 1152px"
                   // Bottom-aligned so every vehicle stands on the same ground
                   // line. Centred, a shorter vehicle would float in the middle

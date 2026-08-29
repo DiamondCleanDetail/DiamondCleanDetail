@@ -573,6 +573,7 @@ export default function BookingWizard({
                 }
                 setLevel={(l) => updateCurrentSelection({ tintLevelValue: l.value })}
                 vehicleSize={vehicleSize}
+                isTesla={isTesla}
                 // Here the selected shade IS the order, and "no tint" isn't a
                 // product — Clear stays a comparison state on the service page.
                 allowClear={false}

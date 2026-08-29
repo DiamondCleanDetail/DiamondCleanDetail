@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { previewAspect, tintLevels } from "./tintLevels.ts";
+import { previewAspect, teslaPreviewAspect, tintLevels } from "./tintLevels.ts";
 
 /** Width and height straight out of a PNG's IHDR chunk, which always sits at
  * a fixed offset — enough to check a render's shape without an image library. */
@@ -28,6 +28,33 @@ test("the declared preview aspect matches the renders on disk", () => {
       );
     }
   }
+});
+
+test("the Tesla renders match their declared aspect and are all one size", () => {
+  const sizes = tintLevels
+    .map((l) => l.teslaImage)
+    .filter((p): p is string => Boolean(p))
+    .map((p) => {
+      const { width, height } = pngSize(p);
+      assert.equal(
+        (width / height).toFixed(3),
+        teslaPreviewAspect.toFixed(3),
+        `${p} is ${width}x${height}, which does not match teslaPreviewAspect`
+      );
+      return `${width}x${height}`;
+    });
+  assert.ok(sizes.length > 0, "expected a Tesla render set");
+  assert.equal(new Set(sizes).size, 1, `Tesla renders differ in size: ${sizes.join(", ")}`);
+});
+
+test("every purchasable shade has a Tesla render, or the set falls back mid-list", () => {
+  // The visualiser picks the Tesla set only if every selectable shade has one.
+  // A partial set would silently drop Teslas back to the generic car, so this
+  // fails loudly instead.
+  const missing = tintLevels
+    .filter((l) => !l.windshieldOnly && !l.teslaImage)
+    .map((l) => l.label);
+  assert.deepEqual(missing, [], `shades without a Tesla render: ${missing.join(", ")}`);
 });
 
 test("every shade in a bucket is the same size, so switching cannot shift the car", () => {

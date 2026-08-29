@@ -10,6 +10,11 @@ export type TintLevel = {
    * rendered widths mean equal scale. See TintVisualizer for why that is what
    * keeps them comparable. */
   images: Partial<Record<VehicleSize, string>>;
+  /** Model 3 render, shown instead of the size bucket's car when the
+   * customer's own vehicle is a Tesla. One set covers every Tesla: this is a
+   * preview of glass, not of the exact model, and a Model 3 is a truer
+   * stand-in for a Model Y than a G-Wagen is. */
+  teslaImage?: string;
   /** Preview photo of this shade on a windshield strip specifically. */
   windshieldImage?: string;
   /** 80% only applies to the windshield visor strip, not full windows —
@@ -32,17 +37,21 @@ export const previewAspect: Record<VehicleSize, number> = {
   truck: 3054 / 1357,
 };
 
+/** The Model 3 set is its own shape, so the frame follows it the same way it
+ * follows a vehicle size. Pinned by the same test as the rest. */
+export const teslaPreviewAspect = 2222 / 708;
+
 export const tintLevels: TintLevel[] = [
   // The sedan clear is composed from the corrected base itself: the 50%
   // frame with only the glass swapped back to clear (the glass mask is the
   // set of pixels that differ between the 50% and 5% frames — i.e. exactly
   // the windows). Body, wheels, shadow and alpha are byte-identical to the
   // shades, so toggling Clear cannot move anything by construction.
-  { value: 0, label: "Clear", images: { sedan: "/tint-levels/0.png", suv: "/tint-levels/suv-0.png", truck: "/tint-levels/truck-0.png" } },
+  { value: 0, label: "Clear", images: { sedan: "/tint-levels/0.png", suv: "/tint-levels/suv-0.png", truck: "/tint-levels/truck-0.png" }, teslaImage: "/tint-levels/tesla-0.png" },
   { value: 80, label: "80%", images: {}, windshieldOnly: true },
-  { value: 50, label: "50%", images: { sedan: "/tint-levels/50.png", suv: "/tint-levels/suv-50.png", truck: "/tint-levels/truck-50.png" } },
-  { value: 35, label: "35%", images: { sedan: "/tint-levels/35.png", suv: "/tint-levels/suv-35.png", truck: "/tint-levels/truck-35.png" } },
-  { value: 15, label: "15%", images: { sedan: "/tint-levels/15.png", suv: "/tint-levels/suv-15.png", truck: "/tint-levels/truck-15.png" } },
-  { value: 5, label: "5%", images: { sedan: "/tint-levels/5.png", suv: "/tint-levels/suv-5.png", truck: "/tint-levels/truck-5.png" } },
+  { value: 50, label: "50%", images: { sedan: "/tint-levels/50.png", suv: "/tint-levels/suv-50.png", truck: "/tint-levels/truck-50.png" }, teslaImage: "/tint-levels/tesla-50.png" },
+  { value: 35, label: "35%", images: { sedan: "/tint-levels/35.png", suv: "/tint-levels/suv-35.png", truck: "/tint-levels/truck-35.png" }, teslaImage: "/tint-levels/tesla-35.png" },
+  { value: 15, label: "15%", images: { sedan: "/tint-levels/15.png", suv: "/tint-levels/suv-15.png", truck: "/tint-levels/truck-15.png" }, teslaImage: "/tint-levels/tesla-15.png" },
+  { value: 5, label: "5%", images: { sedan: "/tint-levels/5.png", suv: "/tint-levels/suv-5.png", truck: "/tint-levels/truck-5.png" }, teslaImage: "/tint-levels/tesla-5.png" },
 ];
 

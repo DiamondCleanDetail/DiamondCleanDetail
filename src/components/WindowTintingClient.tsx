@@ -127,7 +127,12 @@ export default function WindowTintingClient() {
           title="Choose Your Tint Level"
           subtitle="Preview how each shade looks before you book."
         >
-          <TintVisualizer level={level} setLevel={setLevel} vehicleSize={vehicleSize} />
+          <TintVisualizer
+            level={level}
+            setLevel={setLevel}
+            vehicleSize={vehicleSize}
+            isTesla={isTesla}
+          />
         </TintStepSection>
 
         <TintStepSection
