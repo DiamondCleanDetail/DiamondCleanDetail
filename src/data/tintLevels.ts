@@ -18,12 +18,11 @@ export type TintLevel = {
 };
 
 export const tintLevels: TintLevel[] = [
-  // The sedan clear is the pre-correction render conformed onto the new
-  // base: the car body affine-fitted to the corrected shades (bodies match
-  // to a couple of pixels) and stood on the shade set's own ground shadow,
-  // so its silhouette and frame are identical to the shades' and the toggle
-  // holds still. If a corrected clear export ever arrives it can replace
-  // /tint-levels/0.png outright, but nothing depends on that happening.
+  // The sedan clear is composed from the corrected base itself: the 50%
+  // frame with only the glass swapped back to clear (the glass mask is the
+  // set of pixels that differ between the 50% and 5% frames — i.e. exactly
+  // the windows). Body, wheels, shadow and alpha are byte-identical to the
+  // shades, so toggling Clear cannot move anything by construction.
   { value: 0, label: "Clear", images: { sedan: "/tint-levels/0.png", suv: "/tint-levels/suv-0.png", truck: "/tint-levels/truck-0.png" } },
   { value: 80, label: "80%", images: {}, windshieldOnly: true },
   { value: 50, label: "50%", images: { sedan: "/tint-levels/50.png", suv: "/tint-levels/suv-50.png", truck: "/tint-levels/truck-50.png" } },
