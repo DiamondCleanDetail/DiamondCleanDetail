@@ -205,6 +205,12 @@ body::after {
   /* Also the reason this can't scroll the page: the track is far wider than
      the screen, and this is what stops that becoming horizontal page scroll. */
   overflow: hidden;
+  /* But it clips vertically too, and the hover lift makes a logo taller than
+     the row it sits in — the tallest mark goes 37.5px → 42px at the 1.12
+     scale below, which was shaving the top and bottom off whichever one you
+     pointed at. This is the room for that, with margin to spare. Raise it if
+     the lift ever grows. */
+  padding-block: 8px;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 }
@@ -213,6 +219,12 @@ body::after {
   display: flex;
   width: max-content;
   animation: marquee-scroll var(--marquee-duration, 40s) linear infinite;
+  /* The track is ~2600px of mask-painted logos inside a masked viewport, on a
+     40-second animation. Without this the compositor is free to drop the layer
+     and re-rasterise it, and the wrap back to the start is exactly when it
+     does — which showed up as the row blanking for a frame and popping back
+     after the last marque. Promoting it once keeps the raster around. */
+  will-change: transform;
 }
 
 /* Let someone stop it to actually read a name — or, now that each logo
@@ -242,11 +254,14 @@ body::after {
 }
 
 @keyframes marquee-scroll {
+  /* translate3d rather than translateX to keep this on the compositor for the
+     whole lap. The two copies are exactly half the track each, so -50% lands
+     copy two precisely where copy one began and the loop has no seam. */
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
