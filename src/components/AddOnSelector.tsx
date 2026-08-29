@@ -13,6 +13,7 @@ export default function AddOnSelector({
   onToggle,
   packageSlug,
   readOnly = false,
+  priceFor,
 }: {
   addOns: AddOn[];
   selected?: string[];
@@ -20,6 +21,9 @@ export default function AddOnSelector({
   /** Currently chosen package, used to grey out already-covered add-ons. */
   packageSlug?: string;
   readOnly?: boolean;
+  /** Context-aware price per add-on (Tesla overrides, film-priced roofs).
+   * Defaults to the flat catalog price. */
+  priceFor?: (a: AddOn) => number;
 }) {
   if (addOns.length === 0) return null;
 
@@ -67,7 +71,7 @@ export default function AddOnSelector({
               <h4 className="font-semibold text-sm">{a.name}</h4>
               <p className="text-xs text-muted mt-1.5 leading-relaxed">{a.description}</p>
               <p className={`mt-3 font-bold ${included ? "text-muted" : "chrome-text"}`}>
-                {included ? "Included in this tier" : `+${formatPrice(a.price)}`}
+                {included ? "Included in this tier" : `+${formatPrice((priceFor ?? ((x: AddOn) => x.price))(a))}`}
               </p>
             </div>
           </>

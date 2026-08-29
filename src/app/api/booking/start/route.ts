@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
-import { addOnsConflict, getCategory, resolveLinePrice } from "@/data/catalog";
-import { teslaTintPrice } from "@/data/teslaTint";
+import { addOnPrice, addOnsConflict, getCategory, resolveLinePrice } from "@/data/catalog";
+import { teslaTintPrice, teslaModelFromVehicleInfo } from "@/data/teslaTint";
 import {
   isPastDate,
   isSlotTooSoon,
@@ -194,12 +194,24 @@ export async function POST(req: NextRequest) {
         teslaCoverageSlug: item.teslaCoverageSlug,
       }) ?? 0;
     // Resolve add-ons from the catalog rather than trusting any price the
-    // client sent, and ignore any the package already covers.
+    // client sent, and ignore any the package already covers. Tesla-only
+    // add-ons are dropped from non-Tesla lines rather than rejected — a
+    // stale link should degrade to "not added", not to a dead booking.
     const addOns = (category!.addOns ?? []).filter(
       (a) =>
-        (item.addOnSlugs ?? []).includes(a.slug) && !a.includedIn?.includes(pkg!.slug)
+        (item.addOnSlugs ?? []).includes(a.slug) &&
+        !a.includedIn?.includes(pkg!.slug) &&
+        (!a.teslaOnly || item.isTesla)
     );
-    const addOnsTotal = addOns.reduce((n, a) => n + a.price, 0);
+    // Context-priced: the same add-on can cost three different things on a
+    // Tesla (flat override, by film, by model), and this is the same
+    // addOnPrice the page and wizard quote with.
+    const teslaModel = teslaModelFromVehicleInfo(body.vehicleInfo ?? "");
+    const addOnsTotal = addOns.reduce(
+      (n, a) =>
+        n + addOnPrice(a, { isTesla: item.isTesla, filmSlug: item.filmSlug, teslaModel }),
+      0
+    );
     const price = basePrice + addOnsTotal;
     const depositPercent = pkg!.depositPercent ?? 0;
     const deposit = depositPercent > 0 ? Math.round((basePrice * depositPercent) / 100) : 0;

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getCategory, getFaqs, resolveLinePrice, Package, VehicleSize } from "@/data/catalog";
+import { addOnPrice, getCategory, getFaqs, resolveLinePrice, Package, VehicleSize } from "@/data/catalog";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
 import { teslaPriceForPackage, teslaModelFromVehicleInfo } from "@/data/teslaTint";
@@ -33,15 +33,28 @@ const benefitImages = [
 
 export default function WindowTintingClient() {
   const [level, setLevel] = useState(tintLevels.find((l) => l.value === 35)!);
-  const [isTesla, setIsTesla] = useState(false);
+  // Detected, not asked: picking Tesla in the vehicle step (or typing it in
+  // the manual field) is the answer. The old checkbox asked twice.
   const [vehicleSize, setVehicleSize] = useState<VehicleSize>("sedan");
   const [vehicleInfo, setVehicleInfo] = useState("");
+  const isTesla = /tesla/i.test(vehicleInfo);
   const [pkg, setPkg] = useState<Package>(category.packages[0]);
   const [filmType, setFilmType] = useState(filmTypes[1]); // Diamond Ceramic RX, most popular
   // Windshield work rides along with either coverage as add-ons, not as a
   // third mutually-exclusive tab — the old model made "full vehicle plus the
   // strip" literally unbookable.
   const [windshieldAddOns, setWindshieldAddOns] = useState<string[]>([]);
+
+  // Switching from a Tesla to anything else must drop Tesla-only picks: the
+  // totals already refused to charge for them, but the summary kept naming
+  // "+ Panoramic Roof" on a car that cannot buy it.
+  useEffect(() => {
+    if (isTesla) return;
+    setWindshieldAddOns((prev) =>
+      prev.filter((slug) => !category.addOns?.find((x) => x.slug === slug)?.teslaOnly)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTesla]);
 
   // A Tesla is priced on coverage x film, so the headline figure has to come
   // from the Tesla table too — otherwise this page quotes the size-based
@@ -50,8 +63,17 @@ export default function WindowTintingClient() {
     ? teslaPriceForPackage(pkg.slug, filmType.slug, teslaModelFromVehicleInfo(vehicleInfo))
     : null;
   const addOnsTotal = (category.addOns ?? [])
-    .filter((a) => windshieldAddOns.includes(a.slug))
-    .reduce((n, a) => n + a.price, 0);
+    .filter((a) => windshieldAddOns.includes(a.slug) && (!a.teslaOnly || isTesla))
+    .reduce(
+      (n, a) =>
+        n +
+        addOnPrice(a, {
+          isTesla,
+          filmSlug: filmType.slug,
+          teslaModel: teslaModelFromVehicleInfo(vehicleInfo),
+        }),
+      0
+    );
   // Film-aware for every car now, through the same resolver the checkout
   // charges with — the number on this card is the number Stripe takes.
   const price =
@@ -96,7 +118,6 @@ export default function WindowTintingClient() {
             vehicleInfo={vehicleInfo}
             setVehicleInfo={setVehicleInfo}
             isTesla={isTesla}
-            setIsTesla={setIsTesla}
           />
         </TintStepSection>
 

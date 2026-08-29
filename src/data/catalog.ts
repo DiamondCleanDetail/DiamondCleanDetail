@@ -77,12 +77,41 @@ export type AddOn = {
    * point — the full windshield already covers the strip's glass, so selling
    * both is selling the same film twice. */
   exclusiveGroup?: string;
+  /** Only offered on Teslas — the panoramic roof being the case in point.
+   * Hidden from non-Tesla UIs and ignored by the server for non-Tesla lines. */
+  teslaOnly?: boolean;
+  /** Flat Tesla override of `price` (the strip runs $59 on a Tesla vs $50). */
+  teslaFlatPrice?: number;
+  /** Tesla price by film slug, for work where the film drives the cost —
+   * the panoramic roof is film-priced where the windshield options aren't. */
+  teslaPriceByFilm?: Record<string, number>;
+  /** Tesla price by model name (matching vehicles.ts), for glass that only
+   * some Teslas have — the Model X windshield is nearly twice the standard. */
+  teslaPriceByModel?: Record<string, number>;
 };
 
 /** Whether two add-ons are mutually exclusive. One rule, asked the same way
  * by the page, the wizard and the API — so the three cannot drift. */
 export function addOnsConflict(a: AddOn, b: AddOn): boolean {
   return Boolean(a.exclusiveGroup && a.exclusiveGroup === b.exclusiveGroup && a.slug !== b.slug);
+}
+
+/** What one add-on costs in context. Everything that quotes or charges an
+ * add-on asks this — the page, the wizard and the API — because a Tesla can
+ * reprice the same add-on three different ways (flat override, by film, by
+ * model) and each surface deciding for itself is how quotes drift. */
+export function addOnPrice(
+  a: AddOn,
+  ctx: { isTesla?: boolean; filmSlug?: string; teslaModel?: string | null } = {}
+): number {
+  if (!ctx.isTesla) return a.price;
+  if (ctx.teslaModel && a.teslaPriceByModel?.[ctx.teslaModel] !== undefined) {
+    return a.teslaPriceByModel[ctx.teslaModel];
+  }
+  if (ctx.filmSlug && a.teslaPriceByFilm?.[ctx.filmSlug] !== undefined) {
+    return a.teslaPriceByFilm[ctx.filmSlug];
+  }
+  return a.teslaFlatPrice ?? a.price;
 }
 
 export type Benefit = { title: string; description: string };
@@ -707,6 +736,8 @@ export const catalog: ServiceCategory[] = [
         description:
           "A visor strip across the top of the windshield — cuts sun glare right at eye level. Any shade.",
         price: 50,
+        // The source sheet prices the strip slightly higher on a Tesla.
+        teslaFlatPrice: 59,
         image: null,
       },
       {
@@ -721,6 +752,29 @@ export const catalog: ServiceCategory[] = [
         description:
           "Ceramic film across the entire windshield for heat and UV — in light shades only (50% or 80%). Darker film on a windshield isn't safe to drive behind.",
         price: 259,
+        // The Model X windshield is a different job — it's the largest piece
+        // of glass on any production car, and the source sheet prices it
+        // (and the Cybertruck's) separately.
+        teslaPriceByModel: { "Model X": 429, Cybertruck: 429 },
+        image: null,
+      },
+      {
+        // Tesla glass roofs are one huge tinted-from-factory panel that
+        // still passes serious heat; this is the film that fixes the
+        // "greenhouse" complaint. Film-priced per the source sheet
+        // (Rev/Turbo/Redline -> our three films), and Tesla-only until
+        // Farhan wants to offer sunroof tint on other cars.
+        slug: "pano-roof",
+        name: "Panoramic Roof",
+        teslaOnly: true,
+        description:
+          "Ceramic film across the glass roof — cuts the heat load Tesla's factory glass lets through.",
+        price: 279,
+        teslaPriceByFilm: {
+          "diamond-smoke": 279,
+          "diamond-ceramic-rx": 379,
+          "diamond-ceramic-rx1": 479,
+        },
         image: null,
       },
     ],

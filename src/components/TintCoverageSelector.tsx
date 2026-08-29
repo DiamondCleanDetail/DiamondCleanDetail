@@ -1,6 +1,6 @@
 "use client";
 
-import { getCategory, vehicleSizeLabels, VehicleSize, resolveLinePrice, Package } from "@/data/catalog";
+import { addOnPrice, getCategory, vehicleSizeLabels, VehicleSize, resolveLinePrice, Package } from "@/data/catalog";
 import { teslaPriceForPackage, teslaModelFromVehicleInfo } from "@/data/teslaTint";
 import { coverageDiagram, COVERAGE_CANVAS } from "@/data/tintCoverage";
 import Image from "next/image";
@@ -113,7 +113,9 @@ export default function TintCoverageSelector({
             the most natural combination there is. */}
         {(category.addOns ?? []).length > 0 && (
           <div className="mt-12 sm:mt-16 border-t-2 border-neutral-200 pt-10 sm:pt-12">
-            <h4 className="text-lg font-semibold text-neutral-900">Add the windshield?</h4>
+            <h4 className="text-lg font-semibold text-neutral-900">
+              {isTesla ? "Add the windshield or roof?" : "Add the windshield?"}
+            </h4>
             <p className="text-sm text-neutral-500 mt-1 max-w-[60ch]">
               Pick one — the full windshield already includes the strip's glass. Either rides along with the coverage you chose above.
             </p>
@@ -138,7 +140,13 @@ export default function TintCoverageSelector({
               ) ? (
                 <div
                   className={`relative w-full transition-opacity ${
-                    windshieldAddOns.length === 0 ? "opacity-40 grayscale" : ""
+                    windshieldAddOns.some((slug) =>
+                      category.addOns?.some(
+                        (x) => x.slug === slug && x.exclusiveGroup === "windshield"
+                      )
+                    )
+                      ? ""
+                      : "opacity-40 grayscale"
                   }`}
                   style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
                 >
@@ -185,10 +193,24 @@ export default function TintCoverageSelector({
                     description: "Just the coverage you picked above.",
                     photo: null as { src: string; alt: string } | null,
                   },
-                  ...(category.addOns ?? []).map((a) => ({
+                  ...(category.addOns ?? [])
+                    // Only the windshield pair belongs in this radio group.
+                    // Independent extras (the Tesla roof) render below as
+                    // checkboxes — folding them in here would have made the
+                    // roof mutually exclusive with the windshield, and
+                    // roof-plus-windshield is a perfectly good order.
+                    .filter((a) => a.exclusiveGroup === "windshield" && (!a.teslaOnly || isTesla))
+                    .map((a) => ({
                     slug: a.slug as string | null,
                     name: a.name,
-                    price: a.price as number | null,
+                    // Context-resolved: a Tesla strip is $59, the Model X
+                    // windshield $429, the roof priced by film — the same
+                    // addOnPrice the checkout charges with.
+                    price: addOnPrice(a, {
+                      isTesla,
+                      filmSlug,
+                      teslaModel: teslaModelFromVehicleInfo(vehicleInfo),
+                    }) as number | null,
                     description: a.description,
                     // The problem each option exists to solve, shown small.
                     // Sun in your eyes is why anyone buys the strip; a
@@ -209,8 +231,13 @@ export default function TintCoverageSelector({
                           : null,
                   })),
                 ].map((a) => {
+                  const windshieldChosen = windshieldAddOns.some((slug) =>
+                    category.addOns?.some(
+                      (x) => x.slug === slug && x.exclusiveGroup === "windshield"
+                    )
+                  );
                   const selected =
-                    a.slug === null ? windshieldAddOns.length === 0 : windshieldAddOns.includes(a.slug);
+                    a.slug === null ? !windshieldChosen : windshieldAddOns.includes(a.slug);
                   return (
                     <label
                       key={a.slug ?? "none"}
@@ -241,7 +268,13 @@ export default function TintCoverageSelector({
                           type="radio"
                           name="windshield-tint-option"
                           checked={selected}
-                          onChange={() => setWindshieldAddOns(a.slug === null ? [] : [a.slug])}
+                          onChange={() => {
+                            const kept = windshieldAddOns.filter((slug) => {
+                              const other = category.addOns?.find((x) => x.slug === slug);
+                              return other && other.exclusiveGroup !== "windshield";
+                            });
+                            setWindshieldAddOns(a.slug === null ? kept : [...kept, a.slug]);
+                          }}
                           className="mt-1 h-4 w-4 appearance-none rounded-full border-2 border-neutral-300 checked:border-neutral-900 checked:bg-neutral-900 checked:shadow-[inset_0_0_0_3px_white] transition-colors"
                         />
                         <span className="flex-1 min-w-0">
@@ -261,6 +294,55 @@ export default function TintCoverageSelector({
                     </label>
                   );
                 })}
+
+                {/* Independent extras — today just the Tesla panoramic roof —
+                    as checkboxes under the radio trio: they combine freely
+                    with any windshield choice (or none). Film-priced, so the
+                    figure follows the film picked in step 4. */}
+                {(category.addOns ?? [])
+                  .filter((a) => !a.exclusiveGroup && (!a.teslaOnly || isTesla))
+                  .map((a) => {
+                    const selected = windshieldAddOns.includes(a.slug);
+                    const price = addOnPrice(a, {
+                      isTesla,
+                      filmSlug,
+                      teslaModel: teslaModelFromVehicleInfo(vehicleInfo),
+                    });
+                    return (
+                      <label
+                        key={a.slug}
+                        className={`flex items-start gap-3 rounded-xl border-2 px-4 py-3.5 cursor-pointer transition-colors ${
+                          selected
+                            ? "border-neutral-900 bg-neutral-50"
+                            : "border-neutral-200 hover:border-neutral-400"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selected}
+                          onChange={() =>
+                            setWindshieldAddOns(
+                              selected
+                                ? windshieldAddOns.filter((slug) => slug !== a.slug)
+                                : [...windshieldAddOns, a.slug]
+                            )
+                          }
+                          className="mt-1 h-4 w-4 rounded border-2 border-neutral-300 accent-neutral-900"
+                        />
+                        <span className="flex-1 min-w-0">
+                          <span className="flex items-baseline justify-between gap-3">
+                            <span className="text-sm font-semibold text-neutral-900">{a.name}</span>
+                            <span className="text-sm font-bold text-neutral-900 tabular-nums shrink-0">
+                              +${price}
+                            </span>
+                          </span>
+                          <span className="block text-xs text-neutral-500 mt-1 leading-relaxed">
+                            {a.description}
+                          </span>
+                        </span>
+                      </label>
+                    );
+                  })}
               </div>
             </div>
           </div>

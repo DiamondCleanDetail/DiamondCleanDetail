@@ -10,6 +10,7 @@ import {
   formatPrice,
   resolveLinePrice,
   addOnsConflict,
+  addOnPrice,
 } from "@/data/catalog";
 import Image from "next/image";
 import TintVisualizer from "@/components/TintVisualizer";
@@ -41,7 +42,11 @@ const phaseLabels: Record<Phase, string> = {
   details: "Details",
   pay: "Pay",
 };
-const phaseOrder: Phase[] = ["select", "configure", "vehicle", "datetime", "details", "pay"];
+// Vehicle comes before the options step on purpose: the options are priced
+// by the vehicle (size for everything, Tesla-or-not for tint), so asking for
+// the car first lets the configure step show real numbers — and lets Tesla
+// detection replace the old "This is a Tesla" checkbox entirely.
+const phaseOrder: Phase[] = ["select", "vehicle", "configure", "datetime", "details", "pay"];
 
 type ServiceSelection = {
   serviceSlug: string;
@@ -226,6 +231,13 @@ export default function BookingWizard({
     };
   }, [date]);
 
+  // Detected from the vehicle rather than asked. The vehicle step now comes
+  // before the options step, so by the time tint options render we know
+  // whether this is a Tesla — the old "This is a Tesla" checkbox asked the
+  // customer to volunteer something their own car selection already said.
+  // initialTesla survives as a fallback for links minted before detection.
+  const isTesla = /tesla/i.test(vehicleInfo) || Boolean(initialTesla);
+
   const resolved = useMemo(
     () =>
       selections.map((s) => {
@@ -234,7 +246,10 @@ export default function BookingWizard({
         // Drop any add-on the chosen package already covers, so switching to a
         // fuller tier can't leave a duplicate charge behind.
         const addOns = (category.addOns ?? []).filter(
-          (a) => (s.addOnSlugs ?? []).includes(a.slug) && !a.includedIn?.includes(pkg.slug)
+          (a) =>
+            (s.addOnSlugs ?? []).includes(a.slug) &&
+            !a.includedIn?.includes(pkg.slug) &&
+            (!a.teslaOnly || isTesla)
         );
         // The film selector shows a default without necessarily having
         // written it to state, and for a Tesla the film is half the price
@@ -242,13 +257,17 @@ export default function BookingWizard({
         // own fallback.
         const filmSlug =
           category.visualizer === "tint" ? (s.filmSlug ?? filmTypes[1].slug) : s.filmSlug;
-        return { ...s, filmSlug, category, pkg, addOns };
+        return { ...s, filmSlug, isTesla: category.hasTeslaVariant ? isTesla : undefined, category, pkg, addOns };
       }),
-    [selections]
+    [selections, isTesla]
   );
 
-  const addOnsTotalFor = (addOns: { price: number }[]) =>
-    addOns.reduce((n, a) => n + a.price, 0);
+  const addOnsTotalFor = (addOns: import("@/data/catalog").AddOn[], filmSlug?: string) =>
+    addOns.reduce(
+      (n, a) =>
+        n + addOnPrice(a, { isTesla, filmSlug, teslaModel: teslaModelFromVehicleInfo(vehicleInfo) }),
+      0
+    );
 
   // Which of today's slots are still reachable depends on the time of day, so
   // this has to keep up while the customer sits on the step — otherwise the
@@ -282,14 +301,17 @@ export default function BookingWizard({
       teslaCoverageSlug: r.teslaCoverageSlug,
     }) ?? 0;
 
-  const subtotal = resolved.reduce((sum, r) => sum + linePrice(r) + addOnsTotalFor(r.addOns), 0);
+  const subtotal = resolved.reduce(
+    (sum, r) => sum + linePrice(r) + addOnsTotalFor(r.addOns, r.filmSlug),
+    0
+  );
   const totalDeposit = resolved.reduce((sum, r) => {
     const price = linePrice(r);
     const deposit = r.pkg.depositPercent ? Math.round((price * r.pkg.depositPercent) / 100) : 0;
     // Quote-only packages stay at $0 — their add-ons get quoted with the job
     // rather than charged against a price we haven't given yet.
     if (r.pkg.pricing.type === "quote") return sum;
-    return sum + (deposit > 0 ? deposit : price) + addOnsTotalFor(r.addOns);
+    return sum + (deposit > 0 ? deposit : price) + addOnsTotalFor(r.addOns, r.filmSlug);
   }, 0);
   const hasQuoteItem = resolved.some((r) => r.pkg.pricing.type === "quote");
   const allQuoteItems = resolved.length > 0 && resolved.every((r) => r.pkg.pricing.type === "quote");
@@ -333,25 +355,26 @@ export default function BookingWizard({
   }
 
   function handleBack() {
-    if (phase === "configure") {
+    if (phase === "vehicle") setPhase("select");
+    else if (phase === "configure") {
       if (configureIndex > 0) setConfigureIndex((i) => i - 1);
-      else setPhase("select");
-    } else if (phase === "vehicle") {
+      else setPhase("vehicle");
+    } else if (phase === "datetime") {
       setConfigureIndex(Math.max(0, selections.length - 1));
       setPhase("configure");
-    } else if (phase === "datetime") setPhase("vehicle");
-    else if (phase === "details") setPhase("datetime");
+    } else if (phase === "details") setPhase("datetime");
     else if (phase === "pay") setPhase("details");
   }
 
   function handleContinue() {
-    if (phase === "select") {
+    if (phase === "select") setPhase("vehicle");
+    else if (phase === "vehicle") {
       setConfigureIndex(0);
       setPhase("configure");
     } else if (phase === "configure") {
       if (configureIndex < selections.length - 1) setConfigureIndex((i) => i + 1);
-      else setPhase("vehicle");
-    } else if (phase === "vehicle") setPhase("datetime");
+      else setPhase("datetime");
+    }
     else if (phase === "datetime") setPhase("details");
     else if (phase === "details") setPhase("pay");
     else if (phase === "pay") submitBooking();
@@ -558,25 +581,22 @@ export default function BookingWizard({
                 filmType={filmTypes.find((f) => f.slug === current.filmSlug) ?? filmTypes[1]}
                 setFilmType={(f) => updateCurrentSelection({ filmSlug: f.slug })}
               />
-              {current.category.hasTeslaVariant && (
+              {/* No checkbox: the vehicle step precedes this one now, so a
+                  Tesla is detected from the car the customer already named.
+                  A Tesla prices on coverage x film rather than on vehicle
+                  size, so detection swaps in Tesla coverage options. Model 3
+                  and the rest genuinely differ: the rear-window choice exists
+                  only on a Model 3, and it is a real price difference, not a
+                  detail — where the model is known, only its options show. */}
+              {current.category.hasTeslaVariant && isTesla && (
                 <div className="px-5 sm:px-8 pb-8">
-                  <label className="flex items-center gap-2.5 text-sm text-neutral-700 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={current.isTesla ?? false}
-                      onChange={(e) => updateCurrentSelection({ isTesla: e.target.checked })}
-                      className="h-4 w-4 rounded border-2 border-neutral-300 accent-neutral-900"
-                    />
-                    This is a Tesla
-                  </label>
-                  {/* A Tesla prices on coverage x film rather than on vehicle
-                      size, so picking the Tesla box swaps in its own coverage
-                      options. Model 3 and the rest genuinely differ: the
-                      rear-window choice exists only on a Model 3, and it is a
-                      real price difference, not a detail. Where we already
-                      know the model from the vehicle field we only offer that
-                      model's options. */}
-                  {current.isTesla && (
+                  <p className="text-sm font-semibold text-neutral-900">
+                    Tesla detected{" "}
+                    <span className="font-normal text-neutral-500">
+                      — {teslaModelFromVehicleInfo(vehicleInfo) ?? "Tesla"} pricing applies.
+                    </span>
+                  </p>
+                  {(
                     <div className="mt-4">
                       <p className="text-xs text-neutral-500 mb-2">
                         Tesla glass is priced per coverage and film. Pick the coverage you want:
@@ -672,13 +692,23 @@ export default function BookingWizard({
             <div className="mt-8">
               <h3 className="font-semibold">Add-Ons</h3>
               <p className="text-sm text-muted mt-1 mb-4">
-                Optional extras for high-wear areas. Anything your package already covers is
+                Optional extras for this service. Anything your package already covers is
                 marked as included.
               </p>
               <AddOnSelector
-                addOns={current.category.addOns}
+                // Tesla-only extras (the panoramic roof) never show for other
+                // cars, and every price is context-resolved — the same
+                // addOnPrice the API charges with.
+                addOns={current.category.addOns.filter((a) => !a.teslaOnly || isTesla)}
                 selected={current.addOnSlugs ?? []}
                 onToggle={toggleAddOn}
+                priceFor={(a) =>
+                  addOnPrice(a, {
+                    isTesla,
+                    filmSlug: current.filmSlug,
+                    teslaModel: teslaModelFromVehicleInfo(vehicleInfo),
+                  })
+                }
                 packageSlug={current.pkg.slug}
               />
             </div>
