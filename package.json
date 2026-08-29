@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test \"src/**/*.test.ts\""
+    "test": "node --import ./scripts/register-alias.mjs --test \"src/**/*.test.ts\""
   },
   "dependencies": {
     "@clerk/nextjs": "^7.8.2",

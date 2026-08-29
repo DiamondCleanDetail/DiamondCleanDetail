@@ -129,7 +129,7 @@ export default function TintCoverageSelector({
               {isTesla ? "Add the windshield or roof?" : "Add the windshield?"}
             </h4>
             <p className="text-sm text-neutral-500 mt-1 max-w-[60ch]">
-              Pick one — the full windshield already includes the strip's glass. Either rides along with the coverage you chose above.
+              Pick one — the full windshield already includes the strip&apos;s glass. Either rides along with the coverage you chose above.
             </p>
 
             {/* The diagram follows the selection: Full Windshield when it's

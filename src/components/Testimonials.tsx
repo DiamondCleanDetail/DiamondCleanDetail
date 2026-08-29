@@ -18,7 +18,7 @@ export default function Testimonials() {
       <FadeIn>
         <div className="flex items-baseline justify-between gap-3 mb-4 sm:mb-6">
           <div>
-            <SectionHeading align="left" eyebrow="Certified Brilliance" title="Brilliant" accent="Reviews" />
+            <SectionHeading align="left" eyebrow="In Their Words" title="Brilliant" accent="Reviews" />
           </div>
           <div className="shrink-0 text-right">
             {/* div, not p — Stars renders a div, which is invalid inside a p. */}

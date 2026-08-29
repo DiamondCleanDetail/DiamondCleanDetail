@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
 import { addOnPrice, addOnsConflict, getCategory, resolveLinePrice } from "@/data/catalog";
 import { teslaTintPrice, teslaModelFromVehicleInfo } from "@/data/teslaTint";
+import { filmTypes } from "@/data/filmTypes";
 import {
   isPastDate,
   isSlotTooSoon,
@@ -79,6 +80,17 @@ export async function POST(req: NextRequest) {
           );
         }
       }
+    }
+    // The film has to be one we sell. Add-ons are already re-resolved from
+    // the catalogue rather than trusted, and the film deserves the same: an
+    // unrecognised slug doesn't error, it silently misses the film table and
+    // charges the base rate, which is a different number from the one the
+    // customer was shown.
+    if (item.filmSlug && !filmTypes.some((f) => f.slug === item.filmSlug)) {
+      return NextResponse.json(
+        { error: "That film isn't one we offer — please choose again." },
+        { status: 400 }
+      );
     }
     if (item.isTesla) {
       const priced =

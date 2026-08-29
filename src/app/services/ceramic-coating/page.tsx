@@ -14,6 +14,7 @@ import CtaCard from "@/components/CtaCard";
 import PackagePrices from "@/components/PackagePrices";
 import PackageDetails from "@/components/PackageDetails";
 import DiamondDivider from "@/components/DiamondDivider";
+import HelpNudge from "@/components/HelpNudge";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 const category = getCategory("ceramic-coating");
@@ -171,6 +172,7 @@ export default function CeramicCoatingPage() {
             </StaggerItem>
           ))}
         </StaggerGrid>
+        <HelpNudge label="Not sure which coating?" className="max-w-2xl mx-auto" />
       </section>
 
       <DiamondDivider />

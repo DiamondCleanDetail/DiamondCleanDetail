@@ -9,6 +9,7 @@ import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
 import PackagePrices from "@/components/PackagePrices";
 import DiamondDivider from "@/components/DiamondDivider";
+import HelpNudge from "@/components/HelpNudge";
 import { serviceArea } from "@/data/serviceArea";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
@@ -88,6 +89,7 @@ export default function MaintenancePlansPage() {
             as one-off bookings whenever you want one.
           </p>
         </FadeIn>
+        <HelpNudge label="Not sure which cadence?" className="max-w-2xl mx-auto" />
       </section>
 
       <DiamondDivider />

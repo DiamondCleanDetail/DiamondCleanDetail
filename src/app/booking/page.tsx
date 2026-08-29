@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import BookingWizard from "@/components/BookingWizard";
 import type { VehicleSize } from "@/data/catalog";
+import { filmTypes } from "@/data/filmTypes";
 
 export const metadata: Metadata = {
   title: "Book a Detail",
@@ -14,7 +15,13 @@ export default async function BookingPage({
   const service = typeof params.service === "string" ? params.service : undefined;
   const pkg = typeof params.package === "string" ? params.package : undefined;
   const tint = typeof params.tint === "string" ? params.tint : undefined;
-  const film = typeof params.film === "string" ? params.film : undefined;
+  // Checked against the real films, the way the add-on params already are.
+  // An unrecognised slug used to survive this far and then behave worse than
+  // a missing one: the wizard falls back to Ceramic RX for *display* only
+  // when the value is absent, so a bogus film showed RX while pricing at the
+  // base rate — $299 charged against $449 shown on a mid-size full vehicle.
+  const filmParam = typeof params.film === "string" ? params.film : undefined;
+  const film = filmTypes.some((f) => f.slug === filmParam) ? filmParam : undefined;
   const tesla = params.tesla === "1";
   const vehicleSizeParam = typeof params.vehicleSize === "string" ? params.vehicleSize : undefined;
   const vehicleSize: VehicleSize | undefined =

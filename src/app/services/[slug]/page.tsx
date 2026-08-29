@@ -18,6 +18,7 @@ import AddOnSelector from "@/components/AddOnSelector";
 import PackagePrices from "@/components/PackagePrices";
 import PackageDetails from "@/components/PackageDetails";
 import DiamondDivider from "@/components/DiamondDivider";
+import HelpNudge from "@/components/HelpNudge";
 
 /** Services that have outgrown this template and ship their own route.
  * A static route wins over this dynamic one at request time regardless, but
@@ -197,6 +198,11 @@ export default async function ServiceCategoryPage({
           <FadeIn>
             <PPFVisualizer packages={category.packages} categorySlug={category.slug} />
           </FadeIn>
+          {/* The package list below is suppressed for PPF, so this section
+              owns the tier choice — and therefore owns the way out of it. */}
+          <div className="mx-auto max-w-6xl px-6">
+            <HelpNudge label="Not sure how much coverage you need?" className="max-w-2xl mx-auto" />
+          </div>
         </section>
       )}
 
@@ -329,6 +335,7 @@ export default async function ServiceCategoryPage({
             </div>
           ))}
         </div>
+        <HelpNudge className="max-w-2xl mx-auto" />
       </section>
       )}
 

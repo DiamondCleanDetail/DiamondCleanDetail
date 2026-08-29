@@ -9,6 +9,7 @@ import ServiceAreaMap from "@/components/ServiceAreaMap";
 import DiamondDivider from "@/components/DiamondDivider";
 import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
+import HelpNudge from "@/components/HelpNudge";
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
         <FadeIn delay={0.1}>
           <ServiceMosaic />
         </FadeIn>
+        <HelpNudge label="Not sure where to start?" className="max-w-2xl mx-auto" />
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-12 sm:pb-24">

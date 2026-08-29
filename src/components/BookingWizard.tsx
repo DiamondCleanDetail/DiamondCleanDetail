@@ -19,6 +19,7 @@ import TintCoverageSelector from "@/components/TintCoverageSelector";
 import PPFVisualizer from "@/components/PPFVisualizer";
 import VehiclePicker from "@/components/VehiclePicker";
 import AddOnSelector from "@/components/AddOnSelector";
+import HelpNudge from "@/components/HelpNudge";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
 import { teslaCoverages, teslaCoveragesFor, teslaModelFromVehicleInfo } from "@/data/teslaTint";
@@ -749,6 +750,11 @@ export default function BookingWizard({
               />
             </div>
           )}
+
+          {/* The last off-ramp before payment. Someone unsure at this point
+              will otherwise either guess or leave, and a guessed booking is
+              worse for both sides than a phone call. */}
+          <HelpNudge label="Not sure you've picked the right thing?" />
         </div>
       )}
 

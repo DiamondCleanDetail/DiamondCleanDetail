@@ -14,6 +14,7 @@ import TintVehicleSelector from "@/components/TintVehicleSelector";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import TintStepSection from "@/components/TintStepSection";
 import TintBuildBar from "@/components/TintBuildBar";
+import HelpNudge from "@/components/HelpNudge";
 import FadeIn from "@/components/FadeIn";
 import FaqAccordion from "@/components/FaqAccordion";
 import StatCallouts from "@/components/StatCallouts";
@@ -277,6 +278,8 @@ export default function WindowTintingClient() {
 
               </div>
             </div>
+
+            <HelpNudge light label="Not sure which film or shade?" className="max-w-2xl mx-auto" />
 
             <p className="mt-6 text-sm text-neutral-500 text-center max-w-2xl mx-auto">
               Tesla vehicles use different glass and film-application techniques. The price above
