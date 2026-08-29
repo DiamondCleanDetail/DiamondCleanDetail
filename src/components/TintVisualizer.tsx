@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
+import StackedImage from "@/components/StackedImage";
 import { previewAspect, tintLevels, type TintLevel } from "@/data/tintLevels";
 import { vehicleSizeLabels, type VehicleSize } from "@/data/catalog";
 import SegmentedTabs from "@/components/SegmentedTabs";
@@ -30,6 +30,12 @@ export default function TintVisualizer({
   const selectableLevels = allowClear ? previewLevels : purchasableLevels;
   const size = vehicleSize ?? "sedan";
   const image = level.images[size];
+  // Every shade for this vehicle, held in the DOM together so picking one is
+  // instant. Only this vehicle's set — loading all three sizes up front would
+  // be three times the bytes to save a switch most people never make.
+  const shadeVariants = selectableLevels
+    .filter((l) => l.images[size])
+    .map((l) => ({ key: String(l.value), src: l.images[size]! }));
   return (
     <div className="relative w-full">
       <div className="relative">
@@ -67,12 +73,14 @@ export default function TintVisualizer({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 24 }}
                 transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] as const }}
-                // Upper right, which is the open air over the bonnet — every
-                // render faces right, so that corner is the one the vehicle
-                // doesn't reach into. Behind the car (z-0) so it reads as a
+                // Pinned to the top rather than measured up from the floor:
+                // the frame is much shorter for a sedan than for a G-Wagen, so
+                // the same offset from the bottom sat at a different height on
+                // each, and a large numeral could run off the top of the
+                // flattest one. Behind the car (z-0) so it reads as a
                 // watermark rather than a label sitting on the paint.
-                className="pointer-events-none select-none absolute bottom-[52%] right-[2%] z-0 font-black text-neutral-900/25 leading-none"
-                style={{ fontSize: "8.5cqw" }}
+                className="pointer-events-none select-none absolute top-[1%] right-[2%] z-0 font-black text-neutral-900/25 leading-none"
+                style={{ fontSize: "12cqw" }}
               >
                 {level.label}
               </motion.span>
@@ -80,11 +88,11 @@ export default function TintVisualizer({
 
             <div className="absolute inset-0">
               {image ? (
-                <Image
-                  src={image}
+                <StackedImage
+                  variants={shadeVariants}
+                  active={String(level.value)}
+                  priorityKey={String(level.value)}
                   alt={`${level.label} tint preview on a ${vehicleSizeLabels[size]}`}
-                  fill
-                  priority
                   sizes="(max-width: 640px) 100vw, 1152px"
                   // Bottom-aligned so every vehicle stands on the same ground
                   // line. Centred, a shorter vehicle would float in the middle

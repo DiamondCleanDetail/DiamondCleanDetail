@@ -4,6 +4,7 @@ import { addOnPrice, getCategory, vehicleSizeLabels, VehicleSize, resolveLinePri
 import { teslaPriceForPackage, teslaModelFromVehicleInfo } from "@/data/teslaTint";
 import { coverageDiagram, COVERAGE_CANVAS } from "@/data/tintCoverage";
 import Image from "next/image";
+import StackedImage from "@/components/StackedImage";
 import SegmentedTabs from "@/components/SegmentedTabs";
 
 const category = getCategory("window-tinting")!;
@@ -40,6 +41,17 @@ export default function TintCoverageSelector({
   const price =
     teslaPrice?.price ?? resolveLinePrice(pkg, vehicleSize, { filmSlug }) ?? 0;
   const diagram = coverageDiagram(pkg.slug, vehicleSize);
+  // Both coverage diagrams and both windshield ones stay mounted, so choosing
+  // between them is a style change rather than a fetch.
+  const coverageVariants = category.packages
+    .map((p) => ({ key: p.slug, src: coverageDiagram(p.slug, vehicleSize) }))
+    .filter((v): v is { key: string; src: string } => Boolean(v.src));
+  const windshieldSlug = windshieldAddOns.includes("full-windshield")
+    ? "full-windshield"
+    : "windshield-strip";
+  const windshieldVariants = ["windshield-strip", "full-windshield"]
+    .map((slug) => ({ key: slug, src: coverageDiagram(slug, vehicleSize) }))
+    .filter((v): v is { key: string; src: string } => Boolean(v.src));
 
   return (
     <div className="w-full">
@@ -68,11 +80,11 @@ export default function TintCoverageSelector({
             style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
           >
             {diagram ? (
-              <Image
-                src={diagram}
+              <StackedImage
+                variants={coverageVariants}
+                active={pkg.slug}
+                priorityKey={pkg.slug}
                 alt={`${pkg.name} tint coverage on a ${vehicleSizeLabels[vehicleSize]}`}
-                fill
-                priority
                 sizes="(max-width: 640px) 100vw, 50vw"
                 className="object-contain object-bottom"
               />
@@ -150,21 +162,12 @@ export default function TintCoverageSelector({
                   }`}
                   style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
                 >
-                  <Image
-                    src={
-                      coverageDiagram(
-                        windshieldAddOns.includes("full-windshield")
-                          ? "full-windshield"
-                          : "windshield-strip",
-                        vehicleSize
-                      )!
-                    }
+                  <StackedImage
+                    variants={windshieldVariants}
+                    active={windshieldSlug}
                     alt={`${
-                      windshieldAddOns.includes("full-windshield")
-                        ? "Full windshield"
-                        : "Windshield strip"
+                      windshieldSlug === "full-windshield" ? "Full windshield" : "Windshield strip"
                     } coverage on a ${vehicleSizeLabels[vehicleSize]}`}
-                    fill
                     sizes="(max-width: 640px) 100vw, 50vw"
                     className="object-contain object-bottom"
                   />

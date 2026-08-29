@@ -274,18 +274,15 @@ body::after {
    which left a blank frame while the incoming file was still being fetched.
    Because all the layers are present and decoded, there is nothing to wait
    for at switch time. */
+/* Every tier is already in the DOM, so the swap costs nothing — it used to
+   cross-fade over 0.4s, which read as the picture lagging behind the click
+   rather than as a transition. Cutting straight also makes the difference
+   between two tiers easier to see, since the panels that change are the only
+   thing that moves. */
 .ppf-coverage-layer {
   opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .ppf-coverage-layer[data-shown="true"] {
   opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* A cross-fade is still motion — swap instantly instead. */
-  .ppf-coverage-layer {
-    transition: none;
-  }
 }
