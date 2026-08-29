@@ -180,7 +180,9 @@ export default async function ServiceCategoryPage({
         )}
       </section>
 
-      {/* Visualizer, if applicable */}
+      {/* Visualizer, if applicable. It paints its own white ground edge to
+          edge and butts straight against the dark either side — the spacing
+          here sits outside that block, so the cut stays hard. */}
       {category.visualizer === "ppf" && (
         <section className="w-full pb-10 sm:pb-16">
           <FadeIn>

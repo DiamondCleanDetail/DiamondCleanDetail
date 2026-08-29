@@ -108,10 +108,15 @@ export default function PPFVisualizer({
   const override = priceOverride[pkg.slug];
 
   return (
-    <div className="w-full py-14 sm:py-20 bg-black">
+    /* White, like the tint configurator, and a hard edge at both ends rather
+       than a fade: the renders are a white car photographed on white, so on
+       black the body dissolved into its own background and only the film read
+       clearly. The break doubles as the signal that this block is a tool
+       rather than more page to read. */
+    <div className="w-full py-14 sm:py-20 bg-white text-neutral-900">
       <div className="mx-auto max-w-3xl px-6 text-center mb-10">
         <h3 className="font-semibold text-lg sm:text-xl">Preview Your Coverage</h3>
-        <p className="text-xs sm:text-sm text-muted mt-2">
+        <p className="text-xs sm:text-sm text-neutral-500 mt-2">
           Choose a tier to see exactly which panels are protected.
         </p>
       </div>
@@ -123,7 +128,6 @@ export default function PPFVisualizer({
           value={pkg.slug}
           onChange={selectTier}
           layoutId="ppf-tab-highlight"
-          tone="dark"
           className="w-full"
         />
 
@@ -161,8 +165,8 @@ export default function PPFVisualizer({
               );
             })}
             {!image && (
-              <div className="absolute inset-0 rounded-xl border border-dashed border-border/60 flex items-center justify-center">
-                <p className="text-sm text-muted">Coverage photo coming soon</p>
+              <div className="absolute inset-0 rounded-xl border border-dashed border-neutral-300 flex items-center justify-center">
+                <p className="text-sm text-neutral-500">Coverage photo coming soon</p>
               </div>
             )}
           </div>
@@ -175,21 +179,24 @@ export default function PPFVisualizer({
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] as const }}
             >
-              <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
+              <span className="text-[10px] sm:text-xs uppercase tracking-widest text-neutral-500">
                 Tier {packages.findIndex((p) => p.slug === pkg.slug) + 1} of {packages.length}
               </span>
               <h4 className="text-2xl sm:text-3xl font-bold tracking-tight mt-2">{pkg.name}</h4>
-              <p className="text-sm sm:text-base text-muted mt-3">{pkg.tagline}</p>
-              <p className="text-xs sm:text-sm text-muted/80 mt-3 italic">
+              <p className="text-sm sm:text-base text-neutral-500 mt-3">{pkg.tagline}</p>
+              <p className="text-xs sm:text-sm text-neutral-500 mt-3 italic">
                 Coverage areas: {pkg.features.join(", ")}
               </p>
               {override?.note && (
-                <p className="text-xs text-muted/70 mt-3">{override.note}</p>
+                <p className="text-xs text-neutral-500 mt-3">{override.note}</p>
               )}
 
-              <div className="mt-6 flex flex-wrap items-center gap-4 sm:gap-5 bg-surface-2 border border-border rounded-xl px-5 py-4">
+              {/* The price stays on a dark card, the way the tint page's payoff
+                  card does: the chrome price and button are both light-on-dark
+                  treatments and would have nothing to sit against on white. */}
+              <div className="mt-6 flex flex-wrap items-center gap-4 sm:gap-5 bg-neutral-900 rounded-xl px-5 py-4">
                 <div>
-                  <p className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">
                     {override ? "Estimated Range" : "Starting From"}
                   </p>
                   <p className="chrome-text text-2xl sm:text-3xl font-bold leading-tight">
