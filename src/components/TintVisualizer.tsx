@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { tintLevels, type TintLevel } from "@/data/tintLevels";
+import { previewAspect, tintLevels, type TintLevel } from "@/data/tintLevels";
 import { vehicleSizeLabels, type VehicleSize } from "@/data/catalog";
 import SegmentedTabs from "@/components/SegmentedTabs";
 
@@ -46,14 +46,19 @@ export default function TintVisualizer({
           />
 
           {/* Preview.
-              The box is cut for the tallest vehicle, not the sedan. Every
-              vehicle render runs bumper to bumper across its own full width,
-              so they all draw at the same scale as each other — which means a
-              G-Wagen needs the extra height, and an M3 simply leaves air above
-              itself. Sizing the box to the sedan instead would force the taller
-              vehicles to shrink to fit, and a G63 would end up drawn smaller
-              than an M3 it is actually the same length as. */}
-          <div className="relative mt-10 sm:mt-14 aspect-[3054/1357] w-full">
+              The frame takes the current vehicle's own shape rather than the
+              tallest vehicle's. Every render runs bumper to bumper across its
+              full width, so drawing each at full width keeps them all at the
+              same scale — a fixed frame isn't what holds that, and cutting it
+              for the G-Wagen just left a third of the box as dead air above
+              the far flatter sedan. */}
+          <div
+            className="relative mt-6 sm:mt-8 w-full"
+            // A container so the watermark below can be sized as a share of
+            // the frame. At a fixed pixel size it was a quarter of the frame's
+            // height on a wide screen but nearly half of it on a small laptop.
+            style={{ aspectRatio: String(previewAspect[size]), containerType: "inline-size" }}
+          >
             <AnimatePresence mode="popLayout">
               <motion.span
                 key={level.value}
@@ -62,7 +67,12 @@ export default function TintVisualizer({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 24 }}
                 transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] as const }}
-                className="pointer-events-none select-none absolute bottom-[68%] right-[3%] z-0 text-6xl sm:text-8xl font-black text-neutral-900/25 leading-none"
+                // Upper right, which is the open air over the bonnet — every
+                // render faces right, so that corner is the one the vehicle
+                // doesn't reach into. Behind the car (z-0) so it reads as a
+                // watermark rather than a label sitting on the paint.
+                className="pointer-events-none select-none absolute bottom-[52%] right-[2%] z-0 font-black text-neutral-900/25 leading-none"
+                style={{ fontSize: "8.5cqw" }}
               >
                 {level.label}
               </motion.span>

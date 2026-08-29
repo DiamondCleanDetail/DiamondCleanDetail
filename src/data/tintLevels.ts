@@ -17,6 +17,21 @@ export type TintLevel = {
   windshieldOnly?: boolean;
 };
 
+/** Aspect ratio of the preview renders, per vehicle-size bucket. Every shade
+ * within a bucket is the same pixel size, so one number covers the set.
+ *
+ * The visualiser sizes its frame from this rather than from the tallest
+ * vehicle. Reserving the tallest vehicle's height for all three left a third
+ * of the frame as dead air above a sedan, which is the flattest of them.
+ *
+ * Swapping in a new render set means updating the matching number here —
+ * tintLevels.test.ts reads the actual PNGs and fails if this drifts. */
+export const previewAspect: Record<VehicleSize, number> = {
+  sedan: 3054 / 909,
+  suv: 2440 / 908,
+  truck: 3054 / 1357,
+};
+
 export const tintLevels: TintLevel[] = [
   // The sedan clear is composed from the corrected base itself: the 50%
   // frame with only the glass swapped back to clear (the glass mask is the
