@@ -110,23 +110,25 @@ function StackedCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => 
             <PhotoCountBadge count={media.length} />
           </button>
 
+          {/* Same fixed-size portrait thumbnails as the feature card. Sharing
+              the row's width between however many photos a job had meant a
+              job with one extra photo got a single 4:3 tile the full width of
+              the column — taller than the main image above it, and cropping a
+              portrait shot to about 60%. */}
           {media.length > 1 && (
-            <div
-              className="grid gap-px bg-border"
-              style={{ gridTemplateColumns: `repeat(${media.length - 1}, minmax(0, 1fr))` }}
-            >
+            <div className="flex flex-wrap gap-2 px-3 pt-3 sm:px-4 sm:pt-4">
               {media.slice(1).map((m, j) => (
                 <button
                   key={m.src}
                   type="button"
                   onClick={() => onOpen(j + 1)}
                   aria-label={`View ${m.kind === "video" ? "clip" : "photo"} ${j + 2} from ${item.title}`}
-                  className="group relative aspect-[4/3] bg-surface-2 cursor-zoom-in overflow-hidden"
+                  className="group relative w-[58px] sm:w-[64px] aspect-[4/5] rounded-lg bg-surface-2 cursor-zoom-in overflow-hidden border border-border"
                 >
                   <MediaTile
                     media={m}
                     alt={`${item.title} — ${m.kind === "video" ? "clip" : "photo"} ${j + 2}`}
-                    sizes="(max-width: 1024px) 25vw, 17vw"
+                    sizes="64px"
                     badge="small"
                   />
                 </button>
@@ -140,21 +142,33 @@ function StackedCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => 
   );
 }
 
-/** Wide side-by-side card for a marque with only one job. A lone tall card
- * left two thirds of the row empty; this fills the width and, being
- * landscape rather than square, is actually shorter than the stacked card. */
+/** Wide side-by-side card for a marque with only one job, where a lone
+ * stacked card would leave two thirds of the row empty. The photo keeps the
+ * upright shape it was taken in; the width goes to the caption and thumbnails
+ * instead of to stretching the image. */
 function FeatureCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => void }) {
-  // Capped at four so the strip always fills its row exactly — a fixed
-  // column count left ragged empty cells whenever the count wasn't a
-  // multiple of it. Any remainder is surfaced on the last tile.
+  // Capped at four so the strip stays one tidy row at the widths this card is
+  // used at. Anything beyond that is surfaced as a "+N" on the last tile
+  // rather than silently dropped — the lightbox still opens the full set.
   const media = workMedia(item);
   const extras = media.slice(1, 5);
   const hidden = Math.max(0, media.length - 5);
 
   return (
-    <figure className="card-lift bg-surface border border-border rounded-xl overflow-hidden sm:grid sm:grid-cols-[3fr_2fr]">
+    /* A narrow media column with a portrait box, rather than the media taking
+       three fifths of a wide card and stretching to whatever height the text
+       beside it happened to need.
+
+       Nearly every photo in this portfolio is a phone photo held upright —
+       65 of 74, median aspect 0.82. The old box came out 661x280, a 2.36:1
+       letterbox, and object-cover fills that by width: a 0.82 photo scaled to
+       661 wide stands 806 tall, so 280px of it survived. Two thirds of every
+       shot was cropped away, which is why a Huracan interior read as an
+       unidentifiable grey smear. At 4:5 the box matches what the camera
+       actually took and the crop is a few percent. */
+    <figure className="card-lift bg-surface border border-border rounded-xl overflow-hidden sm:grid sm:grid-cols-[minmax(0,300px)_minmax(0,1fr)]">
       {media.length === 0 ? (
-        <div className="relative aspect-[4/3] sm:aspect-auto sm:min-h-[280px] bg-surface-2 flex items-center justify-center text-xs text-muted px-4 text-center">
+        <div className="relative aspect-[4/5] bg-surface-2 flex items-center justify-center text-xs text-muted px-4 text-center">
           Photo coming soon — {item.title}
         </div>
       ) : (
@@ -162,36 +176,36 @@ function FeatureCard({ item, onOpen }: { item: WorkItem; onOpen: (i: number) => 
           type="button"
           onClick={() => onOpen(0)}
           aria-label={`View media from ${item.title}`}
-          className="group relative block w-full aspect-[4/3] sm:aspect-auto sm:min-h-[280px] bg-surface-2 cursor-zoom-in overflow-hidden"
+          className="group relative block w-full aspect-[4/5] bg-surface-2 cursor-zoom-in overflow-hidden"
         >
-          <MediaTile media={media[0]} alt={item.title} sizes="(max-width: 640px) 100vw, 55vw" />
+          <MediaTile media={media[0]} alt={item.title} sizes="(max-width: 640px) 100vw, 300px" />
           <PhotoCountBadge count={media.length} />
         </button>
       )}
 
-      <div className="flex flex-col justify-between min-w-0">
+      <div className="flex flex-col min-w-0">
         <Caption item={item} />
 
+        {/* Thumbnails at a fixed portrait size, laid out left to right, rather
+            than stretched to share the column's width. Sharing it meant the
+            tile shape depended on how many photos a job happened to have: one
+            extra photo became a single tile the full width of the card, which
+            reproduced exactly the letterbox crop this card was suffering from
+            in the main image. A fixed size crops every job the same way. */}
         {extras.length > 0 && (
-          <div
-            className="grid gap-px bg-border border-t border-border"
-            style={{ gridTemplateColumns: `repeat(${extras.length}, minmax(0, 1fr))` }}
-          >
+          <div className="flex flex-wrap gap-2 p-4 pt-0">
             {extras.map((m, j) => (
               <button
                 key={m.src}
                 type="button"
                 onClick={() => onOpen(j + 1)}
                 aria-label={`View ${m.kind === "video" ? "clip" : "photo"} ${j + 2} from ${item.title}`}
-                // Fixed height rather than an aspect ratio: with one extra
-                // photo an aspect-ratio tile ballooned to fill the column,
-                // making the strip's size vary wildly between cards.
-                className="group relative h-20 sm:h-24 bg-surface-2 cursor-zoom-in overflow-hidden"
+                className="group relative w-[68px] sm:w-[76px] aspect-[4/5] rounded-lg bg-surface-2 cursor-zoom-in overflow-hidden border border-border"
               >
                 <MediaTile
                   media={m}
                   alt={`${item.title} — ${m.kind === "video" ? "clip" : "photo"} ${j + 2}`}
-                  sizes="(max-width: 640px) 33vw, 15vw"
+                  sizes="88px"
                   badge="small"
                 />
                 {/* If the job has more shots than fit here, the last tile says so. */}
