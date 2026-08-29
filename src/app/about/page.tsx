@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import FadeIn from "@/components/FadeIn";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 import SectionHeading from "@/components/SectionHeading";
@@ -44,16 +45,10 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          {/* A fixed portrait column rather than an even split. Half the row is
-              far more width than a head-and-shoulders shot wants, and the old
-              square filled it — which left the short paragraph beside it
-              floating in the middle of a tall empty box. The portrait is now
-              sized like a portrait, and the column takes only the width it
-              needs. */}
-          <div className="grid sm:grid-cols-[minmax(0,260px)_minmax(0,1fr)] lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] gap-8 sm:gap-12 items-center">
-            <div className="aspect-[4/5] w-full max-w-[280px] sm:max-w-none mx-auto rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
-              <p className="text-sm text-muted text-center px-6">Photo coming soon — Farhan</p>
-            </div>
+          {/* No portrait, by request — the section is carried by the words and
+              the signature instead, kept to a letter's width so it still reads
+              as a note from a person rather than a stretched block of copy. */}
+          <div className="mx-auto max-w-2xl">
             <div>
               <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">Who We Are</span>
               <h2 className="text-xl sm:text-2xl font-semibold mt-2">Owned and operated by Farhan</h2>
@@ -65,9 +60,7 @@ export default function AboutPage() {
 
               {/* Signed, the way a letter is. It is set in the wordmark's own
                   script rather than a second handwriting face, so it reads as
-                  the same hand that signs the logo — and it gives the text
-                  column enough height to sit level with the portrait instead
-                  of needing to be centred against empty space. */}
+                  the same hand that signs the logo. */}
               <div className="mt-8 pt-6 border-t border-border">
                 {/* Scales with the viewport rather than stepping at a
                     breakpoint: a script face is wide, and at a fixed 30px the
@@ -115,8 +108,14 @@ export default function AboutPage() {
               on a small laptop and squeezed the paragraph into three-word
               lines. */}
           <div className="grid sm:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] gap-8 sm:gap-12 items-center">
-            <div className="sm:order-2 aspect-[16/9] w-full rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
-              <p className="text-sm text-muted text-center px-6">Photo coming soon — On the job</p>
+            <div className="sm:order-2 relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-border">
+              <Image
+                src="/work/morgan-1.webp"
+                alt="A Diamond Clean Detail job in progress on a residential driveway"
+                fill
+                className="object-cover"
+                sizes="(min-width: 1024px) 420px, (min-width: 640px) 300px, 100vw"
+              />
             </div>
             <div>
               <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">The Goal</span>
