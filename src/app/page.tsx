@@ -28,18 +28,18 @@ function PreviewCard({
   return (
     <Link
       href={href}
-      className="card-lift group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-6 bg-surface border border-border rounded-2xl px-6 py-7 sm:px-8 sm:py-10"
+      className="card-lift group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 bg-surface border border-border rounded-2xl px-5 py-5 sm:px-7 sm:py-6"
     >
       <div>
-        <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">
+        <span className="text-[10px] uppercase tracking-widest text-muted">
           Interactive Preview
         </span>
-        <h2 className="text-xl sm:text-3xl font-bold mt-2">
+        <h2 className="text-lg sm:text-2xl font-bold mt-1.5">
           {title} — <span className="chrome-text">{accent}</span>
         </h2>
-        <p className="text-sm sm:text-base text-muted mt-2 max-w-lg">{body}</p>
+        <p className="text-sm text-muted mt-1.5 max-w-lg">{body}</p>
       </div>
-      <span className="chrome-btn shrink-0 px-6 py-3 rounded-lg font-semibold whitespace-nowrap text-sm sm:text-base">
+      <span className="chrome-btn shrink-0 px-5 py-2.5 rounded-lg font-semibold whitespace-nowrap text-sm">
         {cta} &rarr;
       </span>
     </Link>
