@@ -93,6 +93,7 @@ export default function ServiceHero({
           &larr; All Services
         </Link>
         <motion.span
+          data-motion
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] as const }}
@@ -101,6 +102,7 @@ export default function ServiceHero({
           {eyebrow}
         </motion.span>
         <motion.h1
+          data-motion
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.08, ease: [0.2, 0.8, 0.2, 1] as const }}
@@ -109,6 +111,7 @@ export default function ServiceHero({
           {title}
         </motion.h1>
         <motion.p
+          data-motion
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.16, ease: [0.2, 0.8, 0.2, 1] as const }}

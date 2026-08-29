@@ -63,6 +63,7 @@ export default function Hero() {
 
       <div className="relative mx-auto max-w-6xl px-6 py-16 sm:py-24 text-center w-full">
         <motion.span
+          data-motion
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] as const }}
@@ -71,6 +72,7 @@ export default function Hero() {
           ✦ A Cut Above Every Car Wash
         </motion.span>
         <motion.h1
+          data-motion
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.2, 1] as const }}
@@ -79,6 +81,7 @@ export default function Hero() {
           Your Car, <span className="chrome-text">Detailed Right.</span>
         </motion.h1>
         <motion.p
+          data-motion
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: [0.2, 0.8, 0.2, 1] as const }}
@@ -88,6 +91,7 @@ export default function Hero() {
           brought to your driveway in the Denver Metro Area.
         </motion.p>
         <motion.div
+          data-motion
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.24, ease: [0.2, 0.8, 0.2, 1] as const }}

@@ -321,3 +321,13 @@ body::after {
 .ppf-coverage-layer[data-shown="true"] {
   opacity: 1;
 }
+
+/* The dead-man's switch from layout.tsx. If hydration never happens, every
+   element framer-motion left at opacity:0 is forced visible — the animation
+   is lost, but the page is readable, which is the only thing that matters at
+   that point. Scoped to [data-motion] rather than anything with an inline
+   opacity so it can't unhide something meant to stay hidden. */
+html.motion-failed [data-motion] {
+  opacity: 1 !important;
+  transform: none !important;
+}

@@ -98,6 +98,27 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${mayonice.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        {/* Dead-man's switch for the animations.
+         *
+         * Everything wrapped in FadeIn is server-rendered with an inline
+         * opacity:0 that only framer-motion clears. So if the JS bundle dies
+         * — a syntax error on an older browser, a chunk that 404s, anything —
+         * the header and footer survive and every single thing between them
+         * is invisible. The site looks empty rather than broken, which is
+         * worse: nobody reports it, they just leave.
+         *
+         * This arms a timer that forces all of it visible. A successful
+         * hydration disarms it (see MotionProvider), so the animations still
+         * run normally; only a failure ever trips it. Written in ES5 on
+         * purpose — it has to survive exactly the old engines that would
+         * choke on the bundle. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "window.__dcdMotion=setTimeout(function(){" +
+              "document.documentElement.className+=' motion-failed'},2500)",
+          }}
+        />
         <ClerkProvider appearance={clerkAppearance}>
           <script
           type="application/ld+json"

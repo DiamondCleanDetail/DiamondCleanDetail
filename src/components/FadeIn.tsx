@@ -16,6 +16,7 @@ export default function FadeIn({
 }) {
   return (
     <motion.div
+      data-motion
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}

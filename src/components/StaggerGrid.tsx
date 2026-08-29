@@ -22,6 +22,7 @@ const item = {
 export function StaggerGrid({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <motion.div
+      data-motion
       variants={container}
       initial="hidden"
       whileInView="show"
@@ -35,7 +36,7 @@ export function StaggerGrid({ children, className }: { children: ReactNode; clas
 
 export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div variants={item} className={className}>
+    <motion.div data-motion variants={item} className={className}>
       {children}
     </motion.div>
   );
