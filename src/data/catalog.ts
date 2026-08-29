@@ -545,13 +545,15 @@ export const catalog: ServiceCategory[] = [
     description:
       "Choose a coverage tier and see exactly which panels get protected — from Barrier's essential front-end coverage up to Full Protection, which wraps the entire vehicle in self-healing film.",
     tagline: "Invisible armor for the panels that take the hits.",
-    // TODO(placeholder): `ppf-hero-placeholder-stock.webp` is a STOCK PHOTO,
-    // not our work — Farhan's own PPF photos are due the week of 2026-08-31.
-    // To swap it: drop the new file into public/services/ and change this one
-    // line. Nothing else references it, and nothing on the page claims the
-    // hero as our own job (the hero image is decorative, with empty alt).
-    heroImage: "/services/ppf-hero-placeholder-stock.webp",
+    // The blue BMW is the hero and the card both — the same shot, and one we
+    // can stand behind, so it leads the page rather than sitting on a card
+    // while stock art takes the top.
+    heroImage: "/services/ppf-hero.jpg",
     cardImage: "/services/ppf-hero.jpg",
+    // TODO(placeholder): STOCK PHOTO, not our work — Farhan's own PPF photos
+    // are due the week of 2026-08-31. Swap the file and this line; nothing
+    // else references it. Cropped square because the frame it sits in is.
+    valuePropImage: "/services/ppf-what-it-is-stock.webp",
     // Real, and genuinely a customer's car: the chips are the point of the
     // shot, so it is cropped tight enough that they still read at phone size.
     benefitImages: [
