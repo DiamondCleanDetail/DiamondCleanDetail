@@ -451,14 +451,28 @@ export const catalog: ServiceCategory[] = [
       before: "/services/ceramic-coating-before.jpg",
       after: "/services/ceramic-coating-after.jpg",
     },
+    // The explainer belongs beside the "what it is" copy, which is the one
+    // place on the page where a diagram beats a photograph.
+    valuePropImage: "/services/ceramic-coating-diagram.jpg",
+    // `ceramic-coating-application.jpg` used to lead this list. It is a
+    // different file from the hero but the same shot — same car, same angle,
+    // same hands — so the page opened on a photo and then showed it again a
+    // screen later. The clips are the stronger proof anyway: beading is the
+    // thing a coating actually does that you can see.
     processMedia: [
-      { type: "image", src: "/services/ceramic-coating-application.jpg", caption: "Applying ceramic coating by hand" },
       { type: "video", src: "/video/wheel-ceramic-coating.mp4", caption: "Wheel ceramic coating in action" },
       { type: "video", src: "/video/ceramic-glass-beading.mp4", caption: "Water beading off coated glass" },
       { type: "video", src: "/video/ceramic-wheel-beading.mp4", caption: "Water beading off coated wheels" },
     ],
     valueProp:
-      "Ceramic coating is a liquid polymer that chemically bonds to a surface, forming a hard, glossy, hydrophobic layer that outlasts any wax by years, not weeks. Beyond paint, we offer dedicated coatings for wheels — where brake dust and heat cycles do the most damage — and for glass, where a hydrophobic layer makes rain bead and roll off instead of smearing.",
+      "A liquid polymer that chemically bonds to your paint, forming a hard, glossy, water-repelling layer that outlasts wax by years rather than weeks. We coat wheels and glass too — the wheels take the worst of the brake dust and heat, and coated glass makes rain bead and roll away instead of smearing.",
+    // Real work, and specifically ceramic work: every one of these is from a
+    // Diamond Detail Pro job, the tier that includes a ceramic coating.
+    benefitImages: [
+      { src: "/work/mercedes-amg-gt-1.webp", alt: "A coated Mercedes-AMG GT, the finish still sharp under workshop lighting" },
+      { src: "/work/ferrari-488-1.webp", alt: "Deep, wet-looking gloss on the flank of a coated Ferrari 488 Spider" },
+      { src: "/work/bentley-1.webp", alt: "A coated Bentley, clean and beading after a wash" },
+    ],
     benefits: [
       { title: "Years of protection", description: "Bonds to the surface instead of sitting on top, so it doesn't wash or wear off in weeks." },
       { title: "Deep, wet-look gloss", description: "A coated finish reads noticeably glossier and deeper than wax or sealant alone." },
@@ -469,6 +483,31 @@ export const catalog: ServiceCategory[] = [
       { title: "Decontamination", description: "Paint, wheels, or glass are deep-cleaned to remove embedded grime before anything is applied." },
       { title: "Coating application", description: "The ceramic coating is applied by hand and leveled evenly across the surface." },
       { title: "Cure time", description: "Coatings cure for 24-48 hours before the vehicle should get wet." },
+    ],
+    // Sourced from the Diamond Detail Pro jobs on the Our Work page — that
+    // tier is "full paint correction and professional-grade ceramic coating",
+    // so every car here really was coated. Captions keep the job's own name
+    // rather than relabelling it "Ceramic Coating", which would imply the
+    // booking was coating alone.
+    galleryImages: [
+      { src: "/work/ferrari-488-1.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
+      { src: "/work/ferrari-488-2.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
+      { src: "/work/ferrari-488-3.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
+      { src: "/work/ferrari-488-4.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
+      { src: "/work/ferrari-488-5.webp", caption: "The Diamond Detail Pro — Ferrari 488 Spider" },
+      { src: "/work/lamborghini-huracan-1.webp", caption: "The Diamond Detail Pro — Lamborghini Huracán" },
+      { src: "/work/lamborghini-huracan-2.webp", caption: "The Diamond Detail Pro — Lamborghini Huracán" },
+      { src: "/work/bentley-1.webp", caption: "The Diamond Detail Pro — Bentley" },
+      { src: "/work/bentley-2.webp", caption: "The Diamond Detail Pro — Bentley" },
+      { src: "/work/bentley-3.webp", caption: "The Diamond Detail Pro — Bentley" },
+      { src: "/work/mercedes-amg-gt-1.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/mercedes-amg-gt-2.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/mercedes-amg-gt-3.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/mercedes-amg-gt-4.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/mercedes-amg-gt-5.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/mercedes-amg-gt-6.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
+      { src: "/work/bmw-x5-1.webp", caption: "The Diamond Detail Pro — BMW X5" },
+      { src: "/work/lexus-rx-1.webp", caption: "The Diamond Detail Pro — Lexus RX" },
     ],
     packages: [
       {
@@ -492,6 +531,9 @@ export const catalog: ServiceCategory[] = [
         pricing: { type: "fixed", byVehicleSize: { sedan: 750, suv: 875, truck: 950 } },
         durationMinutes: 480,
         depositPercent: 25,
+        // Its own tagline already called it the most popular; this is what
+        // actually marks it as such in the tier row.
+        featured: true,
       },
       {
         slug: "5-year-coating",

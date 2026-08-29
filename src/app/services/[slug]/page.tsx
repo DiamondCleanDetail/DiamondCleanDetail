@@ -19,10 +19,18 @@ import PackagePrices from "@/components/PackagePrices";
 import PackageDetails from "@/components/PackageDetails";
 import DiamondDivider from "@/components/DiamondDivider";
 
+/** Services that have outgrown this template and ship their own route.
+ * A static route wins over this dynamic one at request time regardless, but
+ * leaving the slug here would still prerender a second, unreachable copy. */
+const HAS_OWN_PAGE = new Set([
+  "window-tinting",
+  "specialty-vehicles",
+  "mobile-detailing",
+  "ceramic-coating",
+]);
+
 export function generateStaticParams() {
-  return catalog
-    .filter((c) => c.slug !== "window-tinting" && c.slug !== "specialty-vehicles" && c.slug !== "mobile-detailing")
-    .map((c) => ({ slug: c.slug }));
+  return catalog.filter((c) => !HAS_OWN_PAGE.has(c.slug)).map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({

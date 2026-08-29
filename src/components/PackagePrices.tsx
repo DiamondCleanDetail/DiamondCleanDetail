@@ -40,11 +40,11 @@ export default function PackagePrices({ pkg }: { pkg: Package }) {
         {sizes.map((s) => (
           <div
             key={s}
-            className="rounded-lg bg-surface-2 border border-border px-2 py-2.5 text-center"
+            className="price-cell rounded-lg bg-surface-2 border border-border px-2 py-2.5 text-center"
             title={vehicleSizeLabels[s]}
           >
             <p className="text-[10px] uppercase tracking-widest text-muted">{vehicleSizeShortLabels[s]}</p>
-            <p className="chrome-text text-xl font-black leading-none mt-1 tabular-nums">
+            <p className="price-figure chrome-text font-black leading-none mt-1 tabular-nums">
               {formatPrice(priceForSize(pkg, s) ?? 0)}
               {pkg.priceIsFrom && "+"}
             </p>

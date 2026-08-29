@@ -117,6 +117,21 @@ body::after {
   color: transparent;
 }
 
+/* Per-size price cells.
+   A four-figure price at a fixed 20px needs 72px and gets 57px once three
+   package cards sit side by side — and because .chrome-text paints its
+   gradient inside the element's own box, the overflow doesn't wrap or spill,
+   it simply isn't painted: "$1,450" rendered as "$1,45". Sizing the figure
+   from the cell it lives in keeps it whole in a narrow card and full size in
+   a wide one. */
+.price-cell {
+  container-type: inline-size;
+}
+
+.price-figure {
+  font-size: clamp(0.9rem, 27cqw, 1.25rem);
+}
+
 .chrome-btn {
   position: relative;
   overflow: hidden;
