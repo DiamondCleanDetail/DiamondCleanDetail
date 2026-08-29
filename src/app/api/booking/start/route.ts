@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
-import { getCategory, priceForSize } from "@/data/catalog";
+import { getCategory, resolveLinePrice } from "@/data/catalog";
 import {
   isPastDate,
   isSlotTooSoon,
@@ -22,6 +22,12 @@ type ItemInput = {
   packageSlug: string;
   addOnSlugs?: string[];
   note?: string;
+  /** Tint only, and only for a Tesla: which coverage/film pair was chosen.
+   * The price is looked up from these here rather than accepted from the
+   * client, same as every other figure on this route. */
+  isTesla?: boolean;
+  filmSlug?: string;
+  teslaCoverageSlug?: string;
 };
 
 type StartBookingBody = {
@@ -131,7 +137,16 @@ export async function POST(req: NextRequest) {
   }
 
   const rows = resolved.map(({ item, category, pkg }) => {
-    const basePrice = priceForSize(pkg!, body.vehicleSize) ?? 0;
+    // The same resolver the form prices with, so what someone agreed to and
+    // what they are charged cannot differ. A Tesla coverage/film pair we do
+    // not price resolves to null and falls to 0 rather than silently billing
+    // the size-based figure, which would be a different number than shown.
+    const basePrice =
+      resolveLinePrice(pkg!, body.vehicleSize, {
+        isTesla: item.isTesla,
+        filmSlug: item.filmSlug,
+        teslaCoverageSlug: item.teslaCoverageSlug,
+      }) ?? 0;
     // Resolve add-ons from the catalog rather than trusting any price the
     // client sent, and ignore any the package already covers.
     const addOns = (category!.addOns ?? []).filter(

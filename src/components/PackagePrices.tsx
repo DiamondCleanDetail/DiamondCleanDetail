@@ -1,11 +1,13 @@
-import { formatPrice, priceForSize, vehicleSizeLabels, type Package, type VehicleSize } from "@/data/catalog";
+import {
+  formatPrice,
+  priceForSize,
+  vehicleSizeLabels,
+  vehicleSizeShortLabels,
+  type Package,
+  type VehicleSize,
+} from "@/data/catalog";
 
 const sizes: VehicleSize[] = ["sedan", "suv", "truck"];
-const shortLabels: Record<VehicleSize, string> = {
-  sedan: "Sedan",
-  suv: "SUV",
-  truck: "Truck",
-};
 
 /** Shows the price for every vehicle size at once, rather than a sedan price
  * plus "larger vehicles priced at checkout". People arrive knowing what they
@@ -41,7 +43,7 @@ export default function PackagePrices({ pkg }: { pkg: Package }) {
             className="rounded-lg bg-surface-2 border border-border px-2 py-2.5 text-center"
             title={vehicleSizeLabels[s]}
           >
-            <p className="text-[10px] uppercase tracking-widest text-muted">{shortLabels[s]}</p>
+            <p className="text-[10px] uppercase tracking-widest text-muted">{vehicleSizeShortLabels[s]}</p>
             <p className="chrome-text text-xl font-black leading-none mt-1 tabular-nums">
               {formatPrice(priceForSize(pkg, s) ?? 0)}
               {pkg.priceIsFrom && "+"}

@@ -145,8 +145,8 @@ export const vehicleData: Record<string, VehicleModel[]> = {
   Chrysler: [
     { name: "300", category: "sedan" },
     { name: "200", category: "sedan" },
-    { name: "Pacifica", category: "suv" },
-    { name: "Voyager", category: "suv" },
+    { name: "Pacifica", category: "truck" },
+    { name: "Voyager", category: "truck" },
   ],
   Dodge: [
     { name: "Charger", category: "sedan" },
@@ -156,7 +156,7 @@ export const vehicleData: Record<string, VehicleModel[]> = {
     { name: "Journey", category: "suv" },
     { name: "Durango", category: "truck" },
     { name: "Hornet", category: "suv" },
-    { name: "Grand Caravan", category: "suv" },
+    { name: "Grand Caravan", category: "truck" },
   ],
   Ferrari: [
     { name: "Roma", category: "sedan" },
@@ -227,7 +227,7 @@ export const vehicleData: Record<string, VehicleModel[]> = {
     { name: "CR-V", category: "suv" },
     { name: "Passport", category: "suv" },
     { name: "Pilot", category: "truck" },
-    { name: "Odyssey", category: "suv" },
+    { name: "Odyssey", category: "truck" },
     { name: "Ridgeline", category: "truck" },
   ],
   Hyundai: [
@@ -289,7 +289,7 @@ export const vehicleData: Record<string, VehicleModel[]> = {
     { name: "Sportage", category: "suv" },
     { name: "Sorento", category: "truck" },
     { name: "Telluride", category: "truck" },
-    { name: "Carnival", category: "suv" },
+    { name: "Carnival", category: "truck" },
   ],
   Lamborghini: [
     { name: "Huracan", category: "sedan" },
@@ -463,7 +463,7 @@ export const vehicleData: Record<string, VehicleModel[]> = {
     { name: "Highlander", category: "truck" },
     { name: "Grand Highlander", category: "truck" },
     { name: "bZ4X", category: "suv" },
-    { name: "Sienna", category: "suv" },
+    { name: "Sienna", category: "truck" },
     { name: "4Runner", category: "truck" },
     { name: "Sequoia", category: "truck" },
     { name: "Land Cruiser", category: "truck" },
@@ -479,7 +479,7 @@ export const vehicleData: Record<string, VehicleModel[]> = {
     { name: "Arteon", category: "sedan" },
     { name: "Beetle", category: "sedan" },
     { name: "ID.4", category: "suv" },
-    { name: "ID. Buzz", category: "suv" },
+    { name: "ID. Buzz", category: "truck" },
     { name: "Taos", category: "suv" },
     { name: "Tiguan", category: "suv" },
     { name: "Atlas", category: "truck" },

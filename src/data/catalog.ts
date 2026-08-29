@@ -1,11 +1,28 @@
 import { policies } from "@/data/policies";
+import { teslaTintPrice } from "@/data/teslaTint";
 
 export type VehicleSize = "sedan" | "suv" | "truck";
 
+/**
+ * What the three price buckets are really measuring is how much car there is
+ * to work on — for tint specifically, how many rows of glass. So minivans sit
+ * in the largest bucket alongside three-row SUVs rather than in the middle,
+ * and the middle one is named for what actually lives there now: two-row
+ * hatchbacks and mid-size SUVs. It used to read "SUV / Minivan", which put
+ * a three-row Odyssey and a two-row CR-V under one label and one price.
+ */
 export const vehicleSizeLabels: Record<VehicleSize, string> = {
   sedan: "Sedan / Coupe",
-  suv: "SUV / Minivan",
+  suv: "Hatchback / Mid-size SUV",
   truck: "Truck / Full-size SUV",
+};
+
+/** The short forms used where the full label won't fit — a pricing column
+ * head, a tab. Kept next to the labels so the two can't drift. */
+export const vehicleSizeShortLabels: Record<VehicleSize, string> = {
+  sedan: "Sedan",
+  suv: "Mid-size",
+  truck: "Large",
 };
 
 export type PricingModel =
@@ -494,9 +511,6 @@ export const catalog: ServiceCategory[] = [
     // Small fixed-area pieces sold alongside a coverage tier. Anything a
     // package already wraps is marked includedIn so it can't be bought twice.
     addOns: [
-      // "Door Sill Guards" used to sit in this list at $89. It is gone because
-      // Farhan confirmed sills and edges are the same piece of work, and two
-      // names for one job is a customer paying twice for it.
       {
         slug: "door-edge-guards",
         name: "Door Edge PPF",
@@ -526,6 +540,20 @@ export const catalog: ServiceCategory[] = [
         name: "Fog Light Protection",
         description: "Same protection for the lower lights, which take the worst of the road spray.",
         price: 89,
+        image: null,
+      },
+      {
+        // Separate from Door Edge PPF, and worth being clear why, because the
+        // two get confused: the sill is the painted ledge you step over
+        // getting in, the edge is the rim that meets the next car along when a
+        // door swings open. Different panel, different damage, different film.
+        // PRICE UNCONFIRMED — matched to Door Edge PPF, which is the closest
+        // equivalent piece of work. Needs Farhan's own number.
+        slug: "door-sill-guards",
+        name: "Door Sill Guards",
+        description:
+          "Protects the painted sill you step over getting in and out, where shoes and bags wear the paint through.",
+        price: 95,
         image: null,
       },
       {
@@ -883,6 +911,27 @@ export function priceForSize(pkg: Package, size: VehicleSize): number | null {
   if (pkg.pricing.type === "fixed") return pkg.pricing.byVehicleSize[size];
   if (pkg.pricing.type === "starting-at") return pkg.pricing.amount;
   return null;
+}
+
+/** What a line actually costs, accounting for Teslas being priced on a
+ * different axis from everything else.
+ *
+ * This exists so there is exactly one answer to "what does this cost". The
+ * booking form shows a price and the API independently recomputes it before
+ * charging — if those two ever used different logic, the number someone agreed
+ * to and the number they were charged could differ, which is the worst class
+ * of bug this codebase can have. Both call this. */
+export function resolveLinePrice(
+  pkg: Package,
+  size: VehicleSize,
+  opts: { isTesla?: boolean; filmSlug?: string; teslaCoverageSlug?: string } = {}
+): number | null {
+  if (opts.isTesla && opts.teslaCoverageSlug && opts.filmSlug) {
+    // A Tesla coverage/film pair we don't price returns null rather than
+    // quietly falling back to the size-based figure, which would undercharge.
+    return teslaTintPrice(opts.teslaCoverageSlug, opts.filmSlug);
+  }
+  return priceForSize(pkg, size);
 }
 
 /** 3 short, honest FAQ entries derived from data already on the category —

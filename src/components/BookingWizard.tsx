@@ -9,6 +9,7 @@ import {
   priceForSize,
   priceLabel,
   formatPrice,
+  resolveLinePrice,
 } from "@/data/catalog";
 import Image from "next/image";
 import TintVisualizer from "@/components/TintVisualizer";
@@ -18,6 +19,7 @@ import VehiclePicker from "@/components/VehiclePicker";
 import AddOnSelector from "@/components/AddOnSelector";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
+import { teslaCoverages, teslaCoveragesFor, teslaModelFromVehicleInfo } from "@/data/teslaTint";
 import {
   todayIso,
   isBookableDay,
@@ -48,6 +50,9 @@ type ServiceSelection = {
   tintLevelValue?: number;
   filmSlug?: string;
   isTesla?: boolean;
+  /** Which Tesla coverage option, when isTesla is set — Teslas price on
+   * coverage x film rather than on vehicle size. */
+  teslaCoverageSlug?: string;
 };
 
 type Draft = {
@@ -217,7 +222,13 @@ export default function BookingWizard({
         const addOns = (category.addOns ?? []).filter(
           (a) => (s.addOnSlugs ?? []).includes(a.slug) && !a.includedIn?.includes(pkg.slug)
         );
-        return { ...s, category, pkg, addOns };
+        // The film selector shows a default without necessarily having
+        // written it to state, and for a Tesla the film is half the price
+        // lookup — so settle it here rather than letting each caller pick its
+        // own fallback.
+        const filmSlug =
+          category.visualizer === "tint" ? (s.filmSlug ?? filmTypes[1].slug) : s.filmSlug;
+        return { ...s, filmSlug, category, pkg, addOns };
       }),
     [selections]
   );
@@ -247,12 +258,19 @@ export default function BookingWizard({
     [bookedRanges, totalDuration, date, now]
   );
 
-  const subtotal = resolved.reduce(
-    (sum, r) => sum + (priceForSize(r.pkg, vehicleSize) ?? 0) + addOnsTotalFor(r.addOns),
-    0
-  );
+  // One helper for every price shown in this form, so the summary, the
+  // deposit and the per-line figures can't diverge from each other — or from
+  // what the API recomputes before charging.
+  const linePrice = (r: (typeof resolved)[number]) =>
+    resolveLinePrice(r.pkg, vehicleSize, {
+      isTesla: r.isTesla,
+      filmSlug: r.filmSlug,
+      teslaCoverageSlug: r.teslaCoverageSlug,
+    }) ?? 0;
+
+  const subtotal = resolved.reduce((sum, r) => sum + linePrice(r) + addOnsTotalFor(r.addOns), 0);
   const totalDeposit = resolved.reduce((sum, r) => {
-    const price = priceForSize(r.pkg, vehicleSize) ?? 0;
+    const price = linePrice(r);
     const deposit = r.pkg.depositPercent ? Math.round((price * r.pkg.depositPercent) / 100) : 0;
     // Quote-only packages stay at $0 — their add-ons get quoted with the job
     // rather than charged against a price we haven't given yet.
@@ -318,6 +336,12 @@ export default function BookingWizard({
 
   const canContinue = (() => {
     if (phase === "select") return selections.length > 0;
+    // A Tesla with no coverage picked has no price, and the step it is chosen
+    // on is the one being left — so it is checked here rather than discovered
+    // as a $0 line on the payment step.
+    if (phase === "configure") {
+      return !(current?.isTesla && current.category.hasTeslaVariant && !current.teslaCoverageSlug);
+    }
     if (phase === "vehicle") return Boolean(vehicleInfo);
     if (phase === "datetime") return Boolean(date && time && availableSlots.includes(time));
     if (phase === "details") return Boolean(name && phone);
@@ -331,9 +355,19 @@ export default function BookingWizard({
       const items = resolved.map((r) => {
         const tintNote =
           r.category.visualizer === "tint"
-            ? ` — ${(tintLevels.find((l) => l.value === (r.tintLevelValue ?? 35)) ?? tintLevels.find((l) => l.value === 35)!).label} tint, ${(filmTypes.find((f) => f.slug === r.filmSlug) ?? filmTypes[1]).name}${r.isTesla ? ", Tesla (confirm pricing)" : ""}`
+            ? ` — ${(tintLevels.find((l) => l.value === (r.tintLevelValue ?? 35)) ?? tintLevels.find((l) => l.value === 35)!).label} tint, ${(filmTypes.find((f) => f.slug === r.filmSlug) ?? filmTypes[1]).name}${r.isTesla ? `, Tesla — ${teslaCoverages.find((c) => c.slug === r.teslaCoverageSlug)?.name ?? "coverage to confirm"}` : ""}`
             : "";
-        return { serviceSlug: r.category.slug, packageSlug: r.pkg.slug, addOnSlugs: r.addOnSlugs ?? [], note: tintNote };
+        return {
+          serviceSlug: r.category.slug,
+          packageSlug: r.pkg.slug,
+          addOnSlugs: r.addOnSlugs ?? [],
+          note: tintNote,
+          // Sent as the customer's choices, not as a price. The server looks
+          // the figure up from the same table this form did.
+          isTesla: r.isTesla,
+          filmSlug: r.filmSlug,
+          teslaCoverageSlug: r.teslaCoverageSlug,
+        };
       });
       const res = await fetch("/api/booking/start", {
         method: "POST",
@@ -509,10 +543,56 @@ export default function BookingWizard({
                     />
                     This is a Tesla
                   </label>
+                  {/* A Tesla prices on coverage x film rather than on vehicle
+                      size, so picking the Tesla box swaps in its own coverage
+                      options. Model 3 and the rest genuinely differ: the
+                      rear-window choice exists only on a Model 3, and it is a
+                      real price difference, not a detail. Where we already
+                      know the model from the vehicle field we only offer that
+                      model's options. */}
                   {current.isTesla && (
-                    <p className="mt-2 text-xs text-neutral-500">
-                      Tesla glass uses a different installation process — we&apos;ll confirm exact pricing before your appointment.
-                    </p>
+                    <div className="mt-4">
+                      <p className="text-xs text-neutral-500 mb-2">
+                        Tesla glass is priced per coverage and film. Pick the coverage you want:
+                      </p>
+                      <div className="space-y-2">
+                        {teslaCoveragesFor(teslaModelFromVehicleInfo(vehicleInfo)).map((c) => {
+                          const film = current.filmSlug ?? filmTypes[1].slug;
+                          const price = c.prices[film as keyof typeof c.prices];
+                          const selected = current.teslaCoverageSlug === c.slug;
+                          return (
+                            <label
+                              key={c.slug}
+                              className={`flex items-center gap-3 rounded-lg border-2 px-4 py-3 cursor-pointer transition-colors ${
+                                selected
+                                  ? "border-neutral-900 bg-neutral-50"
+                                  : "border-neutral-200 hover:border-neutral-400"
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="tesla-coverage"
+                                checked={selected}
+                                onChange={() => updateCurrentSelection({ teslaCoverageSlug: c.slug })}
+                                className="h-4 w-4 accent-neutral-900"
+                              />
+                              <span className="flex-1 min-w-0">
+                                <span className="block text-sm font-medium text-neutral-900">{c.name}</span>
+                                <span className="block text-xs text-neutral-500">{c.models}</span>
+                              </span>
+                              <span className="text-sm font-bold text-neutral-900 tabular-nums shrink-0">
+                                {formatPrice(price)}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                      {!current.teslaCoverageSlug && (
+                        <p className="mt-2 text-xs text-neutral-500">
+                          Choose one to see your total — Tesla pricing replaces the standard coverage price.
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -725,7 +805,7 @@ export default function BookingWizard({
                   )}
                 </div>
                 <span className="sm:text-right shrink-0">
-                  {r.pkg.pricing.type === "quote" ? "Priced after assessment" : formatPrice(priceForSize(r.pkg, vehicleSize) ?? 0)}
+                  {r.pkg.pricing.type === "quote" ? "Priced after assessment" : formatPrice(linePrice(r))}
                 </span>
               </div>
             ))}

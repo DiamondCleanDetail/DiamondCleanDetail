@@ -49,7 +49,7 @@ export const testimonials: Testimonial[] = [
  * `totalOnGoogle` is the count on the Google listing, which may be higher than
  * the handful quoted here — set it to the real number and it will be used
  * instead. Left null, the page reports only what it can actually show. */
-export const reviewsTotalOnGoogle: number | null = null;
+export const reviewsTotalOnGoogle: number | null = 8;
 
 export const reviewsAverage =
   Math.round(

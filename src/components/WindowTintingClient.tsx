@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getCategory, getFaqs, priceForSize, Package, VehicleSize } from "@/data/catalog";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
+import { teslaPriceForPackage, teslaModelFromVehicleInfo } from "@/data/teslaTint";
 import ServiceHero from "@/components/ServiceHero";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintCoverageSelector from "@/components/TintCoverageSelector";
@@ -38,7 +39,13 @@ export default function WindowTintingClient() {
   const [pkg, setPkg] = useState<Package>(category.packages[0]);
   const [filmType, setFilmType] = useState(filmTypes[1]); // Diamond Ceramic RX, most popular
 
-  const price = priceForSize(pkg, vehicleSize);
+  // A Tesla is priced on coverage x film, so the headline figure has to come
+  // from the Tesla table too — otherwise this page quotes the size-based
+  // price and the checkout charges a different one.
+  const teslaPrice = isTesla
+    ? teslaPriceForPackage(pkg.slug, filmType.slug, teslaModelFromVehicleInfo(vehicleInfo))
+    : null;
+  const price = teslaPrice?.price ?? priceForSize(pkg, vehicleSize);
   const bookingHref = `/booking?service=${category.slug}&package=${pkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}&vehicleSize=${vehicleSize}&vehicleInfo=${encodeURIComponent(vehicleInfo)}`;
 
   return (
@@ -96,7 +103,14 @@ export default function WindowTintingClient() {
           title="Choose Your Coverage"
           subtitle="Pick how much glass you want covered."
         >
-          <TintCoverageSelector vehicleSize={vehicleSize} pkg={pkg} setPkg={setPkg} />
+          <TintCoverageSelector
+            vehicleSize={vehicleSize}
+            pkg={pkg}
+            setPkg={setPkg}
+            isTesla={isTesla}
+            filmSlug={filmType.slug}
+            vehicleInfo={vehicleInfo}
+          />
         </TintStepSection>
 
         <TintStepSection
@@ -157,7 +171,7 @@ export default function WindowTintingClient() {
                 </p>
 
                 <p className="text-[10px] uppercase tracking-[0.25em] text-white/55 mt-8">
-                  Starting From
+                  {teslaPrice && !teslaPrice.isFrom ? "Price" : "Starting From"}
                 </p>
                 <p className="chrome-text text-5xl sm:text-6xl font-black leading-none mt-2">
                   ${price}

@@ -1,6 +1,7 @@
 "use client";
 
 import { getCategory, vehicleSizeLabels, VehicleSize, priceForSize, Package } from "@/data/catalog";
+import { teslaPriceForPackage, teslaModelFromVehicleInfo } from "@/data/teslaTint";
 import SegmentedTabs from "@/components/SegmentedTabs";
 import WindshieldTintPreview from "@/components/WindshieldTintPreview";
 
@@ -10,12 +11,26 @@ export default function TintCoverageSelector({
   vehicleSize,
   pkg,
   setPkg,
+  isTesla = false,
+  filmSlug,
+  vehicleInfo = "",
 }: {
   vehicleSize: VehicleSize;
   pkg: Package;
   setPkg: (p: Package) => void;
+  isTesla?: boolean;
+  filmSlug?: string;
+  vehicleInfo?: string;
 }) {
-  const price = priceForSize(pkg, vehicleSize);
+  // A Tesla is priced on coverage × film rather than on vehicle size, so it
+  // has to be quoted from the Tesla table here too. Showing the size-based
+  // price on this step and charging the Tesla one at checkout would move the
+  // number after someone had already decided.
+  const teslaPrice =
+    isTesla && filmSlug
+      ? teslaPriceForPackage(pkg.slug, filmSlug, teslaModelFromVehicleInfo(vehicleInfo))
+      : null;
+  const price = teslaPrice?.price ?? priceForSize(pkg, vehicleSize);
 
   return (
     <div className="w-full">
@@ -46,7 +61,13 @@ export default function TintCoverageSelector({
                 </li>
               ))}
             </ul>
-            <p className="text-xs text-neutral-500 mt-4 uppercase tracking-widest">Price for {vehicleSizeLabels[vehicleSize]}</p>
+            <p className="text-xs text-neutral-500 mt-4 uppercase tracking-widest">
+              {teslaPrice
+                ? teslaPrice.isFrom
+                  ? "Tesla price from"
+                  : "Tesla price"
+                : `Price for ${vehicleSizeLabels[vehicleSize]}`}
+            </p>
             <p className="text-2xl font-semibold chrome-text-dark">${price}</p>
           </div>
         </div>
