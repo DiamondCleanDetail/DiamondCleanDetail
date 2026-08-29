@@ -128,23 +128,16 @@ export const workItems: WorkItem[] = [
     ],
   },
   {
-    // DRAFT — not published. `draft: true` keeps this out of the grid until
-    // Farhan confirms the details, so nothing here can go live as fact.
+    // Published: Ayden confirmed the clip is ours. The vehicle reads off the
+    // footage itself — side script says GT3 RS, and the swan-neck wing,
+    // bonnet ducts and fender louvres match a 992.
     //
-    // The vehicle is read off the clip itself: the side script says GT3 RS,
-    // and the swan-neck wing, bonnet ducts and front-fender louvres match a
-    // 992 GT3 RS. Satin black with red wheels and red decals, filmed on a
-    // brick driveway, pavers still wet.
-    //
-    // TODO(farhan): confirm two things, then delete this comment and `draft`:
-    //   1. which service this was — the title below guesses "The Diamond
-    //      Detail", matching the other Porsche entries, but it could be any
-    //      package;
-    //   2. that this is our own job rather than a supplied clip.
+    // TODO(farhan): the package is still unknown, so the title names the car
+    // and nothing else rather than borrowing the other Porsches' tier. Say
+    // which service this was and it can take a tier like the rest.
     slug: "porsche-911-gt3rs-walkaround",
-    title: "The Diamond Detail — Porsche 911 GT3 RS",
+    title: "Porsche 911 GT3 RS",
     brand: "Porsche",
-    draft: true,
     images: [],
     videos: [
       {

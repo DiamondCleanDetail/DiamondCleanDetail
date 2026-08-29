@@ -42,14 +42,14 @@ export const metadata: Metadata = {
     title: "Diamond Clean Detail",
     description:
       "Premium mobile car detailing, ceramic coatings, paint protection film, and window tinting across the Denver Metro Area.",
-    images: ["/services/ceramic-coating-hero.jpg"],
+    images: ["/services/social-share.jpg"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Diamond Clean Detail",
     description:
       "Premium mobile car detailing, ceramic coatings, paint protection film, and window tinting across the Denver Metro Area.",
-    images: ["/services/ceramic-coating-hero.jpg"],
+    images: ["/services/social-share.jpg"],
   },
 };
 

@@ -369,6 +369,14 @@ export const catalog: ServiceCategory[] = [
         src: "/video/paint-correction-apillar.mp4",
         caption: "Machine-polishing faded A-pillar trim back to gloss",
       },
+      {
+        // The old hero. It shows the polisher actually working, which the new
+        // hero doesn't — worth keeping where the process is the subject
+        // rather than dropping when the hero changed.
+        type: "video",
+        src: "/video/paint-correction-polishing.mp4",
+        caption: "Machine polishing a hood under inspection lighting",
+      },
     ],
     valueProp:
       "Every vehicle picks up fine swirl marks and light scratches from years of washing. Paint correction uses machine polishers and cutting/finishing compounds to level out that top layer of clear coat, bringing back true clarity and gloss before any wax, sealant, or ceramic coating goes on.",

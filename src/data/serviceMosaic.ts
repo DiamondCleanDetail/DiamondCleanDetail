@@ -13,7 +13,9 @@ export const serviceMosaic: MosaicTile[] = [
   { title: "Ceramic Coatings", href: "/services/ceramic-coating", image: "/services/ceramic-coating-hero.jpg", col: 1, row: "2" },
   { title: "Paint Protection Film", href: "/services/paint-protection-film", image: "/services/ppf-hero.jpg", col: 2, row: "1" },
   { title: "Window Tinting", href: "/window-tinting", image: "/services/window-tinting-hero.webp", col: 2, row: "2" },
-  { title: "See Our Work", href: "/our-work", image: "/work/morgan-1.webp", col: 3, row: "span" },
+  // A tall tile, so it takes a portrait frame — the 911's cabin rather than
+  // the blue SUV, which was a wide exterior shot cropped hard to fit.
+  { title: "See Our Work", href: "/our-work", image: "/work/porsche-911-carrera-interior.webp", col: 3, row: "span" },
   { title: "Paint Correction", href: "/services/paint-correction", image: "/mosaic/paint-correction.jpg", col: 4, row: "1" },
   { title: "Fleet Services", href: "/services/fleet-detailing", image: "/mosaic/fleet-detailing.jpg", col: 4, row: "2" },
   { title: "Wheel Coatings", href: "/services/ceramic-coating", image: "/mosaic/wheel-ceramic-coating.jpg", col: 5, row: "1" },
