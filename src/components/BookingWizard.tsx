@@ -6,7 +6,6 @@ import {
   getCategory,
   vehicleSizeLabels,
   VehicleSize,
-  priceForSize,
   priceLabel,
   formatPrice,
   resolveLinePrice,
