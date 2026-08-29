@@ -31,8 +31,17 @@ export const metadata: Metadata = category
 /** Mobile detailing gets its own page rather than the shared service
  * template: it's the flagship service, so it leads with packages and real
  * work instead of an explainer, and carries the membership offer. */
+/** The interior-only / exterior-only pair is a different kind of choice from
+ * the tiered packages — "which half of the car" rather than "how deep" — so
+ * the page shows them in their own two-up row instead of letting five cards
+ * pile into one grid. */
+const HALF_DETAIL_SLUGS = ["interior-detail", "exterior-detail"];
+
 export default function MobileDetailingPage() {
   if (!category) notFound();
+
+  const tieredPackages = category.packages.filter((p) => !HALF_DETAIL_SLUGS.includes(p.slug));
+  const halfPackages = category.packages.filter((p) => HALF_DETAIL_SLUGS.includes(p.slug));
 
   const headlinePhotos = (category.galleryImages ?? []).slice(0, 6);
 
@@ -58,7 +67,7 @@ export default function MobileDetailingPage() {
           />
         </FadeIn>
         <StaggerGrid className="grid md:grid-cols-3 gap-4 sm:gap-5">
-          {category.packages.map((pkg) => (
+          {tieredPackages.map((pkg) => (
             <StaggerItem key={pkg.slug}>
               <div
                 className={`card-lift relative h-full flex flex-col bg-surface border rounded-2xl overflow-hidden ${
@@ -112,6 +121,64 @@ export default function MobileDetailingPage() {
             </StaggerItem>
           ))}
         </StaggerGrid>
+
+        {/* Just-inside / just-outside — its own labelled row so the pair
+            reads as an alternative to the packages above, not two more tiers. */}
+        {halfPackages.length > 0 && (
+          <>
+            <FadeIn>
+              <div className="flex items-center gap-4 mt-12 sm:mt-16 mb-6 sm:mb-8">
+                <div className="h-px flex-1 bg-border" />
+                <p className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted text-center">
+                  Just need one or the other?
+                </p>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+            </FadeIn>
+            <StaggerGrid className="grid sm:grid-cols-2 gap-4 sm:gap-5 mx-auto max-w-3xl">
+              {halfPackages.map((pkg) => (
+                <StaggerItem key={pkg.slug}>
+                  <div className="card-lift relative h-full flex flex-col bg-surface border border-border rounded-2xl overflow-hidden">
+                    <div className="p-6 flex flex-col flex-1">
+                      <h3 className="text-xl font-bold">{pkg.name}</h3>
+                      <p className="text-sm text-muted mt-2">{pkg.tagline}</p>
+                      <ul className="mt-4 space-y-1.5 flex-1">
+                        {pkg.features.map((f) => (
+                          <li key={f} className="text-sm text-muted flex gap-2">
+                            <span className="text-accent shrink-0">&#10003;</span>
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                      <PackageDetails pkg={pkg} />
+                      <div className="mt-6 pt-5 border-t border-border">
+                        <PackagePrices pkg={pkg} />
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {pkg.durationMinutes && (
+                            <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
+                              &#9201; ~{Math.round(pkg.durationMinutes / 60)} hr on site
+                            </span>
+                          )}
+                          {pkg.depositPercent && (
+                            <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
+                              {pkg.depositPercent}% deposit
+                            </span>
+                          )}
+                        </div>
+                        <Link
+                          href={`/booking?service=${category.slug}&package=${pkg.slug}`}
+                          className="chrome-btn w-full text-center inline-block mt-5 px-5 py-3 rounded-lg font-bold"
+                        >
+                          Book This
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerGrid>
+          </>
+        )}
         <FadeIn>
           {/* Honest membership pointer: the member visit is a different
               (lighter) service, so it's framed as its own thing rather than
