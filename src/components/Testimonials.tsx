@@ -1,4 +1,4 @@
-import { testimonials, reviewsAverage, reviewsCount } from "@/data/testimonials";
+import { getReviews } from "@/lib/googleReviews";
 import FadeIn from "@/components/FadeIn";
 import SectionHeading from "@/components/SectionHeading";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
@@ -18,7 +18,16 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export default function Testimonials() {
+export default async function Testimonials() {
+  // Live from the Google listing when a key is configured, the hand-entered
+  // list otherwise. Either way this is a server component, so the fetch and
+  // its day-long cache never reach the browser.
+  const {
+    testimonials,
+    average: reviewsAverage,
+    count: reviewsCount,
+  } = await getReviews();
+
   return (
     <section className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
       <FadeIn>
