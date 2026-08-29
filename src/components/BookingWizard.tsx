@@ -120,7 +120,9 @@ export default function BookingWizard({
           {
             serviceSlug: startCategory.slug,
             packageSlug: startPackage.slug,
-            tintLevelValue: initialTint ? Number(initialTint) : undefined,
+            // 0 is the page's clear-comparison state, not a shade — treat a
+            // stale tint=0 link the same as no shade named.
+            tintLevelValue: initialTint && Number(initialTint) !== 0 ? Number(initialTint) : undefined,
             filmSlug: initialFilm,
             isTesla: initialTesla,
             // Filtered against the category so a stale or hand-edited URL
@@ -533,6 +535,9 @@ export default function BookingWizard({
                 }
                 setLevel={(l) => updateCurrentSelection({ tintLevelValue: l.value })}
                 vehicleSize={vehicleSize}
+                // Here the selected shade IS the order, and "no tint" isn't a
+                // product — Clear stays a comparison state on the service page.
+                allowClear={false}
               />
               <TintFilmTypeSelector
                 filmType={filmTypes.find((f) => f.slug === current.filmSlug) ?? filmTypes[1]}

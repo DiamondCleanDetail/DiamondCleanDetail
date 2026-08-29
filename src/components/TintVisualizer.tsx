@@ -7,18 +7,27 @@ import { vehicleSizeLabels, type VehicleSize } from "@/data/catalog";
 import SegmentedTabs from "@/components/SegmentedTabs";
 
 /** 80% is a windshield-visor-only shade, so it never appears in this bar. */
-const selectableLevels = tintLevels.filter((l) => !l.windshieldOnly);
+const previewLevels = tintLevels.filter((l) => !l.windshieldOnly);
+/** Clear is a comparison baseline, not a product — you cannot buy "no tint".
+ * The service page keeps it so people can flick between clear and a shade to
+ * see the difference; the booking wizard hides it, because there the selected
+ * level IS the order. */
+const purchasableLevels = previewLevels.filter((l) => l.value !== 0);
 
 export default function TintVisualizer({
   level,
   setLevel,
   vehicleSize,
+  allowClear = true,
 }: {
   level: TintLevel;
   setLevel: (l: TintLevel) => void;
   /** Which example vehicle to preview — defaults to Sedan/Coupe if omitted. */
   vehicleSize?: VehicleSize;
+  /** False in purchase contexts, where Clear must not be selectable. */
+  allowClear?: boolean;
 }) {
+  const selectableLevels = allowClear ? previewLevels : purchasableLevels;
   const size = vehicleSize ?? "sedan";
   const image = level.images[size];
   return (

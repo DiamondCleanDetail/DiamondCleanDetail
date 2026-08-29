@@ -172,31 +172,57 @@ export default function WindowTintingClient() {
                   aria-hidden
                   className="mt-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
                 />
-                <p className="text-2xl sm:text-4xl font-bold text-white mt-6 text-balance">
-                  {level.label} tint &middot; {pkg.name}
-                  {windshieldAddOns.length > 0 &&
-                    ` + ${(category.addOns ?? [])
-                      .filter((a) => windshieldAddOns.includes(a.slug))
-                      .map((a) => a.name)
-                      .join(" + ")}`}
-                </p>
-                <p className="text-sm sm:text-base text-white/60 mt-2">
-                  {filmType.name} &middot; {isTesla ? "Tesla" : "Standard vehicle"}
-                </p>
+                {/* Clear (value 0) is the visualizer's comparison baseline,
+                    not a shade anyone can buy — "Clear tint · Full Vehicle"
+                    with a price and a Book button read as a product that
+                    doesn't exist. With Clear up in step 2, this card turns
+                    into the prompt to pick a real shade instead. */}
+                {level.value === 0 ? (
+                  <>
+                    <p className="text-2xl sm:text-4xl font-bold text-white mt-6 text-balance">
+                      That&apos;s the car with no tint
+                    </p>
+                    <p className="text-sm sm:text-base text-white/60 mt-2">
+                      Clear is just the comparison view — pick a shade in step 2 to see your
+                      price and book.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setLevel(tintLevels.find((l) => l.value === 35)!)}
+                      className="chrome-btn inline-block mt-8 px-8 py-3.5 rounded-lg font-bold text-base"
+                    >
+                      Start With 35% &uarr;
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-2xl sm:text-4xl font-bold text-white mt-6 text-balance">
+                      {level.label} tint &middot; {pkg.name}
+                      {windshieldAddOns.length > 0 &&
+                        ` + ${(category.addOns ?? [])
+                          .filter((a) => windshieldAddOns.includes(a.slug))
+                          .map((a) => a.name)
+                          .join(" + ")}`}
+                    </p>
+                    <p className="text-sm sm:text-base text-white/60 mt-2">
+                      {filmType.name} &middot; {isTesla ? "Tesla" : "Standard vehicle"}
+                    </p>
 
-                <p className="text-[10px] uppercase tracking-[0.25em] text-white/55 mt-8">
-                  {teslaPrice && !teslaPrice.isFrom ? "Price" : "Starting From"}
-                </p>
-                <p className="chrome-text text-5xl sm:text-6xl font-black leading-none mt-2">
-                  ${price}
-                </p>
+                    <p className="text-[10px] uppercase tracking-[0.25em] text-white/55 mt-8">
+                      {teslaPrice && !teslaPrice.isFrom ? "Price" : "Starting From"}
+                    </p>
+                    <p className="chrome-text text-5xl sm:text-6xl font-black leading-none mt-2">
+                      ${price}
+                    </p>
 
-                <Link
-                  href={bookingHref}
-                  className="chrome-btn inline-block mt-8 px-8 py-3.5 rounded-lg font-bold text-base"
-                >
-                  Book This &rarr;
-                </Link>
+                    <Link
+                      href={bookingHref}
+                      className="chrome-btn inline-block mt-8 px-8 py-3.5 rounded-lg font-bold text-base"
+                    >
+                      Book This &rarr;
+                    </Link>
+                  </>
+                )}
 
                 {filmType.slug !== "diamond-smoke" && (
                   <p className="text-xs text-white/55 mt-5">
