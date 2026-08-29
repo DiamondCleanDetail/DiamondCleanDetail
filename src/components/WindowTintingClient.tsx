@@ -38,6 +38,10 @@ export default function WindowTintingClient() {
   const [vehicleInfo, setVehicleInfo] = useState("");
   const [pkg, setPkg] = useState<Package>(category.packages[0]);
   const [filmType, setFilmType] = useState(filmTypes[1]); // Diamond Ceramic RX, most popular
+  // Windshield work rides along with either coverage as add-ons, not as a
+  // third mutually-exclusive tab — the old model made "full vehicle plus the
+  // strip" literally unbookable.
+  const [windshieldAddOns, setWindshieldAddOns] = useState<string[]>([]);
 
   // A Tesla is priced on coverage x film, so the headline figure has to come
   // from the Tesla table too — otherwise this page quotes the size-based
@@ -45,8 +49,11 @@ export default function WindowTintingClient() {
   const teslaPrice = isTesla
     ? teslaPriceForPackage(pkg.slug, filmType.slug, teslaModelFromVehicleInfo(vehicleInfo))
     : null;
-  const price = teslaPrice?.price ?? priceForSize(pkg, vehicleSize);
-  const bookingHref = `/booking?service=${category.slug}&package=${pkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}&vehicleSize=${vehicleSize}&vehicleInfo=${encodeURIComponent(vehicleInfo)}`;
+  const addOnsTotal = (category.addOns ?? [])
+    .filter((a) => windshieldAddOns.includes(a.slug))
+    .reduce((n, a) => n + a.price, 0);
+  const price = (teslaPrice?.price ?? priceForSize(pkg, vehicleSize) ?? 0) + addOnsTotal;
+  const bookingHref = `/booking?service=${category.slug}&package=${pkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}&vehicleSize=${vehicleSize}&vehicleInfo=${encodeURIComponent(vehicleInfo)}${windshieldAddOns.length ? `&addons=${windshieldAddOns.join(",")}` : ""}`;
 
   return (
     <div>
@@ -110,6 +117,8 @@ export default function WindowTintingClient() {
             isTesla={isTesla}
             filmSlug={filmType.slug}
             vehicleInfo={vehicleInfo}
+            windshieldAddOns={windshieldAddOns}
+            setWindshieldAddOns={setWindshieldAddOns}
           />
         </TintStepSection>
 
@@ -165,6 +174,11 @@ export default function WindowTintingClient() {
                 />
                 <p className="text-2xl sm:text-4xl font-bold text-white mt-6 text-balance">
                   {level.label} tint &middot; {pkg.name}
+                  {windshieldAddOns.length > 0 &&
+                    ` + ${(category.addOns ?? [])
+                      .filter((a) => windshieldAddOns.includes(a.slug))
+                      .map((a) => a.name)
+                      .join(" + ")}`}
                 </p>
                 <p className="text-sm sm:text-base text-white/60 mt-2">
                   {filmType.name} &middot; {isTesla ? "Tesla" : "Standard vehicle"}

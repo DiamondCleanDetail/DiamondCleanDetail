@@ -91,6 +91,7 @@ export default function BookingWizard({
   initialTint,
   initialFilm,
   initialTesla,
+  initialAddOns,
   initialVehicleSize,
   initialVehicleInfo,
 }: {
@@ -99,6 +100,7 @@ export default function BookingWizard({
   initialTint?: string;
   initialFilm?: string;
   initialTesla?: boolean;
+  initialAddOns?: string[];
   initialVehicleSize?: VehicleSize;
   initialVehicleInfo?: string;
 }) {
@@ -121,6 +123,11 @@ export default function BookingWizard({
             tintLevelValue: initialTint ? Number(initialTint) : undefined,
             filmSlug: initialFilm,
             isTesla: initialTesla,
+            // Filtered against the category so a stale or hand-edited URL
+            // cannot smuggle in an add-on the service does not sell.
+            addOnSlugs: initialAddOns?.filter((slug) =>
+              startCategory.addOns?.some((a) => a.slug === slug)
+            ),
           },
         ]
       : []

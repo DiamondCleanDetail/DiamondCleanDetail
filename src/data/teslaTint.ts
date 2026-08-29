@@ -113,8 +113,6 @@ export function teslaCoveragesFor(model: string | null): TeslaCoverage[] {
 const PACKAGE_TO_TESLA_COVERAGE: Record<string, string[]> = {
   "front-two": ["tesla-front-doors"],
   "full-vehicle": ["tesla-full-car", "tesla-model-3-partial-rear", "tesla-model-3-full-rear"],
-  // A windshield strip has no Tesla-specific price, so it keeps the standard one.
-  "windshield-strip": [],
 };
 
 /** The Tesla price to show for a coverage package, or null when there isn't a

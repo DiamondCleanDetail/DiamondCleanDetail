@@ -26,6 +26,3 @@ export const tintLevels: TintLevel[] = [
   { value: 5, label: "5%", images: { sedan: "/tint-levels/5.png", suv: "/tint-levels/suv-5.png", truck: "/tint-levels/truck-5.png" } },
 ];
 
-/** Shades offered for the windshield visor strip — includes 80%, which
- * doesn't apply to full windows. */
-export const windshieldTintLevels = tintLevels.filter((l) => l.value !== 0);

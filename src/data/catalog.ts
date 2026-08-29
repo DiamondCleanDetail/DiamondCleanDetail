@@ -679,13 +679,33 @@ export const catalog: ServiceCategory[] = [
         durationMinutes: 150,
         depositPercent: 25,
       },
+    ],
+    /* Windshield work used to be a third coverage package, which made it
+     * mutually exclusive with the other two — its own tagline said "add-on
+     * visor strip", yet someone wanting Full Vehicle AND the strip literally
+     * could not book both. It is modelled as what it always was: an add-on
+     * that rides along with either coverage (or none). */
+    addOns: [
       {
         slug: "windshield-strip",
         name: "Windshield Strip",
-        tagline: "Add-on visor strip.",
-        features: ["Top-of-windshield strip", "Reduces sun glare"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 50, suv: 50, truck: 50 } },
-        durationMinutes: 30,
+        description:
+          "A visor strip across the top of the windshield — cuts sun glare right at eye level. Any shade.",
+        price: 50,
+        image: null,
+      },
+      {
+        // PRICE ADOPTED from Turbo Tint Aurora's published windshield tint
+        // ($259), the same source Farhan named for the Tesla numbers —
+        // confirm it is his. Light shades only is his own rule: anything
+        // under 35% on a windshield is a visibility hazard, and the source
+        // shop goes further and sells only 80% and 50%.
+        slug: "full-windshield",
+        name: "Full Windshield",
+        description:
+          "Ceramic film across the entire windshield for heat and UV — in light shades only (50% or 80%). Darker film on a windshield isn't safe to drive behind.",
+        price: 259,
+        image: null,
       },
     ],
   },

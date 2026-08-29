@@ -22,6 +22,9 @@ export default async function BookingPage({
       ? vehicleSizeParam
       : undefined;
   const vehicleInfo = typeof params.vehicleInfo === "string" ? params.vehicleInfo : undefined;
+  // Comma-separated add-on slugs, validated in the wizard against the
+  // category rather than trusted here.
+  const addOns = typeof params.addons === "string" ? params.addons.split(",").filter(Boolean) : undefined;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10 sm:py-16">
@@ -38,6 +41,7 @@ export default async function BookingPage({
         initialTesla={tesla}
         initialVehicleSize={vehicleSize}
         initialVehicleInfo={vehicleInfo}
+        initialAddOns={addOns}
       />
     </div>
   );
