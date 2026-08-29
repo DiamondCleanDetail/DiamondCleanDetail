@@ -881,6 +881,7 @@ export const catalog: ServiceCategory[] = [
     name: "Scratch Removal",
     shortName: "Scratch Removal",
     heroImage: "/services/scratch-removal-hero.webp",
+    cardImage: "/services/scratch-removal-hero.webp",
     summary: "Spot repair for scratches and light paint damage.",
     description:
       "Targeted machine polishing or touch-up to reduce or remove scratches and scuffs. Severity is assessed on a quick photo or in-person before pricing.",

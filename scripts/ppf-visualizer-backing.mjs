@@ -1,16 +1,20 @@
 /**
  * Builds the backing layer that sits behind every PPF visualizer tier.
  *
- * The renders were cut out of their original background, and the cut went
- * straight through the cabin glass: where you should see the far-side rear
- * window and the interior behind it, the PNG is simply transparent. On the
- * old dark page that read as tinted glass and nobody noticed. On white it
- * shows as white holes with a pale fringe around them.
+ * The renders were cut out of their original background and the cut went
+ * through the glass. Around the rear side windows that left thin ribbons of
+ * missing and half-missing pixels, which on the old dark page read as tint
+ * and on white read as bright outlines around the interior shapes.
  *
- * Rather than re-cut five renders, this produces one opaque patch shaped to
- * exactly those holes and colour-matched to the paint around each one. Drawn
- * underneath the stack, it is invisible everywhere the car is solid and fills
- * in behind it everywhere the car is not.
+ * Rather than re-cut five renders, this paints one opaque patch that sits
+ * under the whole stack across the rear cabin only. Where the car is solid
+ * the patch is hidden; where the cut ate into it, the patch shows through
+ * instead of the page.
+ *
+ * NOT the windshield. That hole is real and deliberate — you look through a
+ * windshield to whatever is behind the car, so filling it made the front
+ * glass look muddy and tinted. Only the rear glass, where you are looking at
+ * the far-side window and the interior behind it, wants something behind it.
  *
  * Run: node scripts/ppf-visualizer-backing.mjs
  */
@@ -26,12 +30,18 @@ const LAYERS = [
 
 const OUT = "public/services/ppf-visualizer-backing.png";
 
-/** Below this, a pixel is treated as background rather than car. */
-const SOLID = 200;
-/** How far to grow the patch past the hole edge. The fringe is the partly
- * transparent ring around each hole, so the patch has to reach under it —
- * stopping at the hole leaves exactly the white outline we are hiding. */
-const GROW = 3;
+/** At or above this alpha a pixel is solid car, and hides the patch. */
+const SOLID = 250;
+
+/**
+ * The rear cabin, in image pixels. The car faces left, so this starts behind
+ * the windshield and runs to the back of the rear quarter glass.
+ *
+ * The box only has to be roughly right: it is intersected with the car's own
+ * silhouette below, so its edges can sit over paint or over background
+ * without either showing.
+ */
+const REGION = { x0: 715, x1: 1180, y0: 40, y1: 320 };
 
 const meta = await sharp(LAYERS[0]).metadata();
 const W = meta.width;
@@ -48,9 +58,8 @@ for (const { info } of layers) {
   }
 }
 
-/** A pixel is "hole" only if every tier agrees it is see-through there. A
- * tier that paints film over a gap must not end up with a patch showing
- * through its own artwork. */
+/** See-through in EVERY tier. A tier that paints film over a gap must not end
+ * up with the patch showing through its own artwork. */
 const seeThrough = new Uint8Array(W * H).fill(1);
 for (const { data } of layers) {
   for (let i = 0; i < W * H; i++) {
@@ -58,8 +67,10 @@ for (const { data } of layers) {
   }
 }
 
-// The background is whatever transparency connects to the edge of the canvas.
-// Everything else see-through is enclosed by the car: a hole.
+// The page background is whatever transparency reaches the edge of the
+// canvas. Everything else is car — either solid, or a gap the cut left
+// inside it. Excluding `outside` is what keeps the patch from spilling past
+// the silhouette and drawing a dark halo around the roofline.
 const outside = new Uint8Array(W * H);
 const stack = [];
 const flood = (x, y) => {
@@ -87,45 +98,28 @@ while (stack.length) {
   flood(x, y - 1);
 }
 
-let patch = new Uint8Array(W * H);
-let holeCount = 0;
-for (let i = 0; i < W * H; i++) {
-  if (seeThrough[i] && !outside[i]) {
+// The patch: the rear cabin, minus the background. Deliberately includes the
+// solid paint in between — those pixels are covered by the car itself, and
+// including them means the patch has no internal edges to catch the light.
+const patch = new Uint8Array(W * H);
+let patchCount = 0;
+for (let y = REGION.y0; y <= REGION.y1; y++) {
+  for (let x = REGION.x0; x <= REGION.x1; x++) {
+    const i = y * W + x;
+    if (outside[i]) continue;
     patch[i] = 1;
-    holeCount++;
+    patchCount++;
   }
 }
 
-// Grow under the fringe, but never past the car's outer edge — growing into
-// `outside` would paint a dark halo along the silhouette against the white.
-for (let pass = 0; pass < GROW; pass++) {
-  const next = patch.slice();
-  for (let y = 1; y < H - 1; y++) {
-    for (let x = 1; x < W - 1; x++) {
-      const i = y * W + x;
-      if (patch[i] || outside[i]) continue;
-      if (
-        patch[i - 1] ||
-        patch[i + 1] ||
-        patch[i - W] ||
-        patch[i + W]
-      ) {
-        next[i] = 1;
-      }
-    }
-  }
-  patch = next;
-}
-
-// Colour each patch pixel from the nearest solid paint, spread inward one
-// ring at a time. A flat fill would read as a dark blob behind glass that is
-// lit differently top to bottom; borrowing the neighbouring colour keeps the
-// patch invisible even where it peeks past the fringe.
+// Colour: the car's own pixels where it has them, and where it doesn't,
+// neighbouring colour spread inward one ring at a time. A flat fill would
+// read as a dark blob behind glass that is lit differently top to bottom.
 const base = layers[layers.length - 1].data;
 const rgb = new Uint8Array(W * H * 3);
 const known = new Uint8Array(W * H);
 for (let i = 0; i < W * H; i++) {
-  if (!patch[i] && base[i * 4 + 3] >= SOLID) {
+  if (base[i * 4 + 3] >= SOLID) {
     rgb[i * 3] = base[i * 4];
     rgb[i * 3 + 1] = base[i * 4 + 1];
     rgb[i * 3 + 2] = base[i * 4 + 2];
@@ -133,7 +127,10 @@ for (let i = 0; i < W * H; i++) {
   }
 }
 
-let remaining = holeCount;
+let remaining = 0;
+for (let i = 0; i < W * H; i++) if (patch[i] && !known[i]) remaining++;
+const toFill = remaining;
+
 for (let pass = 0; pass < 400 && remaining > 0; pass++) {
   const added = [];
   for (let y = 1; y < H - 1; y++) {
@@ -177,7 +174,6 @@ await sharp(out, { raw: { width: W, height: H, channels: 4 } })
   .png({ compressionLevel: 9 })
   .toFile(OUT);
 
-const patched = patch.reduce((n, v) => n + v, 0);
 console.log(
-  `${OUT}: ${holeCount} hole px, ${patched} painted after ${GROW}px grow`
+  `${OUT}: ${patchCount}px patch over the rear cabin, ${toFill}px of it painted in`
 );
