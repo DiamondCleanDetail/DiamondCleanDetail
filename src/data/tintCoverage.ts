@@ -34,7 +34,13 @@ const diagrams: Record<string, Partial<Record<VehicleSize, string>>> = {
     suv: "/tint-coverage/full-suv.png",
     truck: "/tint-coverage/full-truck.png",
   },
-  // "windshield-strip" renders are still to come.
+  // Keyed by the add-on slug rather than a package slug — windshield work is
+  // an add-on now, but this lookup doesn't care which kind of slug it's fed.
+  "windshield-strip": {
+    sedan: "/tint-coverage/windshield-strip-sedan.png",
+    suv: "/tint-coverage/windshield-strip-suv.png",
+    truck: "/tint-coverage/windshield-strip-truck.png",
+  },
 };
 
 export function coverageDiagram(packageSlug: string, size: VehicleSize): string | null {

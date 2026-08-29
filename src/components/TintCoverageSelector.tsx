@@ -118,18 +118,30 @@ export default function TintCoverageSelector({
             </p>
 
             <div className="mt-6 grid sm:grid-cols-2 gap-8 sm:gap-10 items-center">
-              <div
-                className="relative w-full"
-                style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
-              >
-                <Image
-                  src={coverageDiagram("windshield-strip", vehicleSize) ?? ""}
-                  alt={`Windshield strip coverage on a ${vehicleSizeLabels[vehicleSize]}`}
-                  fill
-                  sizes="(max-width: 640px) 100vw, 50vw"
-                  className="object-contain object-bottom"
-                />
-              </div>
+              {/* Guarded rather than fed src="" — an empty src renders the
+                  browser's broken-image glyph, which is exactly how the
+                  unregistered diagram slipped through the first time. */}
+              {coverageDiagram("windshield-strip", vehicleSize) ? (
+                <div
+                  className="relative w-full"
+                  style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
+                >
+                  <Image
+                    src={coverageDiagram("windshield-strip", vehicleSize)!}
+                    alt={`Windshield strip coverage on a ${vehicleSizeLabels[vehicleSize]}`}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-contain object-bottom"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="relative w-full rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center"
+                  style={{ aspectRatio: `${COVERAGE_CANVAS.width} / ${COVERAGE_CANVAS.height}` }}
+                >
+                  <p className="text-sm text-neutral-500">Windshield diagram coming soon</p>
+                </div>
+              )}
 
               <div className="space-y-3">
                 {(category.addOns ?? []).map((a) => {
