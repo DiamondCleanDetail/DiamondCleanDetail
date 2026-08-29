@@ -48,7 +48,7 @@ export default function TintStepSection({
           carries ~13. Both land ~20-27px clear of the rule. */}
       <span
         aria-hidden
-        className={`pointer-events-none select-none absolute top-2 sm:top-1 right-3 sm:right-10 text-[6rem] sm:text-[11rem] font-black leading-none tabular-nums tracking-tight ${
+        className={`pointer-events-none select-none absolute top-3 sm:top-4 right-3 sm:right-10 text-[4.25rem] sm:text-[8rem] font-black leading-none tabular-nums tracking-tight ${
           alt ? "text-neutral-900/[0.075]" : "text-neutral-900/[0.105]"
         }`}
       >

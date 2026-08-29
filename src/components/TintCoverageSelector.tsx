@@ -313,10 +313,17 @@ export default function TintCoverageSelector({
                   );
                 })}
 
-                {/* Independent extras — today just the Tesla panoramic roof —
-                    as checkboxes under the radio trio: they combine freely
-                    with any windshield choice (or none). Film-priced, so the
-                    figure follows the film picked in step 4. */}
+              </div>
+
+              {/* Independent extras — today just the Tesla panoramic roof —
+                  as checkboxes under the radio trio: they combine freely with
+                  any windshield choice (or none). Film-priced, so the figure
+                  follows the film picked in step 4.
+                  Outside the radiogroup, and full width rather than in one of
+                  its columns: a checkbox is not one of the radios' options,
+                  and sitting in a half-width cell it read as a fourth choice
+                  in that set with an empty slot beside it. */}
+              <div className="mt-3 space-y-3">
                 {(category.addOns ?? [])
                   .filter((a) => !a.exclusiveGroup && (!a.teslaOnly || isTesla))
                   .map((a) => {
