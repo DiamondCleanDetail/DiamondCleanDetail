@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getCategory, getFaqs, priceForSize, Package, VehicleSize } from "@/data/catalog";
+import { getCategory, getFaqs, resolveLinePrice, Package, VehicleSize } from "@/data/catalog";
 import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
 import { teslaPriceForPackage, teslaModelFromVehicleInfo } from "@/data/teslaTint";
@@ -52,7 +52,12 @@ export default function WindowTintingClient() {
   const addOnsTotal = (category.addOns ?? [])
     .filter((a) => windshieldAddOns.includes(a.slug))
     .reduce((n, a) => n + a.price, 0);
-  const price = (teslaPrice?.price ?? priceForSize(pkg, vehicleSize) ?? 0) + addOnsTotal;
+  // Film-aware for every car now, through the same resolver the checkout
+  // charges with — the number on this card is the number Stripe takes.
+  const price =
+    (teslaPrice?.price ??
+      resolveLinePrice(pkg, vehicleSize, { filmSlug: filmType.slug }) ??
+      0) + addOnsTotal;
   const bookingHref = `/booking?service=${category.slug}&package=${pkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}&vehicleSize=${vehicleSize}&vehicleInfo=${encodeURIComponent(vehicleInfo)}${windshieldAddOns.length ? `&addons=${windshieldAddOns.join(",")}` : ""}`;
 
   return (
@@ -209,7 +214,10 @@ export default function WindowTintingClient() {
                     </p>
 
                     <p className="text-[10px] uppercase tracking-[0.25em] text-white/55 mt-8">
-                      {teslaPrice && !teslaPrice.isFrom ? "Price" : "Starting From"}
+                      {/* Every path through the resolver is an exact quote
+                          now — the only "from" left is a Model 3 whose
+                          rear-window choice is still open. */}
+                      {teslaPrice?.isFrom ? "Starting From" : "Price"}
                     </p>
                     <p className="chrome-text text-5xl sm:text-6xl font-black leading-none mt-2">
                       ${price}
@@ -224,11 +232,7 @@ export default function WindowTintingClient() {
                   </>
                 )}
 
-                {filmType.slug !== "diamond-smoke" && (
-                  <p className="text-xs text-white/55 mt-5">
-                    Film upgrade priced separately — we&apos;ll confirm your exact total.
-                  </p>
-                )}
+
               </div>
             </div>
 

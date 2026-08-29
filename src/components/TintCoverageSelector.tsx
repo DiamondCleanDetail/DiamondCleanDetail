@@ -1,6 +1,6 @@
 "use client";
 
-import { getCategory, vehicleSizeLabels, VehicleSize, priceForSize, Package } from "@/data/catalog";
+import { getCategory, vehicleSizeLabels, VehicleSize, resolveLinePrice, Package } from "@/data/catalog";
 import { teslaPriceForPackage, teslaModelFromVehicleInfo } from "@/data/teslaTint";
 import { coverageDiagram, COVERAGE_CANVAS } from "@/data/tintCoverage";
 import Image from "next/image";
@@ -37,7 +37,8 @@ export default function TintCoverageSelector({
     isTesla && filmSlug
       ? teslaPriceForPackage(pkg.slug, filmSlug, teslaModelFromVehicleInfo(vehicleInfo))
       : null;
-  const price = teslaPrice?.price ?? priceForSize(pkg, vehicleSize);
+  const price =
+    teslaPrice?.price ?? resolveLinePrice(pkg, vehicleSize, { filmSlug }) ?? 0;
   const diagram = coverageDiagram(pkg.slug, vehicleSize);
 
   return (

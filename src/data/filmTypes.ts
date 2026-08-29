@@ -16,7 +16,8 @@ export type FilmType = {
   /** What to show when a customer expands the card — specific, factual
    * selling points rather than generic marketing copy. */
   benefits: string[];
-  /** Relative price note shown until Farhan confirms exact per-tier pricing. */
+  /** Short relative-cost cue on the film card; exact figures live in
+   * tintPricing.ts and every quoted price comes from there. */
   priceNote: string;
   featured?: boolean;
 };
@@ -58,7 +59,7 @@ export const filmTypes: FilmType[] = [
       "No signal interference with GPS, radio, or phones",
       "Lifetime warranty",
     ],
-    priceNote: "Pricing TBD",
+    priceNote: "From +$70",
     featured: true,
   },
   {
@@ -78,6 +79,6 @@ export const filmTypes: FilmType[] = [
       "Extreme optical clarity — no haze",
       "Lifetime warranty",
     ],
-    priceNote: "Pricing TBD",
+    priceNote: "From +$210",
   },
 ];

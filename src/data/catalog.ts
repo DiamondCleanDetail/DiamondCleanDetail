@@ -1,5 +1,6 @@
 import { policies } from "@/data/policies";
 import { teslaTintPrice } from "@/data/teslaTint";
+import { tintPrice } from "@/data/tintPricing";
 
 export type VehicleSize = "sedan" | "suv" | "truck";
 
@@ -678,7 +679,9 @@ export const catalog: ServiceCategory[] = [
         name: "Front Two Windows",
         tagline: "Driver & passenger front only.",
         features: ["Front two windows", "Any available shade"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 90, suv: 100, truck: 100 } },
+        // MUST equal the diamond-smoke row in tintPricing.ts — these are what
+        // the cards quote, that table is what checkout charges.
+        pricing: { type: "fixed", byVehicleSize: { sedan: 119, suv: 119, truck: 119 } },
         durationMinutes: 60,
       },
       {
@@ -686,7 +689,7 @@ export const catalog: ServiceCategory[] = [
         name: "Full Vehicle",
         tagline: "All windows, one consistent shade.",
         features: ["All side & rear windows", "Any available shade", "UV & heat rejection"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 250, suv: 300, truck: 325 } },
+        pricing: { type: "fixed", byVehicleSize: { sedan: 279, suv: 299, truck: 299 } },
         durationMinutes: 150,
         depositPercent: 25,
       },
@@ -963,6 +966,14 @@ export function resolveLinePrice(
     // A Tesla coverage/film pair we don't price returns null rather than
     // quietly falling back to the size-based figure, which would undercharge.
     return teslaTintPrice(opts.teslaCoverageSlug, opts.filmSlug);
+  }
+  // Non-Tesla tint prices by film as well as size. Before this branch the
+  // film choice never touched the number, so the flagship ceramic charged
+  // the dyed-film rate. A film with no table row falls back to the base
+  // price — charged as base, never as free.
+  if (opts.filmSlug) {
+    const byFilm = tintPrice(pkg.slug, opts.filmSlug, size);
+    if (byFilm !== null) return byFilm;
   }
   return priceForSize(pkg, size);
 }
