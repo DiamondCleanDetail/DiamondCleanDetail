@@ -639,9 +639,8 @@ export const catalog: ServiceCategory[] = [
         tagline: "Near-total coverage for the panels that see the most road.",
         // Doors are not offered at this tier. Partial door coverage isn't
         // something we do, so it can't be listed — full doors are Full
-        // Protection. NOTE: the Track coverage render still shows film on
-        // the front doors and needs replacing; see the launch shot list.
-        features: ["Full hood, fenders & bumper", "Roof, A-pillars & mirrors"],
+        // Protection.
+        features: ["Full hood, fenders & bumper", "Roof, A-pillars & mirrors", "Rocker panels"],
         pricing: { type: "starting-at", amount: 3499 },
         depositPercent: 25,
       },
