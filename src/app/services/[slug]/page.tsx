@@ -103,6 +103,27 @@ export default async function ServiceCategoryPage({
             </div>
           </FadeIn>
         </section>
+      ) : category.valuePropVideo ? (
+        <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
+          <FadeIn>
+            <div className="grid sm:grid-cols-2 gap-6 sm:gap-10 items-center">
+              <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-surface-2">
+                <video
+                  src={category.valuePropVideo}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+              </div>
+              <div>
+                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">What It Is</span>
+                <p className="text-lg sm:text-xl mt-3 leading-relaxed">{category.valueProp}</p>
+              </div>
+            </div>
+          </FadeIn>
+        </section>
       ) : category.valuePropImage ? (
         <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
           <FadeIn>
@@ -144,7 +165,23 @@ export default async function ServiceCategoryPage({
         <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
           <FadeIn>
             <SectionHeading title="See It" accent="Applied" className="mb-8 sm:mb-10" />
-            <ProcessSlideshow items={category.processMedia} />
+            {category.processMediaNote ? (
+              // Clip and reason side by side. Stacked, the copy sat a full
+              // screen below the thing it was explaining.
+              <div className="grid lg:grid-cols-2 gap-6 sm:gap-10 items-center">
+                <ProcessSlideshow items={category.processMedia} />
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-bold">
+                    {category.processMediaNote.title}
+                  </h3>
+                  <p className="text-base sm:text-lg text-muted mt-3 leading-relaxed">
+                    {category.processMediaNote.body}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <ProcessSlideshow items={category.processMedia} />
+            )}
           </FadeIn>
         </section>
       )}

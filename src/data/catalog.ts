@@ -141,6 +141,10 @@ export type ServiceCategory = {
   heroImageMobile?: string;
   /** Optional explainer image shown beside the "What It Is" copy, e.g. "/services/ceramic-coating-diagram.jpg". */
   valuePropImage?: string;
+  /** A clip shown beside the "What It Is" copy instead of valuePropImage.
+   * For a service whose explanation is really a demonstration — watching the
+   * polisher work says more about correction than any still can. */
+  valuePropVideo?: string;
   /** One photo per benefit card, same order as `benefits`. A missing or
    * null entry renders a "coming soon" placeholder for that card instead
    * of leaving it text-only. */
@@ -149,6 +153,10 @@ export type ServiceCategory = {
   beforeAfter?: { before: string | null; after: string | null; beforeLabel?: string; afterLabel?: string };
   /** Slideshow of application/process photos or video (e.g. applying ceramic coating, water beading on finished paint). Set to an empty array or omit to render a "coming soon" placeholder. */
   processMedia?: { type: "image" | "video"; src: string; caption?: string }[];
+  /** Copy set beside the process media rather than under it. Use when the
+   * clip is one thing worth explaining, not a reel to sit through — the
+   * media and the reason for it then read as a single point. */
+  processMediaNote?: { title: string; body: string };
   /** Horizontally scrollable gallery of past jobs of this service type, shown below the final booking CTA. Omit or leave empty to render a "coming soon" placeholder. */
   galleryImages?: { src: string; caption: string }[];
   /** "What is this service" explainer paragraph. */
@@ -363,21 +371,23 @@ export const catalog: ServiceCategory[] = [
     tagline: "Restore the paint underneath the swirls.",
     heroVideo: "/video/paint-correction.mp4",
     cardImage: "/work/range-rover-black-1.webp",
+    // The old hero, rehomed. "What It Is" was a "photo coming soon" box, and
+    // a clip of the polisher actually working explains correction better than
+    // the paragraph beside it ever could.
+    valuePropVideo: "/video/paint-correction-polishing.mp4",
+    // One clip, not a reel: this is Farhan's own footage of a real job, and
+    // a second slide only invited people to sit and wait through it.
     processMedia: [
       {
         type: "video",
         src: "/video/paint-correction-apillar.mp4",
         caption: "Machine-polishing faded A-pillar trim back to gloss",
       },
-      {
-        // The old hero. It shows the polisher actually working, which the new
-        // hero doesn't — worth keeping where the process is the subject
-        // rather than dropping when the hero changed.
-        type: "video",
-        src: "/video/paint-correction-polishing.mp4",
-        caption: "Machine polishing a hood under inspection lighting",
-      },
     ],
+    processMediaNote: {
+      title: "Trim and tight areas, not just the big panels",
+      body: "An A-pillar is the kind of area that gets skipped — too narrow for a big polisher, easy to leave faded while the doors and hood come up gleaming. It gets the same passes as everything else, which is why the finished car looks corrected from every angle rather than only in the photos.",
+    },
     valueProp:
       "Every vehicle picks up fine swirl marks and light scratches from years of washing. Paint correction uses machine polishers and cutting/finishing compounds to level out that top layer of clear coat, bringing back true clarity and gloss before any wax, sealant, or ceramic coating goes on.",
     benefits: [
