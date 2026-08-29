@@ -590,6 +590,10 @@ export const catalog: ServiceCategory[] = [
     visualizer: "ppf",
     // Small fixed-area pieces sold alongside a coverage tier. Anything a
     // package already wraps is marked includedIn so it can't be bought twice.
+    // Every add-on photo marks the covered area in red on an otherwise plain
+    // white panel, so the set reads as one diagram rather than six unrelated
+    // car photos. Each is cropped 4:3 around its marked area with the
+    // surrounding panel left in — without that context they're abstract shapes.
     addOns: [
       {
         slug: "door-edge-guards",
@@ -597,7 +601,7 @@ export const catalog: ServiceCategory[] = [
         description:
           "Wraps the door edges — the first place paint chips when a door taps a wall or another car. Priced per pair of doors.",
         price: 95,
-        image: null,
+        image: "/services/ppf-addon-door-edge-guards.webp",
       },
       {
         slug: "door-cups",
@@ -605,7 +609,7 @@ export const catalog: ServiceCategory[] = [
         description:
           "Covers the recess behind each handle, where fingernails and rings wear the clear coat. Covers all four handles.",
         price: 119,
-        image: null,
+        image: "/services/ppf-addon-door-cups.webp",
         includedIn: ["full-protection"],
       },
       {
@@ -613,14 +617,14 @@ export const catalog: ServiceCategory[] = [
         name: "Headlight Protection",
         description: "Clear film over the headlights to stop pitting, hazing, and stone chips.",
         price: 195,
-        image: null,
+        image: "/services/ppf-addon-headlight-ppf.webp",
       },
       {
         slug: "fog-light-ppf",
         name: "Fog Light Protection",
         description: "Same protection for the lower lights, which take the worst of the road spray.",
         price: 89,
-        image: null,
+        image: "/services/ppf-addon-fog-light-ppf.webp",
       },
       {
         // Separate from Door Edge PPF, and worth being clear why, because the
@@ -634,14 +638,14 @@ export const catalog: ServiceCategory[] = [
         description:
           "Protects the painted sill you step over getting in and out, where shoes and bags wear the paint through.",
         price: 95,
-        image: null,
+        image: "/services/ppf-addon-door-sill-guards.webp",
       },
       {
         slug: "fuel-door-ppf",
         name: "Fuel Door",
         description: "A small piece around the fuel door, where nozzle scratches build up over time.",
         price: 49,
-        image: null,
+        image: "/services/ppf-addon-fuel-door-ppf.webp",
       },
     ],
     packages: [
