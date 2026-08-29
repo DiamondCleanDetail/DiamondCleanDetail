@@ -1,5 +1,8 @@
 export const serviceArea = {
   region: "Denver Metro Area",
+  /** Short form for the utility bar, where the full region name is too long
+   * to sit beside the social icons on a phone. */
+  city: "Denver, CO",
   phone: "+1 (720) 703-2795",
   phoneHref: "+17207032795",
   email: "info@diamondcleandetail.com",

@@ -48,7 +48,7 @@ export default function ServiceAreaMap() {
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-10 sm:py-16">
+    <section id="service-area" className="mx-auto max-w-6xl px-6 py-10 sm:py-16 scroll-mt-24">
       <SectionHeading
         align="left"
         eyebrow="Where We Work"

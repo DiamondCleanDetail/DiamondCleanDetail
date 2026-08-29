@@ -13,6 +13,10 @@
   --chrome-1: #eceef0;
   --chrome-2: #8b8e94;
   --chrome-3: #d8dbe0;
+  /* The one saturated colour on an otherwise chrome-and-black site, taken
+     from the film in the PPF renders. It is reserved for the utility bar, so
+     the bar reads as a fixture of the page rather than part of the content. */
+  --brand-blue: #3fb4e5;
 }
 
 @theme inline {
@@ -25,6 +29,7 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
   --color-border: var(--border);
+  --color-brand-blue: var(--brand-blue);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

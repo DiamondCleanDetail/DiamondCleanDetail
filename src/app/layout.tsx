@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import UtilityBar from "@/components/UtilityBar";
 import Navbar from "@/components/Navbar";
 import MotionProvider from "@/components/MotionProvider";
 import Footer from "@/components/Footer";
@@ -103,6 +104,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
           />
           <MotionProvider>
+            <UtilityBar />
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />

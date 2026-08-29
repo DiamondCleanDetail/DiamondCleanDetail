@@ -54,13 +54,17 @@ const icons: Record<string, () => React.ReactElement> = {
   TikTok: TikTokIcon,
 };
 
-export default function SocialLinks() {
+export default function SocialLinks({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className={`flex items-center ${compact ? "gap-1" : "justify-center gap-3"}`}>
       {socialLinks.map((social) => {
         const Icon = icons[social.name];
-        const className =
-          "w-11 h-11 flex items-center justify-center rounded-lg border border-border bg-surface-2 text-muted transition-colors hover:text-foreground hover:border-muted";
+        // Compact drops the button chrome and inherits its colour, so the same
+        // icons work on the footer's dark panel and on the blue utility bar
+        // without a second copy of the set.
+        const className = compact
+          ? "w-7 h-7 flex items-center justify-center rounded [&>svg]:w-[15px] [&>svg]:h-[15px] transition-opacity opacity-80 hover:opacity-100"
+          : "w-11 h-11 flex items-center justify-center rounded-lg border border-border bg-surface-2 text-muted transition-colors hover:text-foreground hover:border-muted";
 
         return social.url ? (
           <a
