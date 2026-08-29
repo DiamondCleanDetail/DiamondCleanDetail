@@ -268,6 +268,45 @@ export const catalog: ServiceCategory[] = [
     ],
     packages: [
       {
+        // PRICES ADAPTED from the sheet Farhan shared, not copied: its
+        // interior-only price ($179 sedan) sat above our full Diamond Detail
+        // ($175), which would make the half job cost more than the whole one.
+        // Scaled down to keep the sheet's interior-vs-exterior ratio while
+        // staying under the full detail. Needs Farhan's sign-off.
+        slug: "interior-detail",
+        name: "Interior Detail",
+        tagline: "The full deep clean, inside only.",
+        features: [
+          "Thorough vacuum of carpets, seats & trunk",
+          "Cracks, crevices, vents & console detailed",
+          "Trim, dash & steering column cleaned and protected",
+          "Leather seats cleaned and conditioned",
+          "Odor-causing residue removed at the source",
+        ],
+        excludes: ["Exterior wash", "Paint correction or scratch removal"],
+        pricing: { type: "fixed", byVehicleSize: { sedan: 139, suv: 159, truck: 179 } },
+        durationMinutes: 120,
+        depositPercent: 25,
+      },
+      {
+        // Exterior prices taken from the same sheet as-is — they already sit
+        // sensibly under the full detail. Needs Farhan's sign-off.
+        slug: "exterior-detail",
+        name: "Exterior Detail",
+        tagline: "A proper hand wash and finish, outside only.",
+        features: [
+          "Safe hand wash of the full exterior",
+          "All exterior windows and mirrors cleaned",
+          "Rims and wheel wells deep cleaned",
+          "Tires dressed with 2-month UV protectant",
+          "Exterior trim dressed & door jambs wiped down",
+        ],
+        excludes: ["Interior cleaning", "Paint correction or scratch removal"],
+        pricing: { type: "fixed", byVehicleSize: { sedan: 109, suv: 119, truck: 129 } },
+        durationMinutes: 90,
+        depositPercent: 25,
+      },
+      {
         slug: "the-diamond-detail",
         name: "The Diamond Detail",
         tagline: "A comprehensive deep clean, conditioning, and protection for all surfaces.",
