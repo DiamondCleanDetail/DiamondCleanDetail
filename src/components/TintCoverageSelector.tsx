@@ -183,12 +183,30 @@ export default function TintCoverageSelector({
                     name: "No windshield tint",
                     price: null as number | null,
                     description: "Just the coverage you picked above.",
+                    photo: null as { src: string; alt: string } | null,
                   },
                   ...(category.addOns ?? []).map((a) => ({
                     slug: a.slug as string | null,
                     name: a.name,
                     price: a.price as number | null,
                     description: a.description,
+                    // The problem each option exists to solve, shown small.
+                    // Sun in your eyes is why anyone buys the strip; a
+                    // sun-cracked dash is what the full windshield's UV cut
+                    // prevents. The photo makes the "oh, that's me" click
+                    // that the description alone doesn't.
+                    photo:
+                      a.slug === "windshield-strip"
+                        ? {
+                            src: "/services/windshield-glare.webp",
+                            alt: "Driver squinting into low sun coming under the visor",
+                          }
+                        : a.slug === "full-windshield"
+                          ? {
+                              src: "/services/windshield-cracked-dash.webp",
+                              alt: "A dashboard cracked by years of sun through the windshield",
+                            }
+                          : null,
                   })),
                 ].map((a) => {
                   const selected =
@@ -196,30 +214,48 @@ export default function TintCoverageSelector({
                   return (
                     <label
                       key={a.slug ?? "none"}
-                      className={`flex items-start gap-3 rounded-xl border-2 px-4 py-3.5 cursor-pointer transition-colors ${
+                      className={`block rounded-xl border-2 overflow-hidden cursor-pointer transition-colors ${
                         selected
                           ? "border-neutral-900 bg-neutral-50"
                           : "border-neutral-200 hover:border-neutral-400"
                       }`}
                     >
-                      <input
-                        type="radio"
-                        name="windshield-tint-option"
-                        checked={selected}
-                        onChange={() => setWindshieldAddOns(a.slug === null ? [] : [a.slug])}
-                        className="mt-1 h-4 w-4 appearance-none rounded-full border-2 border-neutral-300 checked:border-neutral-900 checked:bg-neutral-900 checked:shadow-[inset_0_0_0_3px_white] transition-colors"
-                      />
-                      <span className="flex-1 min-w-0">
-                        <span className="flex items-baseline justify-between gap-3">
-                          <span className="text-sm font-semibold text-neutral-900">{a.name}</span>
-                          {a.price !== null && (
-                            <span className="text-sm font-bold text-neutral-900 tabular-nums shrink-0">
-                              +${a.price}
-                            </span>
-                          )}
+                      {/* Slim, muted banner rather than a hero: it's a nudge,
+                          not the subject. Greyed until the option is chosen so
+                          the selected card is also the most vivid one. */}
+                      {a.photo && (
+                        <span className="relative block h-16 sm:h-20 w-full">
+                          <Image
+                            src={a.photo.src}
+                            alt={a.photo.alt}
+                            fill
+                            sizes="(max-width: 640px) 100vw, 40vw"
+                            className={`object-cover transition-[filter,opacity] ${
+                              selected ? "" : "grayscale-[35%] opacity-80"
+                            }`}
+                          />
                         </span>
-                        <span className="block text-xs text-neutral-500 mt-1 leading-relaxed">
-                          {a.description}
+                      )}
+                      <span className="flex items-start gap-3 px-4 py-3.5">
+                        <input
+                          type="radio"
+                          name="windshield-tint-option"
+                          checked={selected}
+                          onChange={() => setWindshieldAddOns(a.slug === null ? [] : [a.slug])}
+                          className="mt-1 h-4 w-4 appearance-none rounded-full border-2 border-neutral-300 checked:border-neutral-900 checked:bg-neutral-900 checked:shadow-[inset_0_0_0_3px_white] transition-colors"
+                        />
+                        <span className="flex-1 min-w-0">
+                          <span className="flex items-baseline justify-between gap-3">
+                            <span className="text-sm font-semibold text-neutral-900">{a.name}</span>
+                            {a.price !== null && (
+                              <span className="text-sm font-bold text-neutral-900 tabular-nums shrink-0">
+                                +${a.price}
+                              </span>
+                            )}
+                          </span>
+                          <span className="block text-xs text-neutral-500 mt-1 leading-relaxed">
+                            {a.description}
+                          </span>
                         </span>
                       </span>
                     </label>
