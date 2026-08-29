@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { getCategory } from "@/data/catalog";
+import { isValidIsoDate } from "@/lib/scheduling";
 
 export async function GET(req: NextRequest) {
   const date = req.nextUrl.searchParams.get("date");
   if (!date) {
     return NextResponse.json({ error: "Missing date." }, { status: 400 });
+  }
+  // Anything that isn't a calendar date used to fall through to the Supabase
+  // query, fail there, and come back as a 500 — a malformed request reported
+  // as a server fault. It's the caller's error, so say so.
+  if (!isValidIsoDate(date)) {
+    return NextResponse.json({ error: "Invalid date." }, { status: 400 });
   }
 
   const db = supabaseAdmin();

@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
 import { getCategory, resolveLinePrice } from "@/data/catalog";
+import { teslaTintPrice } from "@/data/teslaTint";
 import {
   isPastDate,
   isSlotTooSoon,
@@ -42,10 +43,38 @@ type StartBookingBody = {
 };
 
 export async function POST(req: NextRequest) {
-  const body = (await req.json()) as StartBookingBody;
+  // A malformed body used to throw out of req.json() and surface as a bare
+  // 500 with an empty response — the form then showed its generic "something
+  // went wrong" with nothing in the logs to say why.
+  let body: StartBookingBody;
+  try {
+    body = (await req.json()) as StartBookingBody;
+  } catch {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
 
   if (!Array.isArray(body.items) || body.items.length === 0) {
     return NextResponse.json({ error: "No services selected." }, { status: 400 });
+  }
+  // A Tesla tint line must name a real coverage/film pair before it can be
+  // priced. The form enforces this, but the API cannot lean on that: with the
+  // flag set and no (or an invented) coverage slug, resolveLinePrice either
+  // falls through to the size-based figure — charging a Tesla the standard
+  // price — or resolves null and books the job at $0. Both were reachable
+  // with one curl before this check.
+  for (const item of body.items) {
+    if (item.isTesla) {
+      const priced =
+        item.filmSlug &&
+        item.teslaCoverageSlug &&
+        teslaTintPrice(item.teslaCoverageSlug, item.filmSlug) !== null;
+      if (!priced) {
+        return NextResponse.json(
+          { error: "Please pick a Tesla coverage option so we can price it." },
+          { status: 400 }
+        );
+      }
+    }
   }
   if (!["sedan", "suv", "truck"].includes(body.vehicleSize)) {
     return NextResponse.json({ error: "Invalid vehicle size." }, { status: 400 });

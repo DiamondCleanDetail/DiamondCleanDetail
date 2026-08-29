@@ -26,6 +26,14 @@ export default function ServiceHero({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+    // MotionConfig quiets the framer animations for reduced-motion users,
+    // but it has no reach into a raw <video autoPlay> — this background kept
+    // moving for exactly the people who asked nothing on the page to move.
+    // Paused, the poster frame stands in as a static hero.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      videoRef.current?.pause();
+      return;
+    }
     if (videoRef.current) {
       videoRef.current.playbackRate = 0.55;
     }

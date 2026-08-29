@@ -599,7 +599,18 @@ export default function BookingWizard({
           )}
           {current.category.visualizer === "ppf" && (
             <div className="mb-6">
-              <PPFVisualizer packages={current.category.packages} categorySlug={current.category.slug} showCta={false} />
+              <PPFVisualizer
+                packages={current.category.packages}
+                categorySlug={current.category.slug}
+                showCta={false}
+                // Controlled: the visualizer's tier tabs are the package
+                // choice, not a preview beside it. Uncontrolled, clicking
+                // "Shield" here looked exactly like choosing Shield while
+                // the booking stayed on the default tier — the wrong total
+                // only surfaced at payment.
+                value={current.packageSlug}
+                onChange={(slug) => updateCurrentSelection({ packageSlug: slug })}
+              />
             </div>
           )}
           <div className="grid gap-3">

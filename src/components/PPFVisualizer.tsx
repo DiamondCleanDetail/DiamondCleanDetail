@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,13 +27,25 @@ export default function PPFVisualizer({
   packages,
   categorySlug,
   showCta = true,
+  value,
+  onChange,
 }: {
   packages: Package[];
   categorySlug: string;
   showCta?: boolean;
+  /** Controlled tier. The booking wizard passes these so the visualizer's
+   * tier tabs ARE the package choice. Uncontrolled (the service page), the
+   * tabs only drive the preview and the CTA links carry the choice instead.
+   * Before this, the wizard embedded the visualizer read-only above its own
+   * package list — so clicking "Shield" on the big visual looked exactly
+   * like choosing Shield while the booking quietly stayed on the default
+   * tier, and the mismatch only surfaced as a wrong total at payment. */
+  value?: string;
+  onChange?: (slug: string) => void;
 }) {
   const firstSlug = packages[0]?.slug ?? "";
-  const [active, setActive] = useState(firstSlug);
+  const [internalActive, setActive] = useState(firstSlug);
+  const active = value ?? internalActive;
   /**
    * Which layer is actually on screen.
    *
@@ -51,10 +63,8 @@ export default function PPFVisualizer({
   // step without writing to a ref during render.
   const activeRef = useRef(firstSlug);
 
-  function selectTier(slug: string) {
-    setActive(slug);
+  function advanceImageTo(slug: string) {
     activeRef.current = slug;
-
     // Ask the DOM whether that layer's file has arrived, rather than tracking
     // it through React's onLoad: these images are eager and typically finish
     // before hydration, so the event has already been and gone by the time a
@@ -76,6 +86,20 @@ export default function PPFVisualizer({
       { once: true }
     );
   }
+
+  function selectTier(slug: string) {
+    setActive(slug);
+    onChange?.(slug);
+    advanceImageTo(slug);
+  }
+
+  // In controlled mode the tier can also change from outside — the wizard's
+  // package list below this visualizer sets the same selection — and the
+  // image stack has to follow that change exactly as it follows a tab click.
+  useEffect(() => {
+    if (value !== undefined && value !== activeRef.current) advanceImageTo(value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   const pkg = packages.find((p) => p.slug === active) ?? packages[0];
   if (!pkg) return null;
