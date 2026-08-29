@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { stripeClient } from "@/lib/stripe";
-import { getCategory, resolveLinePrice } from "@/data/catalog";
+import { addOnsConflict, getCategory, resolveLinePrice } from "@/data/catalog";
 import { teslaTintPrice } from "@/data/teslaTint";
 import {
   isPastDate,
@@ -63,6 +63,23 @@ export async function POST(req: NextRequest) {
   // price — or resolves null and books the job at $0. Both were reachable
   // with one curl before this check.
   for (const item of body.items) {
+    // Mutually exclusive add-ons can't ride on one line — the full windshield
+    // already covers the strip's glass, and every UI enforces this, so a pair
+    // arriving here came from a request that skipped the form.
+    const category = getCategory(item.serviceSlug);
+    const chosen = (item.addOnSlugs ?? [])
+      .map((slug) => category?.addOns?.find((a) => a.slug === slug))
+      .filter((a): a is NonNullable<typeof a> => Boolean(a));
+    for (let i = 0; i < chosen.length; i++) {
+      for (let j = i + 1; j < chosen.length; j++) {
+        if (addOnsConflict(chosen[i], chosen[j])) {
+          return NextResponse.json(
+            { error: `${chosen[i].name} and ${chosen[j].name} can't be combined — pick one.` },
+            { status: 400 }
+          );
+        }
+      }
+    }
     if (item.isTesla) {
       const priced =
         item.filmSlug &&

@@ -71,7 +71,18 @@ export type AddOn = {
   image?: string | null;
   /** Packages that already cover this area, so it isn't sold twice. */
   includedIn?: string[];
+  /** Add-ons sharing a group are one-or-the-other: choosing one replaces the
+   * other everywhere they're offered. The windshield options are the case in
+   * point — the full windshield already covers the strip's glass, so selling
+   * both is selling the same film twice. */
+  exclusiveGroup?: string;
 };
+
+/** Whether two add-ons are mutually exclusive. One rule, asked the same way
+ * by the page, the wizard and the API — so the three cannot drift. */
+export function addOnsConflict(a: AddOn, b: AddOn): boolean {
+  return Boolean(a.exclusiveGroup && a.exclusiveGroup === b.exclusiveGroup && a.slug !== b.slug);
+}
 
 export type Benefit = { title: string; description: string };
 export type ProcessStep = { title: string; description: string };
@@ -689,6 +700,7 @@ export const catalog: ServiceCategory[] = [
       {
         slug: "windshield-strip",
         name: "Windshield Strip",
+        exclusiveGroup: "windshield",
         description:
           "A visor strip across the top of the windshield — cuts sun glare right at eye level. Any shade.",
         price: 50,
@@ -702,6 +714,7 @@ export const catalog: ServiceCategory[] = [
         // shop goes further and sells only 80% and 50%.
         slug: "full-windshield",
         name: "Full Windshield",
+        exclusiveGroup: "windshield",
         description:
           "Ceramic film across the entire windshield for heat and UV — in light shades only (50% or 80%). Darker film on a windshield isn't safe to drive behind.",
         price: 259,

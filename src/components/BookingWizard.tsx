@@ -9,6 +9,7 @@ import {
   priceLabel,
   formatPrice,
   resolveLinePrice,
+  addOnsConflict,
 } from "@/data/catalog";
 import Image from "next/image";
 import TintVisualizer from "@/components/TintVisualizer";
@@ -126,10 +127,15 @@ export default function BookingWizard({
             filmSlug: initialFilm,
             isTesla: initialTesla,
             // Filtered against the category so a stale or hand-edited URL
-            // cannot smuggle in an add-on the service does not sell.
-            addOnSlugs: initialAddOns?.filter((slug) =>
-              startCategory.addOns?.some((a) => a.slug === slug)
-            ),
+            // cannot smuggle in an add-on the service does not sell — and
+            // deduped by exclusive group, keeping the first named, so
+            // "addons=windshield-strip,full-windshield" can't preselect a
+            // pair the UI itself refuses to combine.
+            addOnSlugs: initialAddOns
+              ?.map((slug) => startCategory.addOns?.find((a) => a.slug === slug))
+              .filter((a): a is NonNullable<typeof a> => Boolean(a))
+              .filter((a, i, arr) => !arr.slice(0, i).some((b) => addOnsConflict(a, b)))
+              .map((a) => a.slug),
           },
         ]
       : []
@@ -303,12 +309,21 @@ export default function BookingWizard({
       prev.map((s, i) => {
         if (i !== configureIndex) return s;
         const current = s.addOnSlugs ?? [];
-        return {
-          ...s,
-          addOnSlugs: current.includes(slug)
-            ? current.filter((x) => x !== slug)
-            : [...current, slug],
-        };
+        if (current.includes(slug)) {
+          return { ...s, addOnSlugs: current.filter((x) => x !== slug) };
+        }
+        // Selecting an add-on drops anything it's mutually exclusive with —
+        // the windshield strip and the full windshield cover the same glass,
+        // so picking one replaces the other rather than stacking.
+        const category = getCategory(s.serviceSlug);
+        const picked = category?.addOns?.find((a) => a.slug === slug);
+        const kept = picked
+          ? current.filter((x) => {
+              const other = category?.addOns?.find((a) => a.slug === x);
+              return !other || !addOnsConflict(picked, other);
+            })
+          : current;
+        return { ...s, addOnSlugs: [...kept, slug] };
       })
     );
   }

@@ -114,7 +114,7 @@ export default function TintCoverageSelector({
           <div className="mt-12 sm:mt-16 border-t-2 border-neutral-200 pt-10 sm:pt-12">
             <h4 className="text-lg font-semibold text-neutral-900">Add the windshield?</h4>
             <p className="text-sm text-neutral-500 mt-1 max-w-[60ch]">
-              Either option rides along with whichever coverage you picked above, in the same visit.
+              Pick one — the full windshield already includes the strip's glass. Either rides along with the coverage you chose above.
             </p>
 
             {/* The diagram follows the selection: Full Windshield when it's
@@ -178,14 +178,17 @@ export default function TintCoverageSelector({
                       <input
                         type="checkbox"
                         checked={selected}
-                        onChange={() =>
-                          setWindshieldAddOns(
-                            selected
-                              ? windshieldAddOns.filter((s) => s !== a.slug)
-                              : [...windshieldAddOns, a.slug]
-                          )
-                        }
-                        className="mt-1 h-4 w-4 accent-neutral-900"
+                        // One-or-the-other: the full windshield already
+                        // covers the strip's glass, so these behave as a
+                        // radio pair — picking one replaces the other, and
+                        // tapping the selected one clears it (neither is
+                        // required, which a plain radio can't express).
+                        onChange={() => setWindshieldAddOns(selected ? [] : [a.slug])}
+                        // Styled as a radio because it behaves as one — a
+                        // square checkbox reads as "take both". Still a
+                        // checkbox underneath so re-tapping clears it, which
+                        // a real radio group cannot do.
+                        className="mt-1 h-4 w-4 appearance-none rounded-full border-2 border-neutral-300 checked:border-neutral-900 checked:bg-neutral-900 checked:shadow-[inset_0_0_0_3px_white] transition-colors"
                       />
                       <span className="flex-1 min-w-0">
                         <span className="flex items-baseline justify-between gap-3">
