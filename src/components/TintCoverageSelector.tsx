@@ -187,7 +187,20 @@ export default function TintCoverageSelector({
                   and radio circles read as "one of these is required". An
                   option you can point at is the only affordance that
                   actually communicates "you can have neither". */}
-              <div className="space-y-3" role="radiogroup" aria-label="Windshield tint">
+              {/* "None" keeps a full-width row of its own; the two options
+                  that carry a photo sit side by side. Stacked full width, an
+                  880x400 photo was being squeezed into roughly 7:1 and read
+                  as an abstract smear — in a half-width column it shows at
+                  its own ratio, uncropped. */}
+              {/* Two-up only from lg. This list already sits in the right-hand
+                  half of the section, so splitting it at sm made four columns
+                  across the page — each option about 160px, enough to wrap
+                  "Windshield Strip" onto two lines and cut the price off. */}
+              <div
+                className="grid lg:grid-cols-2 gap-3"
+                role="radiogroup"
+                aria-label="Windshield tint"
+              >
                 {[
                   {
                     slug: null as string | null,
@@ -245,6 +258,8 @@ export default function TintCoverageSelector({
                     <label
                       key={a.slug ?? "none"}
                       className={`block rounded-xl border-2 overflow-hidden cursor-pointer transition-colors ${
+                        a.slug === null ? "lg:col-span-2" : "flex flex-col"
+                      } ${
                         selected
                           ? "border-neutral-900 bg-neutral-50"
                           : "border-neutral-200 hover:border-neutral-400"
@@ -254,12 +269,12 @@ export default function TintCoverageSelector({
                           not the subject. Greyed until the option is chosen so
                           the selected card is also the most vivid one. */}
                       {a.photo && (
-                        <span className="relative block h-16 sm:h-20 w-full">
+                        <span className="relative block w-full aspect-[880/400]">
                           <Image
                             src={a.photo.src}
                             alt={a.photo.alt}
                             fill
-                            sizes="(max-width: 640px) 100vw, 40vw"
+                            sizes="(max-width: 640px) 100vw, 25vw"
                             className={`object-cover transition-[filter,opacity] ${
                               selected ? "" : "grayscale-[35%] opacity-80"
                             }`}

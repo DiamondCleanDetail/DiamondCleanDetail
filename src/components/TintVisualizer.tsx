@@ -68,7 +68,7 @@ export default function TintVisualizer({
               for the G-Wagen just left a third of the box as dead air above
               the far flatter sedan. */}
           <div
-            className="relative mt-6 sm:mt-8 w-full"
+            className="relative mt-10 sm:mt-12 w-full"
             // A container so the watermark below can be sized as a share of
             // the frame. At a fixed pixel size it was a quarter of the frame's
             // height on a wide screen but nearly half of it on a small laptop.

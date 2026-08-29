@@ -13,6 +13,7 @@ import TintCoverageSelector from "@/components/TintCoverageSelector";
 import TintVehicleSelector from "@/components/TintVehicleSelector";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
 import TintStepSection from "@/components/TintStepSection";
+import TintBuildBar from "@/components/TintBuildBar";
 import FadeIn from "@/components/FadeIn";
 import FaqAccordion from "@/components/FaqAccordion";
 import StatCallouts from "@/components/StatCallouts";
@@ -82,6 +83,16 @@ export default function WindowTintingClient() {
       0) + addOnsTotal;
   const bookingHref = `/booking?service=${category.slug}&package=${pkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}&vehicleSize=${vehicleSize}&vehicleInfo=${encodeURIComponent(vehicleInfo)}${windshieldAddOns.length ? `&addons=${windshieldAddOns.join(",")}` : ""}`;
 
+  // Composed once and used by both the summary card and the bar that carries
+  // the total while you scroll, so the two can't describe the same build
+  // differently.
+  const chosenAddOnNames = (category.addOns ?? [])
+    .filter((a) => windshieldAddOns.includes(a.slug))
+    .map((a) => a.name);
+  const buildHeadline = `${level.label} tint · ${pkg.name}${
+    chosenAddOnNames.length ? ` + ${chosenAddOnNames.join(" + ")}` : ""
+  }`;
+
   return (
     <div>
       <ServiceHero
@@ -94,7 +105,10 @@ export default function WindowTintingClient() {
 
       {/* ---- Configurator: light block, one band per step ---- */}
       <div className="bg-white text-neutral-900">
-        <section className="mx-auto max-w-3xl px-6 pt-14 sm:pt-20 pb-2 text-center">
+        <section
+          id="tint-build-start"
+          className="mx-auto max-w-3xl px-6 pt-14 sm:pt-20 pb-2 text-center"
+        >
           <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-neutral-500">
             Build Your Tint
           </span>
@@ -162,8 +176,10 @@ export default function WindowTintingClient() {
           <TintFilmTypeSelector filmType={filmType} setFilmType={setFilmType} />
         </TintStepSection>
 
-        {/* Payoff: everything chosen above, resolved into one price */}
-        <section className="border-t-2 border-neutral-300 bg-neutral-100">
+        {/* Payoff: everything chosen above, resolved into one price. The id is
+            also what tells the running-total bar to stand down — once this is
+            on screen the bar would be the same figure twice. */}
+        <section id="tint-summary" className="border-t-2 border-neutral-300 bg-neutral-100">
           <div className="mx-auto max-w-4xl px-6 py-14 sm:py-24">
             <div className="relative overflow-hidden rounded-2xl bg-neutral-900 px-6 py-10 sm:px-10 sm:py-12 text-center shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]">
               <div
@@ -356,6 +372,17 @@ export default function WindowTintingClient() {
         </FadeIn>
         <ServiceGallery images={category.galleryImages} />
       </section>
+
+      <TintBuildBar
+        startId="tint-build-start"
+        summaryId="tint-summary"
+        headline={buildHeadline}
+        sub={`${filmType.name} · ${isTesla ? "Tesla" : "Standard vehicle"}`}
+        price={price}
+        priceLabel={teslaPrice?.isFrom ? "From" : "Price"}
+        href={bookingHref}
+        disabled={level.value === 0}
+      />
     </div>
   );
 }
