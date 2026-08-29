@@ -44,18 +44,42 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <div className="grid sm:grid-cols-2 gap-6 sm:gap-10 items-center">
-            <div className="aspect-square w-full max-w-[380px] mx-auto rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
+          {/* A fixed portrait column rather than an even split. Half the row is
+              far more width than a head-and-shoulders shot wants, and the old
+              square filled it — which left the short paragraph beside it
+              floating in the middle of a tall empty box. The portrait is now
+              sized like a portrait, and the column takes only the width it
+              needs. */}
+          <div className="grid sm:grid-cols-[minmax(0,260px)_minmax(0,1fr)] lg:grid-cols-[minmax(0,300px)_minmax(0,1fr)] gap-8 sm:gap-12 items-center">
+            <div className="aspect-[4/5] w-full max-w-[280px] sm:max-w-none mx-auto rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
               <p className="text-sm text-muted text-center px-6">Photo coming soon — Farhan</p>
             </div>
             <div>
               <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">Who We Are</span>
               <h2 className="text-xl sm:text-2xl font-semibold mt-2">Owned and operated by Farhan</h2>
-              <p className="text-muted mt-3 leading-relaxed">
+              <p className="text-muted mt-3 leading-relaxed max-w-[52ch]">
                 Diamond Clean Detail is a Denver-based mobile detailing business, built on the idea that
                 getting your car detailed shouldn&apos;t mean giving up your whole day. We bring the shop to
                 you — same attention to detail, none of the drop-off hassle.
               </p>
+
+              {/* Signed, the way a letter is. It is set in the wordmark's own
+                  script rather than a second handwriting face, so it reads as
+                  the same hand that signs the logo — and it gives the text
+                  column enough height to sit level with the portrait instead
+                  of needing to be centred against empty space. */}
+              <div className="mt-8 pt-6 border-t border-border">
+                {/* Scales with the viewport rather than stepping at a
+                    breakpoint: a script face is wide, and at a fixed 30px the
+                    name measured 327px against 327px of usable width — exact
+                    on a 375px phone and over the edge on anything narrower. */}
+                <p className="font-wordmark text-[clamp(20px,6.4vw,36px)] leading-[1.35] pb-1">
+                  Farhan Yackub
+                </p>
+                <p className="text-[10px] sm:text-xs uppercase tracking-widest text-muted mt-1">
+                  Owner · Diamond Clean Detail
+                </p>
+              </div>
             </div>
           </div>
         </FadeIn>
@@ -83,14 +107,21 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
         <FadeIn>
-          <div className="grid sm:grid-cols-2 gap-6 sm:gap-10 items-center">
-            <div className="sm:order-2 aspect-square w-full max-w-[380px] mx-auto rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
+          {/* Landscape here, portrait above. A working shot is a wide subject
+              and a person is a tall one, so forcing both into one square made
+              each of them wrong and stacked two near-identical mirrored blocks
+              on the same page. The column steps up with the viewport rather
+              than sitting at one fixed width: 440px ate two thirds of the row
+              on a small laptop and squeezed the paragraph into three-word
+              lines. */}
+          <div className="grid sm:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] gap-8 sm:gap-12 items-center">
+            <div className="sm:order-2 aspect-[16/9] w-full rounded-xl bg-gradient-to-br from-surface-2 to-surface border border-border flex items-center justify-center">
               <p className="text-sm text-muted text-center px-6">Photo coming soon — On the job</p>
             </div>
             <div>
               <span className="text-[10px] sm:text-xs uppercase tracking-widest text-muted">The Goal</span>
               <h2 className="text-xl sm:text-2xl font-semibold mt-2">More than a car wash</h2>
-              <p className="text-muted mt-3 leading-relaxed">
+              <p className="text-muted mt-3 leading-relaxed max-w-[46ch]">
                 Paint correction, ceramic coatings, PPF, and tint — done with the kind of care usually
                 reserved for a handful of cars in a shop, brought to every car we work on.
               </p>
