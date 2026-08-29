@@ -122,13 +122,50 @@ export function isSlotTooSoon(
   return parseTimeToMinutes(time) < minutesIntoBusinessDay(now) + MIN_LEAD_TIME_MINUTES;
 }
 
-export function isWeekend(dateStr: string): boolean {
-  if (!isValidIsoDate(dateStr)) return false;
-  // Read the day off the calendar date itself rather than parsing it into an
-  // instant, so the answer can't shift with whatever timezone is running this.
+/** Day of the week for a calendar date, 0 = Sunday, or null if unparseable.
+ *
+ * Read off the calendar date itself rather than parsing it into an instant,
+ * so the answer can't shift with whatever timezone is running this. */
+export function dayOfWeek(dateStr: string): number | null {
+  if (!isValidIsoDate(dateStr)) return null;
   const [year, month, day] = dateStr.split("-").map(Number);
-  const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
-  return weekday === 0 || weekday === 6;
+  return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+}
+
+export function isWeekend(dateStr: string): boolean {
+  const d = dayOfWeek(dateStr);
+  return d === 0 || d === 6;
+}
+
+/**
+ * Which days take online appointments, as day-of-week indices (0 = Sunday).
+ *
+ * Deliberately a list rather than a "weekends only" flag: Farhan works a
+ * weekday job right now, so Saturday and Sunday are the only days he can
+ * actually detail — but that is a fact about this month, not about the
+ * business. When his availability changes this is the one line to edit, and
+ * the date picker, the API's re-check and the customer-facing copy all
+ * follow, because all three read from here rather than each hard-coding a
+ * rule of their own.
+ */
+export const BOOKABLE_DAYS: readonly number[] = [0, 6]; // Sunday, Saturday
+
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+export function isBookableDay(dateStr: string): boolean {
+  const d = dayOfWeek(dateStr);
+  return d !== null && BOOKABLE_DAYS.includes(d);
+}
+
+/** The bookable days as a phrase for customer copy — "Saturdays and Sundays".
+ * Generated from BOOKABLE_DAYS so the copy can never contradict the rule. */
+export function bookableDaysLabel(): string {
+  // Monday-first so a working week reads in the order people expect.
+  const ordered = [1, 2, 3, 4, 5, 6, 0].filter((d) => BOOKABLE_DAYS.includes(d));
+  const names = ordered.map((d) => `${DAY_NAMES[d]}s`);
+  if (names.length === 0) return "no days";
+  if (names.length === 1) return names[0];
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 }
 
 export type BookedRange = { time: string; durationMinutes: number };
@@ -147,7 +184,7 @@ export function availableSlotsFor(
   date: string,
   now: Date = new Date()
 ): string[] {
-  if (!isValidIsoDate(date) || isWeekend(date) || isPastDate(date, now)) return [];
+  if (!isValidIsoDate(date) || !isBookableDay(date) || isPastDate(date, now)) return [];
   return timeSlots.filter((slot) => {
     const start = parseTimeToMinutes(slot);
     const end = start + duration;

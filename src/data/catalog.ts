@@ -1,3 +1,5 @@
+import { policies } from "@/data/policies";
+
 export type VehicleSize = "sedan" | "suv" | "truck";
 
 export const vehicleSizeLabels: Record<VehicleSize, string> = {
@@ -19,9 +21,14 @@ export type Package = {
   pricing: PricingModel;
   durationMinutes?: number;
   depositPercent?: number;
-  /** Headline outcome for tiered corrective work, e.g. "70–80%". Rendered as
-   * the card's defining number so stages compare on result, not just price. */
+  /** Headline outcome for tiered corrective work, e.g. "50–70%". Rendered as
+   * the card's defining number so stages compare on result, not just price.
+   * Presented as an approximation, because paint condition varies per car. */
   defectRemoval?: string;
+  /** Marks fixed per-size prices as a floor rather than a firm quote, shown
+   * as "$1,349+". For work whose scope is set by the vehicle's condition
+   * rather than its size — a Stage 3 correction being the case in point. */
+  priceIsFrom?: boolean;
   /** Who this tier is actually for — the paint/interior conditions it suits. */
   bestFor?: string[];
   /** Stated plainly on the card. Prevents the worst outcome in this trade:
@@ -42,7 +49,6 @@ export type AddOn = {
   slug: string;
   name: string;
   description: string;
-  /** PLACEHOLDER PRICING — replace with Farhan's real numbers before launch. */
   price: number;
   /** Photo of the add-on applied. Null renders a placeholder tile. */
   image?: string | null;
@@ -111,6 +117,10 @@ export type ServiceCategory = {
   /** Whether this service is delivered on-site at the customer's location.
    * Defaults to true — every current category is mobile. */
   isMobileService?: boolean;
+  /** Work that wants a garage or carport to cure properly — film and coatings.
+   * Still mobile, but "we come to you" on its own oversells it, so these
+   * categories say what they need up front rather than on the day. */
+  needsCoveredSpace?: boolean;
 };
 
 export const catalog: ServiceCategory[] = [
@@ -281,20 +291,19 @@ export const catalog: ServiceCategory[] = [
         slug: "single-stage",
         name: "Stage 1 — Enhancement",
         tagline: "A one-step polish that lifts gloss and clears light swirls.",
-        defectRemoval: "40–50%",
+        defectRemoval: "30–50%",
         features: ["One-step machine polish", "Removes light swirl marks", "Enhanced gloss & clarity"],
         bestFor: ["Light swirl marks", "Minor water spots", "Dull or faded finish", "Prep before a wax or sealant"],
         excludes: ["Deep scratches you can catch with a fingernail", "Ceramic coating"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 250, suv: 300, truck: 325 } },
+        pricing: { type: "fixed", byVehicleSize: { sedan: 349, suv: 425, truck: 495 } },
         durationMinutes: 240,
         depositPercent: 25,
       },
       {
-        // PLACEHOLDER PRICING — this middle tier is new; confirm with Farhan.
         slug: "two-stage",
         name: "Stage 2 — Correction",
         tagline: "Compound and polish for paint that's taken real wear.",
-        defectRemoval: "70–80%",
+        defectRemoval: "50–70%",
         features: [
           "Compounding pass, then a refining polish",
           "Removes heavier swirls & light scratches",
@@ -303,7 +312,7 @@ export const catalog: ServiceCategory[] = [
         ],
         bestFor: ["Heavy swirl marks", "Light scratches", "Moderate oxidation", "Buffer trails from a previous shop"],
         excludes: ["Scratches through the clear coat", "Ceramic coating"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 350, suv: 415, truck: 450 } },
+        pricing: { type: "fixed", byVehicleSize: { sedan: 549, suv: 625, truck: 775 } },
         durationMinutes: 360,
         depositPercent: 25,
         featured: true,
@@ -312,7 +321,7 @@ export const catalog: ServiceCategory[] = [
         slug: "multi-stage",
         name: "Stage 3 — Full Correction",
         tagline: "Every pass we have, for paint that's been neglected.",
-        defectRemoval: "90%+",
+        defectRemoval: "70–90%",
         features: [
           "Compound + polish + finishing pass",
           "Removes deep scratches & severe oxidation",
@@ -321,7 +330,10 @@ export const catalog: ServiceCategory[] = [
         ],
         bestFor: ["Deep scratches", "Severe oxidation", "Neglected or long-unwashed paint", "Maximum gloss restoration"],
         excludes: ["Scratches through to primer or metal", "Ceramic coating"],
-        pricing: { type: "fixed", byVehicleSize: { sedan: 450, suv: 525, truck: 575 } },
+        // The only tier Farhan quotes as a floor rather than a firm price:
+        // a Stage 3 is scoped to whatever the paint actually needs.
+        pricing: { type: "fixed", byVehicleSize: { sedan: 1349, suv: 1575, truck: 1695 } },
+        priceIsFrom: true,
         durationMinutes: 480,
         depositPercent: 25,
       },
@@ -329,6 +341,7 @@ export const catalog: ServiceCategory[] = [
   },
   {
     slug: "ceramic-coating",
+    needsCoveredSpace: true,
     name: "Ceramic Coating",
     shortName: "Ceramic Coating",
     summary: "Long-term paint protection with a durable hydrophobic finish.",
@@ -428,6 +441,7 @@ export const catalog: ServiceCategory[] = [
   },
   {
     slug: "paint-protection-film",
+    needsCoveredSpace: true,
     name: "Paint Protection Film (PPF)",
     shortName: "PPF",
     summary: "Self-healing film that shields your paint from rock chips and scratches.",
@@ -480,18 +494,23 @@ export const catalog: ServiceCategory[] = [
     // Small fixed-area pieces sold alongside a coverage tier. Anything a
     // package already wraps is marked includedIn so it can't be bought twice.
     addOns: [
+      // "Door Sill Guards" used to sit in this list at $89. It is gone because
+      // Farhan confirmed sills and edges are the same piece of work, and two
+      // names for one job is a customer paying twice for it.
       {
         slug: "door-edge-guards",
         name: "Door Edge PPF",
-        description: "Wraps the door edges — the first place paint chips when a door taps a wall or another car.",
-        price: 89,
+        description:
+          "Wraps the door edges — the first place paint chips when a door taps a wall or another car. Priced per pair of doors.",
+        price: 95,
         image: null,
       },
       {
         slug: "door-cups",
         name: "Door Handle Cups",
-        description: "Covers the recess behind each handle, where fingernails and rings wear the clear coat.",
-        price: 99,
+        description:
+          "Covers the recess behind each handle, where fingernails and rings wear the clear coat. Covers all four handles.",
+        price: 119,
         image: null,
         includedIn: ["full-protection"],
       },
@@ -499,20 +518,13 @@ export const catalog: ServiceCategory[] = [
         slug: "headlight-ppf",
         name: "Headlight Protection",
         description: "Clear film over the headlights to stop pitting, hazing, and stone chips.",
-        price: 149,
+        price: 195,
         image: null,
       },
       {
         slug: "fog-light-ppf",
         name: "Fog Light Protection",
         description: "Same protection for the lower lights, which take the worst of the road spray.",
-        price: 79,
-        image: null,
-      },
-      {
-        slug: "door-sill-guards",
-        name: "Door Sill Guards",
-        description: "Protects the painted sill under the door from shoe scuffs getting in and out.",
         price: 89,
         image: null,
       },
@@ -537,7 +549,9 @@ export const catalog: ServiceCategory[] = [
         slug: "shield",
         name: "Shield",
         tagline: "Well-rounded coverage for everyday driving.",
-        features: ["Partial hood", "Partial fenders", "Full bumper", "Back of side mirrors (2)"],
+        // Mirrors are deliberately not here — they start at Armor, and are
+        // what separates the two tiers.
+        features: ["Partial hood", "Partial fenders", "Full bumper"],
         pricing: { type: "starting-at", amount: 1199 },
         depositPercent: 25,
         featured: true,
@@ -554,7 +568,11 @@ export const catalog: ServiceCategory[] = [
         slug: "track",
         name: "Track",
         tagline: "Near-total coverage for the panels that see the most road.",
-        features: ["Full hood, fenders & bumper", "Roof, A-pillars & mirrors", "Front & rear doors"],
+        // Doors are not offered at this tier. Partial door coverage isn't
+        // something we do, so it can't be listed — full doors are Full
+        // Protection. NOTE: the Track coverage render still shows film on
+        // the front doors and needs replacing; see the launch shot list.
+        features: ["Full hood, fenders & bumper", "Roof, A-pillars & mirrors"],
         pricing: { type: "starting-at", amount: 3499 },
         depositPercent: 25,
       },
@@ -849,9 +867,15 @@ export function getCategory(slug: string): ServiceCategory | undefined {
  * next to no size label reads as *the* price and feels like bait once an
  * SUV owner reaches checkout. Callers that show the full per-size grid use
  * priceForSize instead. */
+/** Whole-dollar price with thousands separators. Stage 3 correction is the
+ * first four-figure price on the site, and "$1349" reads as a typo. */
+export function formatPrice(dollars: number): string {
+  return `$${dollars.toLocaleString("en-US")}`;
+}
+
 export function priceLabel(pkg: Package, size: VehicleSize = "sedan"): string {
-  if (pkg.pricing.type === "fixed") return `From $${pkg.pricing.byVehicleSize[size]}`;
-  if (pkg.pricing.type === "starting-at") return `From $${pkg.pricing.amount}`;
+  if (pkg.pricing.type === "fixed") return `From ${formatPrice(pkg.pricing.byVehicleSize[size])}`;
+  if (pkg.pricing.type === "starting-at") return `From ${formatPrice(pkg.pricing.amount)}`;
   return "Get a Quote";
 }
 
@@ -867,6 +891,21 @@ export function priceForSize(pkg: Package, size: VehicleSize): number | null {
  * answers for each one. Pass `faqs` on the category to override any/all
  * of these when the generic answer doesn't fit. */
 export function getFaqs(category: ServiceCategory): { q: string; a: string }[] {
+  return [...baseFaqs(category), ...policyFaqs(category)];
+}
+
+/** The questions that apply to every booking regardless of service — weather,
+ * and whether the online price is the final one. Appended to every category,
+ * including ones that override the generated set, because a category with
+ * hand-written FAQs still takes deposits in Colorado weather. */
+function policyFaqs(category: ServiceCategory): { q: string; a: string }[] {
+  const extra: { q: string; a: string }[] = [];
+  if (category.needsCoveredSpace) extra.push(policies.coveredSpace);
+  extra.push(policies.weather, policies.onArrivalPricing);
+  return extra;
+}
+
+function baseFaqs(category: ServiceCategory): { q: string; a: string }[] {
   if (category.faqs) return category.faqs;
 
   const durations = category.packages.map((p) => p.durationMinutes).filter((d): d is number => Boolean(d));

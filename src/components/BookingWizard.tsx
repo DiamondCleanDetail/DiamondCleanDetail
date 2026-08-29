@@ -8,6 +8,7 @@ import {
   VehicleSize,
   priceForSize,
   priceLabel,
+  formatPrice,
 } from "@/data/catalog";
 import Image from "next/image";
 import TintVisualizer from "@/components/TintVisualizer";
@@ -19,12 +20,14 @@ import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
 import {
   todayIso,
-  isWeekend,
+  isBookableDay,
+  bookableDaysLabel,
   availableSlotsFor,
   leadTimeLabel,
   type BookedRange,
 } from "@/lib/scheduling";
 import { serviceArea } from "@/data/serviceArea";
+import { guarantee, policies } from "@/data/policies";
 
 type Phase = "select" | "configure" | "vehicle" | "datetime" | "details" | "pay";
 
@@ -235,7 +238,10 @@ export default function BookingWizard({
 
   const current = resolved[configureIndex];
   const totalDuration = resolved.reduce((sum, r) => sum + (r.pkg.durationMinutes ?? 60), 0) || 60;
-  const weekend = isWeekend(date);
+  // Named for what it means to the customer, not for the calendar: the
+  // closed days are a fact of Farhan's current availability, not of
+  // weekends. See BOOKABLE_DAYS in scheduling.ts.
+  const unavailableDay = Boolean(date) && !isBookableDay(date);
   const availableSlots = useMemo(
     () => availableSlotsFor(totalDuration, bookedRanges, date, now),
     [bookedRanges, totalDuration, date, now]
@@ -584,9 +590,11 @@ export default function BookingWizard({
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>
             {/* Stated up front rather than as an error after picking a
-                weekend — a Saturday customer shouldn't discover the closure
-                four steps into the funnel. */}
-            <p className="text-xs text-muted mb-2">Weekdays only — we&apos;re closed Saturday &amp; Sunday.</p>
+                closed day — nobody should discover the restriction four
+                steps into the funnel. */}
+            <p className="text-xs text-muted mb-2">
+              Appointments run {bookableDaysLabel()} — weekdays are fully booked.
+            </p>
             <input
               type="date"
               value={date}
@@ -597,9 +605,9 @@ export default function BookingWizard({
               }}
               className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm"
             />
-            {weekend && (
+            {unavailableDay && (
               <p className="text-xs text-red-400 mt-1">
-                We&apos;re closed Saturdays and Sundays — please pick a weekday.
+                We&apos;re fully booked that day — appointments are {bookableDaysLabel()}.
               </p>
             )}
           </div>
@@ -608,7 +616,7 @@ export default function BookingWizard({
             <select
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              disabled={!date || weekend}
+              disabled={!date || unavailableDay}
               className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm disabled:text-muted disabled:cursor-not-allowed"
             >
               <option value="" disabled>
@@ -620,7 +628,7 @@ export default function BookingWizard({
                 </option>
               ))}
             </select>
-            {date && !weekend && availableSlots.length === 0 && (
+            {date && !unavailableDay && availableSlots.length === 0 && (
               <p className="text-xs text-muted mt-1">
                 {date === todayIso()
                   ? `We need at least ${leadTimeLabel()}' notice to get to you, so there's nothing left today — please pick another date.`
@@ -717,7 +725,7 @@ export default function BookingWizard({
                   )}
                 </div>
                 <span className="sm:text-right shrink-0">
-                  {r.pkg.pricing.type === "quote" ? "Priced after assessment" : `$${priceForSize(r.pkg, vehicleSize)}`}
+                  {r.pkg.pricing.type === "quote" ? "Priced after assessment" : formatPrice(priceForSize(r.pkg, vehicleSize) ?? 0)}
                 </span>
               </div>
             ))}
@@ -736,13 +744,13 @@ export default function BookingWizard({
             <div className="flex justify-between gap-4 pt-2 border-t border-border">
               <span className="text-muted shrink-0">Total</span>
               <span className="font-semibold text-right">
-                {allQuoteItems ? "Priced after assessment" : hasQuoteItem ? `$${subtotal} + quoted items` : `$${subtotal}`}
+                {allQuoteItems ? "Priced after assessment" : hasQuoteItem ? `${formatPrice(subtotal)} + quoted items` : formatPrice(subtotal)}
               </span>
             </div>
             {!allQuoteItems && totalDeposit > 0 && (
               <div className="flex justify-between gap-4">
                 <span className="text-muted shrink-0">Due now</span>
-                <span className="font-semibold chrome-text text-right">${totalDeposit}</span>
+                <span className="font-semibold chrome-text text-right">{formatPrice(totalDeposit)}</span>
               </div>
             )}
           </div>
@@ -763,6 +771,16 @@ export default function BookingWizard({
               {hasQuoteItem && " Quote-only services above won't be charged."}
             </div>
           )}
+          {/* The guarantee sits at the payment step rather than only on a
+              marketing page, because this is the moment it answers a question
+              someone is actually asking — what happens if this goes wrong. */}
+          <div className="rounded-lg border border-border bg-surface-2 p-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-foreground">
+              {guarantee.name}
+            </p>
+            <p className="text-xs text-muted mt-2 leading-relaxed">{guarantee.promise}</p>
+            <p className="text-xs text-muted mt-2 leading-relaxed">{policies.weather.a}</p>
+          </div>
           {submitError && <p className="text-sm text-red-400">{submitError}</p>}
         </div>
       )}
@@ -788,7 +806,7 @@ export default function BookingWizard({
               ? "Processing..."
               : allQuoteItems
                 ? "Request Quote"
-                : `Pay $${totalDeposit || subtotal || 0} & Book`
+                : `Pay ${formatPrice(totalDeposit || subtotal || 0)} & Book`
             : "Continue"}
         </button>
       </div>
@@ -802,7 +820,7 @@ export default function BookingWizard({
         >
           Call {serviceArea.phone.replace(/^\+1 /, "")}
         </a>{" "}
-        — Monday to Friday.
+        — Monday to Friday, 8:00 AM to 7:00 PM.
       </p>
     </div>
   );

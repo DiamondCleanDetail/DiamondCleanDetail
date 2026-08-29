@@ -10,13 +10,18 @@ export default function PackageDetails({ pkg }: { pkg: Package }) {
 
   return (
     <>
+      {/* "Approx." sits in the label rather than in front of the figure: the
+          number is the thing being compared across tiers and stays a clean
+          numeral, while the qualifier still reads before anyone acts on it.
+          It matters that it is qualified at all — no two cars arrive with the
+          same paint, so a bare "50–70%" would read as a promise. */}
       {pkg.defectRemoval && (
         <div className="mt-4 flex items-baseline gap-2.5">
           <span className="chrome-text text-2xl font-black leading-none tabular-nums">
             {pkg.defectRemoval}
           </span>
           <span className="text-[10px] uppercase tracking-[0.2em] text-muted">
-            Defect removal
+            Approx. defect removal
           </span>
         </div>
       )}

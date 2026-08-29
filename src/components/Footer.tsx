@@ -28,10 +28,17 @@ export default function Footer() {
           <a href={`mailto:${serviceArea.email}`} className="hover:text-foreground transition-colors">
             {serviceArea.email}
           </a>
-          <span className="hidden sm:inline text-border">&bull;</span>
-          <span>
-            {serviceArea.hours[0].days}: {serviceArea.hours[0].time}
-          </span>
+          {/* Both lines, not just the first. When this rendered hours[0] alone
+              it showed the phone hours and silently dropped the one a customer
+              actually needs — which days we can come out. */}
+          {serviceArea.hours.map((h) => (
+            <span key={h.days} className="contents">
+              <span className="hidden sm:inline text-border">&bull;</span>
+              <span>
+                {h.days}: {h.time}
+              </span>
+            </span>
+          ))}
         </div>
       </div>
       <div className="mx-auto max-w-6xl px-6 pb-8 text-center text-xs text-muted tracking-wide">

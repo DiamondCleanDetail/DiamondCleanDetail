@@ -1,4 +1,4 @@
-import { priceForSize, vehicleSizeLabels, type Package, type VehicleSize } from "@/data/catalog";
+import { formatPrice, priceForSize, vehicleSizeLabels, type Package, type VehicleSize } from "@/data/catalog";
 
 const sizes: VehicleSize[] = ["sedan", "suv", "truck"];
 const shortLabels: Record<VehicleSize, string> = {
@@ -21,7 +21,7 @@ export default function PackagePrices({ pkg }: { pkg: Package }) {
         <p className="chrome-text text-3xl font-black leading-tight mt-1">
           {pkg.pricing.type === "quote"
             ? "Get a Quote"
-            : `$${pkg.pricing.amount}`}
+            : formatPrice(pkg.pricing.amount)}
         </p>
       </div>
     );
@@ -29,7 +29,11 @@ export default function PackagePrices({ pkg }: { pkg: Package }) {
 
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-[0.25em] text-muted mb-2">Price by Vehicle</p>
+      {/* A tier priced from a floor says so in the heading rather than only in
+          a "+" on each figure, which is easy to read as part of the number. */}
+      <p className="text-[10px] uppercase tracking-[0.25em] text-muted mb-2">
+        {pkg.priceIsFrom ? "Starting Price by Vehicle" : "Price by Vehicle"}
+      </p>
       <div className="grid grid-cols-3 gap-2">
         {sizes.map((s) => (
           <div
@@ -39,7 +43,8 @@ export default function PackagePrices({ pkg }: { pkg: Package }) {
           >
             <p className="text-[10px] uppercase tracking-widest text-muted">{shortLabels[s]}</p>
             <p className="chrome-text text-xl font-black leading-none mt-1 tabular-nums">
-              ${priceForSize(pkg, s)}
+              {formatPrice(priceForSize(pkg, s) ?? 0)}
+              {pkg.priceIsFrom && "+"}
             </p>
           </div>
         ))}

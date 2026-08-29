@@ -11,6 +11,9 @@ import {
   timeSlots,
   MIN_LEAD_TIME_MINUTES,
   isWeekend,
+  isBookableDay,
+  bookableDaysLabel,
+  BOOKABLE_DAYS,
   todayIso,
 } from "./scheduling.ts";
 
@@ -162,6 +165,11 @@ test("weekend detection rejects malformed input rather than guessing", () => {
 const denverOn28th = (hour: number, minute = 0) =>
   new Date(Date.UTC(2026, 7, 28, hour + 6, minute));
 
+/** 2026-08-29 is a Saturday — a day that actually takes appointments, which
+ * the availableSlotsFor cases need and the isSlotTooSoon ones do not. */
+const denverOn29th = (hour: number, minute = 0) =>
+  new Date(Date.UTC(2026, 7, 29, hour + 6, minute));
+
 test("a slot earlier today is no longer bookable", () => {
   const fourPm = denverOn28th(16);
   assert.equal(isSlotTooSoon("2026-08-28", "9:00 AM", fourPm), true);
@@ -236,7 +244,7 @@ test("every slot the form offers is one the API would accept", () => {
 });
 
 test("the form stops offering today's slots as the day runs out", () => {
-  assert.deepEqual(availableSlotsFor(90, [], "2026-08-28", denverOn28th(6)), [
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-29", denverOn29th(6)), [
     "9:00 AM",
     "10:30 AM",
     "12:00 PM",
@@ -244,26 +252,45 @@ test("the form stops offering today's slots as the day runs out", () => {
     "3:00 PM",
     "4:30 PM",
   ]);
-  assert.deepEqual(availableSlotsFor(90, [], "2026-08-28", denverOn28th(14)), ["4:30 PM"]);
-  assert.deepEqual(availableSlotsFor(90, [], "2026-08-28", denverOn28th(17)), []);
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-29", denverOn29th(14)), ["4:30 PM"]);
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-29", denverOn29th(17)), []);
 });
 
-test("availableSlotsFor still respects closing, weekends and bookings", () => {
-  const earlyOn31st = new Date("2026-08-31T13:00:00Z"); // 07:00 MDT Monday
+test("availableSlotsFor still respects closing, unavailable days and bookings", () => {
+  const earlyOn29th = new Date("2026-08-29T13:00:00Z"); // 07:00 MDT Saturday
   // A 6 hour job can start at noon and finish exactly at the 6pm close, but
   // not at 1:30pm.
-  assert.deepEqual(availableSlotsFor(360, [], "2026-08-31", earlyOn31st), [
+  assert.deepEqual(availableSlotsFor(360, [], "2026-08-29", earlyOn29th), [
     "9:00 AM",
     "10:30 AM",
     "12:00 PM",
   ]);
-  // Saturday.
-  assert.deepEqual(availableSlotsFor(90, [], "2026-08-29", earlyOn31st), []);
+  // Monday — weekdays take no appointments while Farhan is working them.
+  assert.deepEqual(availableSlotsFor(90, [], "2026-08-31", earlyOn29th), []);
   // Already booked.
   assert.deepEqual(
-    availableSlotsFor(90, [{ time: "9:00 AM", durationMinutes: 180 }], "2026-08-31", earlyOn31st),
+    availableSlotsFor(90, [{ time: "9:00 AM", durationMinutes: 180 }], "2026-08-29", earlyOn29th),
     ["12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM"]
   );
+});
+
+test("only the configured days take appointments", () => {
+  assert.deepEqual([...BOOKABLE_DAYS].sort(), [0, 6], "Sunday and Saturday");
+  assert.equal(isBookableDay("2026-08-29"), true, "Saturday");
+  assert.equal(isBookableDay("2026-08-30"), true, "Sunday");
+  for (const weekday of ["2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04"]) {
+    assert.equal(isBookableDay(weekday), false, weekday);
+  }
+  // A malformed date is not bookable — the opposite default would let a
+  // garbage string through the API's day check.
+  assert.equal(isBookableDay("08/29/2026"), false);
+  assert.equal(isBookableDay(""), false);
+});
+
+test("the bookable-days label is generated from the rule, not written twice", () => {
+  // The copy in the booking form and the API's error message both come from
+  // here, so they cannot drift from what availableSlotsFor actually allows.
+  assert.equal(bookableDaysLabel(), "Saturdays and Sundays");
 });
 
 test("availableSlotsFor rejects malformed and past dates outright", () => {

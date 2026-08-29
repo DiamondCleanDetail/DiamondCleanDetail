@@ -83,6 +83,13 @@ export default function VehiclePicker({
         </div>
         <div>
           <p className={light ? "text-sm text-neutral-500 mb-2" : "text-sm text-muted mb-2"}>Closest vehicle size</p>
+          {/* The one rule people get wrong when choosing for themselves. Row
+              count is something anyone can check from the driveway, where
+              "full-size" is a judgement call — and getting it wrong here is
+              what leads to a price changing on arrival. */}
+          <p className={light ? "text-xs text-neutral-500 mb-3" : "text-xs text-muted mb-3"}>
+            Three rows of seats? That&apos;s Truck / Full-size SUV.
+          </p>
           <div className="grid grid-cols-3 gap-3">
             {(Object.keys(vehicleSizeLabels) as VehicleSize[]).map((size) => (
               <button

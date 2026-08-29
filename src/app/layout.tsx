@@ -68,12 +68,24 @@ const localBusinessSchema = {
     addressRegion: "CO",
     addressCountry: "US",
   },
+  // Both, because they are genuinely different: the phone is answered on
+  // weekdays, but the only days that take appointments are Saturday and
+  // Sunday. Publishing the weekday line alone told Google we were open for
+  // business Mon–Fri, which is the opposite of when we can actually detail
+  // a car — a search result promising weekday service is a wasted trip.
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      opens: "07:30",
+      dayOfWeek: ["Saturday", "Sunday"],
+      opens: "09:00",
       closes: "18:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "08:00",
+      closes: "19:00",
+      description: "Phone and enquiries only — appointments are Saturday and Sunday.",
     },
   ],
 };

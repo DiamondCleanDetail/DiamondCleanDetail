@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { AddOn } from "@/data/catalog";
+import { formatPrice, type AddOn } from "@/data/catalog";
 
 /** Grid of optional extras. In `readOnly` mode it's a display-only menu for
  * the service page; otherwise each tile toggles, for the checkout step.
@@ -67,7 +67,7 @@ export default function AddOnSelector({
               <h4 className="font-semibold text-sm">{a.name}</h4>
               <p className="text-xs text-muted mt-1.5 leading-relaxed">{a.description}</p>
               <p className={`mt-3 font-bold ${included ? "text-muted" : "chrome-text"}`}>
-                {included ? "Included in this tier" : `+$${a.price}`}
+                {included ? "Included in this tier" : `+${formatPrice(a.price)}`}
               </p>
             </div>
           </>

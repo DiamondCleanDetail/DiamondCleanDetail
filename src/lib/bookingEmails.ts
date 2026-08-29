@@ -36,7 +36,9 @@ const colors = {
 };
 
 function money(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
+  // Grouped, not just fixed to 2dp — a Stage 3 correction deposit is four
+  // figures, and "$1349.00" reads as a typo.
+  return `${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function escapeHtml(s: string): string {

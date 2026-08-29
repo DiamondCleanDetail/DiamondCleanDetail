@@ -7,7 +7,8 @@ import {
   isPastDate,
   isSlotTooSoon,
   isValidIsoDate,
-  isWeekend,
+  isBookableDay,
+  bookableDaysLabel,
   leadTimeLabel,
   parseTimeToMinutes,
   rangesOverlap,
@@ -60,8 +61,11 @@ export async function POST(req: NextRequest) {
   if (isPastDate(body.date)) {
     return NextResponse.json({ error: "That date has already passed." }, { status: 400 });
   }
-  if (isWeekend(body.date)) {
-    return NextResponse.json({ error: "We're closed on weekends." }, { status: 400 });
+  if (!isBookableDay(body.date)) {
+    return NextResponse.json(
+      { error: `We only take appointments on ${bookableDaysLabel()}.` },
+      { status: 400 }
+    );
   }
   // The form only ever offers these, so anything else came from somewhere
   // that skipped it — and an unrecognised time would otherwise be stored
