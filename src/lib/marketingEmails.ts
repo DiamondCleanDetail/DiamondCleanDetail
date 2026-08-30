@@ -20,14 +20,20 @@ const siteUrl = "https://diamondcleandetail.com";
 
 // Duplicated from globals.css on purpose: mail clients don't load stylesheets
 // and don't resolve CSS variables.
+//
+// A light palette, on purpose. The dark version looked right in preview but
+// several clients (Gmail especially) drop the <body>/table background and paint
+// the email on their own white — which left the light chrome wordmark invisible
+// on white. A light email is the one thing every client renders the same, so
+// the header uses the black wordmark and the body stays dark-on-light.
 const colors = {
-  background: "#08090a",
-  surface: "#121315",
-  surface2: "#1a1c1f",
-  foreground: "#f5f6f7",
-  muted: "#9a9ca2",
-  border: "#26282c",
-  accent: "#d8dbe0",
+  background: "#eef0f2",
+  surface: "#ffffff",
+  surface2: "#f5f6f7",
+  foreground: "#0f1012",
+  muted: "#54575e",
+  border: "#e4e6ea",
+  accent: "#111214",
 };
 
 export type MarketingEmail = {
@@ -177,7 +183,7 @@ export function renderMarketingEmail(
             <tr>
               <td style="padding:32px 32px 24px; text-align:center; border-bottom:1px solid ${colors.border};">
                 <img src="${siteUrl}/brand/logo.png" width="36" height="36" alt="" style="display:block; margin:0 auto 14px;" />
-                <img src="${siteUrl}/brand/wordmark.png" width="206" height="21" alt="Diamond Clean Detail" style="display:block; margin:0 auto; max-width:206px;" />
+                <img src="${siteUrl}/brand/wordmark-dark.png" width="206" height="21" alt="Diamond Clean Detail" style="display:block; margin:0 auto; max-width:206px;" />
               </td>
             </tr>
             <tr>
@@ -212,7 +218,7 @@ export function renderMarketingEmail(
                 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 0;">
                   <tr>
                     <td style="background:${colors.accent}; border-radius:8px;">
-                      <a href="${email.cta.href}" style="display:inline-block; padding:13px 26px; font-family:Arial,Helvetica,sans-serif; font-size:15px; font-weight:bold; color:#0a0a0b; text-decoration:none;">${esc(email.cta.label)}</a>
+                      <a href="${email.cta.href}" style="display:inline-block; padding:13px 26px; font-family:Arial,Helvetica,sans-serif; font-size:15px; font-weight:bold; color:#ffffff; text-decoration:none;">${esc(email.cta.label)}</a>
                     </td>
                   </tr>
                 </table>

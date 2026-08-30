@@ -267,15 +267,11 @@ export default function TintCoverageSelector({
                               src: "/services/windshield-cracked-dash.webp",
                               alt: "A dashboard cracked by years of sun through the windshield",
                             }
-                          : a.slug === "pano-roof" && a.image
-                            ? {
-                                // The roof's problem IS its extent — people
-                                // picture a sunroof-sized square, and the
-                                // top-down shot corrects that on sight.
-                                src: a.image,
-                                alt: "The full glass roof of a Tesla seen from above",
-                              }
-                            : null,
+                          : // The roof card carries no banner photo: its
+                            // top-down render is already the big preview on
+                            // the left when it's selected, and repeating it
+                            // shrunk into the card was redundant.
+                            null,
                   })),
                 ].map((a) => {
                   const windshieldChosen = windshieldAddOns.some((slug) =>
