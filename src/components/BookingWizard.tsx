@@ -522,7 +522,14 @@ export default function BookingWizard({
                   key={c.slug}
                   onClick={() => toggleService(c.slug)}
                   aria-pressed={checked}
-                  className={`text-left rounded-xl overflow-hidden transition-colors border ${
+                  /* flex flex-col matters here: a <button> is a grid item
+                     stretched to the tallest card in its row, and a button
+                     centres its own content vertically by browser default. So
+                     any card whose title fitted on one line pushed its photo
+                     down by half the leftover height, leaving a band of dead
+                     space above the image while the two-line cards beside it
+                     sat flush. */
+                  className={`text-left flex flex-col rounded-xl overflow-hidden transition-colors border ${
                     checked ? "border-accent bg-accent/10" : "bg-surface border-border hover:border-muted"
                   }`}
                 >

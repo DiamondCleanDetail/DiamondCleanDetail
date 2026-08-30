@@ -23,7 +23,7 @@ const wordmarkClass =
 const links = [
   { href: "/our-work", label: "Our Work" },
   { href: "/booking", label: "Book Now" },
-  { href: "/about", label: "About Us" },
+  { href: "/about", label: "About" },
 ];
 
 /** 16px calendar, sized to sit level with Clerk's own menu icons. */
