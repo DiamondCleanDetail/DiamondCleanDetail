@@ -975,18 +975,31 @@ export const catalog: ServiceCategory[] = [
       "Deep cleaning, conditioning, and restoration for leather seats and trim — from routine conditioning to repairing cracks and fading.",
     tagline: "Bring tired leather back to life.",
     heroVideo: "/video/leather-restoration.mp4",
-    cardImage: "/work/ferrari-488-1.webp",
+    // A leather service whose card led with a Ferrari exterior was advertising
+    // the wrong thing entirely. This one is leather.
+    cardImage: "/services/leather-finished.webp",
     valueProp:
       "Leather seats dry out, crack, and fade over years of sun exposure and use. Routine cleaning and conditioning keeps healthy leather supple and protected, while full restoration repairs cracking, fading, and staining on leather that's already showing its age.",
+    valuePropImage: "/services/leather-cabin.webp",
+    valuePropImageIsPhoto: true,
     benefitImages: [
-      null,
-      null,
-      // "Feels like new" is a texture claim, so the shot has to carry texture:
-      // the embossed headrest, the stitch line and the perforation all read
-      // here. Cropped from a portrait original around the seat itself.
+      // The wheel is the most handled and most sun-exposed leather in any
+      // car, so it dries and cracks first — which makes conditioning one the
+      // right picture for a card about preventing exactly that.
       {
-        src: "/services/leather-finished.webp",
-        alt: "A tan leather sports seat, stitching and perforation crisp against the dark interior",
+        src: "/services/leather-wheel.webp",
+        alt: "A microfibre cloth working conditioner into a leather steering wheel",
+      },
+      // Deliberately still empty. Nothing we have shows recolouring, and a
+      // photo of already-rich leather under a heading that says "restores
+      // faded color" implies a before state that never existed. This one
+      // wants a real half-restored seat.
+      null,
+      // The card is about deep cleaning lifting embedded dirt, so the shot is
+      // the cleaning itself rather than the finished result.
+      {
+        src: "/services/leather-seat-clean.webp",
+        alt: "A detailer working a cloth across the leather seat of a sports car",
       },
     ],
     benefits: [
