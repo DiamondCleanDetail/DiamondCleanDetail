@@ -170,6 +170,30 @@ export function bookableDaysLabel(): string {
 
 export type BookedRange = { time: string; durationMinutes: number };
 
+/** Which start slots a job of `duration` minutes can begin at, before existing
+ * bookings are considered.
+ *
+ * Normally that's every slot the job finishes by closing from. But the premium
+ * services take most of — or more than — a day: a full PPF is 10 hours, and a
+ * combined PPF + tint + coating is longer than the day is. Those can never
+ * "finish by 6 PM", and the old rule quietly dropped every slot and rendered
+ * the day "fully booked" when nothing was booked at all. So when no slot fits,
+ * the job is treated as an all-day booking that starts at opening — one real,
+ * honest option — and the business confirms any overflow into another day. */
+export function startSlotsForDuration(duration: number): string[] {
+  const fitting = timeSlots.filter(
+    (slot) => parseTimeToMinutes(slot) + duration <= CLOSING_MINUTES
+  );
+  return fitting.length > 0 ? fitting : [timeSlots[0]];
+}
+
+/** Whether a job of `duration` minutes is too long to finish in a single day
+ * from any slot — i.e. it books as a full day. Used to explain the single
+ * morning option the picker offers for those. */
+export function isAllDayJob(duration: number): boolean {
+  return parseTimeToMinutes(timeSlots[0]) + duration > CLOSING_MINUTES;
+}
+
 /** Time slots on `date` that fit a service of `duration` minutes without
  * running past closing, overlapping an existing booking, or starting sooner
  * than the crew can get there.
@@ -185,10 +209,12 @@ export function availableSlotsFor(
   now: Date = new Date()
 ): string[] {
   if (!isValidIsoDate(date) || !isBookableDay(date) || isPastDate(date, now)) return [];
-  return timeSlots.filter((slot) => {
+  // startSlotsForDuration decides which slots the job can *begin* at (every
+  // slot it fits before closing, or just the opening slot for an all-day job).
+  // Overlap with real bookings and the lead-time rule are applied on top.
+  return startSlotsForDuration(duration).filter((slot) => {
     const start = parseTimeToMinutes(slot);
     const end = start + duration;
-    if (end > CLOSING_MINUTES) return false;
     if (isSlotTooSoon(date, slot, now)) return false;
     return !bookedRanges.some((b) => {
       const bStart = parseTimeToMinutes(b.time);

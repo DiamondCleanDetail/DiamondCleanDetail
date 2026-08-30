@@ -7,6 +7,7 @@ import {
   upcomingBookableDates,
   shortDateLabel,
   bookableDaysLabel,
+  isAllDayJob,
   type BookedRange,
 } from "@/lib/scheduling";
 
@@ -99,6 +100,16 @@ export default function SlotPicker({
         Appointments run {bookableDaysLabel()}. Pick any open time
         below &mdash; greyed-out ones are already taken.
       </p>
+
+      {/* A job longer than a single day can only start in the morning, so the
+          picker offers just that slot. Say why, rather than let it look like
+          every day is nearly full. */}
+      {isAllDayJob(duration) && (
+        <p className="text-sm text-foreground bg-surface-2 border border-border rounded-lg p-3 mb-4">
+          That&apos;s a full day&apos;s work, so it books as a morning start &mdash; we&apos;ll
+          confirm the finish time with you, and larger jobs may carry into a second day.
+        </p>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-2">
         {days.map((day) => {

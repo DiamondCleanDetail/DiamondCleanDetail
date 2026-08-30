@@ -8,6 +8,8 @@ import {
   leadTimeLabel,
   minutesIntoBusinessDay,
   availableSlotsFor,
+  startSlotsForDuration,
+  isAllDayJob,
   timeSlots,
   MIN_LEAD_TIME_MINUTES,
   isWeekend,
@@ -272,6 +274,31 @@ test("availableSlotsFor still respects closing, unavailable days and bookings", 
     availableSlotsFor(90, [{ time: "9:00 AM", durationMinutes: 180 }], "2026-08-29", earlyOn29th),
     ["12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM"]
   );
+});
+
+test("an all-day job books a single morning start instead of reading as fully booked", () => {
+  const earlyOn29th = new Date("2026-08-29T13:00:00Z"); // 07:00 MDT Saturday
+  // A full PPF (10 h) can't finish by close from any slot. It must still be
+  // bookable — as a morning start — not vanish behind an empty picker.
+  assert.deepEqual(availableSlotsFor(600, [], "2026-08-29", earlyOn29th), ["9:00 AM"]);
+  // A combined PPF + tint + coating is longer than the day; same rule.
+  assert.deepEqual(availableSlotsFor(1200, [], "2026-08-29", earlyOn29th), ["9:00 AM"]);
+  // If the morning is already taken, that day genuinely has no room for it.
+  assert.deepEqual(
+    availableSlotsFor(600, [{ time: "9:00 AM", durationMinutes: 90 }], "2026-08-29", earlyOn29th),
+    []
+  );
+});
+
+test("startSlotsForDuration and isAllDayJob agree on where the day-length line falls", () => {
+  // Fits by close from at least one slot → offered normally, not all-day.
+  assert.equal(isAllDayJob(360), false);
+  assert.deepEqual(startSlotsForDuration(360), ["9:00 AM", "10:30 AM", "12:00 PM"]);
+  // 9 h fits exactly from opening (9:00 + 540 = 6:00 close).
+  assert.equal(isAllDayJob(540), false);
+  // Anything longer than the 9 h window is an all-day, morning-only booking.
+  assert.equal(isAllDayJob(541), true);
+  assert.deepEqual(startSlotsForDuration(541), ["9:00 AM"]);
 });
 
 test("only the configured days take appointments", () => {

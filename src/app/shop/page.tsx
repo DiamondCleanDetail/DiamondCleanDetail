@@ -21,7 +21,7 @@ export default function ShopPage() {
             eyebrow="Shop"
             title="Gift Cards &"
             accent="Supplies"
-            subtitle="Give the gift of a spotless car, or pick up the same products we use between details. Gift cards arrive by email; supplies ship to your door."
+            subtitle="Give the gift of a spotless car — gift cards arrive by email and are redeemable against any service. Our own line of detailing products is on the way."
           />
         </FadeIn>
       </section>

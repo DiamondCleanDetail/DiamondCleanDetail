@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Product } from "@/data/products";
-import { MAX_LINE_QTY } from "@/data/products";
+import { MAX_LINE_QTY, PRODUCTS_COMING_SOON } from "@/data/products";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
 
 function money(cents: number): string {
@@ -168,19 +168,29 @@ export default function ShopClient({ products }: { products: Product[] }) {
           </section>
         )}
 
-        {supplies.length > 0 && (
-          <section>
-            <h2 className="text-lg font-semibold mb-1">Detailing Supplies</h2>
-            <p className="text-sm text-muted mb-5">The same products we use, shipped to your door.</p>
-            <StaggerGrid className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {supplies.map((p) => (
-                <StaggerItem key={p.slug}>
-                  <ProductCard product={p} qty={qtys[p.slug] ?? 0} onQty={(n) => setQty(p.slug, n)} />
-                </StaggerItem>
-              ))}
-            </StaggerGrid>
-          </section>
-        )}
+        <section>
+          <h2 className="text-lg font-semibold mb-1">Detailing Supplies</h2>
+          <p className="text-sm text-muted mb-5">The same products we use, shipped to your door.</p>
+          {PRODUCTS_COMING_SOON ? (
+            <div className="rounded-xl border border-dashed border-border bg-surface-2/40 p-8 text-center">
+              <p className="text-foreground font-medium">Products coming soon</p>
+              <p className="text-sm text-muted mt-2 max-w-md mx-auto">
+                We&apos;re putting together a lineup of the products we trust. In the meantime, gift
+                cards above make a great gift.
+              </p>
+            </div>
+          ) : (
+            supplies.length > 0 && (
+              <StaggerGrid className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {supplies.map((p) => (
+                  <StaggerItem key={p.slug}>
+                    <ProductCard product={p} qty={qtys[p.slug] ?? 0} onQty={(n) => setQty(p.slug, n)} />
+                  </StaggerItem>
+                ))}
+              </StaggerGrid>
+            )
+          )}
+        </section>
       </div>
 
       {/* Sticky checkout bar — appears only once something is in the cart. */}

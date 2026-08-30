@@ -15,7 +15,7 @@ import {
   parseTimeToMinutes,
   rangesOverlap,
   timeSlots,
-  CLOSING_MINUTES,
+  startSlotsForDuration,
 } from "@/lib/scheduling";
 import { sendBookingEmails } from "@/lib/bookingEmails";
 import { computeGiftApplication } from "@/lib/giftMath";
@@ -173,7 +173,10 @@ export async function POST(req: NextRequest) {
   const totalDuration = resolved.reduce((sum, r) => sum + (r.pkg!.durationMinutes ?? 60), 0);
   const start = parseTimeToMinutes(body.time);
   const end = start + totalDuration;
-  if (end > CLOSING_MINUTES) {
+  // Same rule the picker offers by: a slot is a valid start if the job either
+  // finishes by closing or is an all-day job beginning at opening. Sharing
+  // startSlotsForDuration keeps the form and the API from disagreeing.
+  if (!startSlotsForDuration(totalDuration).includes(body.time)) {
     return NextResponse.json({ error: "That time doesn't leave enough room before closing." }, { status: 400 });
   }
   const { data: existingBookings, error: availabilityError } = await db

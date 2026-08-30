@@ -5,6 +5,7 @@ import {
   isShippable,
   SHIPPING_FLAT_CENTS,
   MAX_LINE_QTY,
+  PRODUCTS_COMING_SOON,
 } from "@/data/products";
 
 type CartLine = { slug: string; qty: number };
@@ -33,6 +34,10 @@ export async function POST(req: NextRequest) {
     }
     if (!product.inStock) {
       return NextResponse.json({ error: `${product.name} is out of stock.` }, { status: 400 });
+    }
+    // Physical products aren't for sale yet — only gift cards can be bought.
+    if (PRODUCTS_COMING_SOON && product.kind === "supply") {
+      return NextResponse.json({ error: "Our products aren't for sale yet — gift cards only for now." }, { status: 400 });
     }
     if (!Number.isFinite(qty) || qty < 1 || qty > MAX_LINE_QTY) {
       return NextResponse.json({ error: "That quantity isn't valid." }, { status: 400 });

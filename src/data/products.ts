@@ -6,6 +6,11 @@
 // launch (same as the stock photography). Gift cards are the part that needs
 // no sign-off — they're just dollar amounts.
 
+// Physical products aren't for sale yet — the shop shows them as "coming soon"
+// and checkout refuses them, so only gift cards can actually be bought. Flip to
+// false once Farhan has confirmed the real product line, prices and shipping.
+export const PRODUCTS_COMING_SOON = true;
+
 export type ProductKind = "supply" | "gift-card";
 
 export type Product = {
