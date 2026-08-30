@@ -18,6 +18,8 @@ import {
   CLOSING_MINUTES,
 } from "@/lib/scheduling";
 import { sendBookingEmails } from "@/lib/bookingEmails";
+import { computeGiftApplication } from "@/lib/giftMath";
+import { lookupGiftBalance, redeemGift } from "@/lib/giftRedemption";
 
 type ItemInput = {
   serviceSlug: string;
@@ -41,6 +43,9 @@ type StartBookingBody = {
   email?: string;
   date: string;
   time: string;
+  /** Optional gift-card code to apply to today's charge. Re-validated and
+   * priced here — the wizard's preview is advisory. */
+  giftCode?: string;
 };
 
 export async function POST(req: NextRequest) {
@@ -257,6 +262,38 @@ export async function POST(req: NextRequest) {
     };
   });
 
+  // Apply a gift card, if one was entered. Validated and priced *before* the
+  // booking is written, so a bad code rejects cleanly with nothing half-made.
+  // The figure here is authoritative — the wizard only previewed it.
+  const totalChargeCents = Math.round(rows.reduce((sum, r) => sum + r.chargeAmount, 0) * 100);
+  const giftCodeRaw = typeof body.giftCode === "string" ? body.giftCode.trim() : "";
+  let gift: { code: string; appliedCents: number } | null = null;
+
+  if (giftCodeRaw && totalChargeCents > 0) {
+    const card = await lookupGiftBalance(giftCodeRaw);
+    if (!card) {
+      return NextResponse.json(
+        { error: "That gift card code isn't valid or has no balance left." },
+        { status: 400 }
+      );
+    }
+    const { appliedCents } = computeGiftApplication(totalChargeCents, card.balanceCents);
+    if (appliedCents > 0) {
+      gift = { code: card.code, appliedCents };
+      // Reduce what's charged today across the lines so the DB row, the emails
+      // and the success page all show the real figure; price_cents stays the
+      // full service price. Then note the redemption for the owner's records.
+      let toReduce = appliedCents;
+      for (const r of rows) {
+        if (toReduce <= 0) break;
+        const cut = Math.min(r.dbRow.deposit_cents, toReduce);
+        r.dbRow.deposit_cents -= cut;
+        toReduce -= cut;
+      }
+      rows[0].dbRow.vehicle_info += ` [Gift card ${card.code}: -$${(appliedCents / 100).toFixed(2)}]`;
+    }
+  }
+
   const { data: inserted, error } = await db
     .from("bookings")
     .insert(rows.map((r) => r.dbRow))
@@ -267,11 +304,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not save your booking. Please try again." }, { status: 500 });
   }
 
-  const totalCharge = rows.reduce((sum, r) => sum + r.chargeAmount, 0);
+  const chargeAfterGiftCents = totalChargeCents - (gift?.appliedCents ?? 0);
 
-  if (totalCharge <= 0) {
-    // Every selected service is quote-only — nothing to charge, and this
-    // never touches Stripe/the webhook, so send the confirmation now.
+  if (chargeAfterGiftCents <= 0) {
+    // Nothing to charge today: either everything is quote-only, or a gift card
+    // covers the whole charge. A covering gift must actually be spent first —
+    // and if that fails (its balance just changed), the booking is rolled back
+    // rather than confirmed for free.
+    if (gift) {
+      const redeemed = await redeemGift(gift.code, gift.appliedCents);
+      if (!redeemed.ok) {
+        await db.from("bookings").update({ status: "cancelled" }).eq("group_id", groupId);
+        return NextResponse.json(
+          { error: "That gift card's balance just changed — please try again." },
+          { status: 409 }
+        );
+      }
+    }
     await sendBookingEmails({
       customerName: body.name,
       customerEmail: body.email || null,
@@ -284,7 +333,7 @@ export async function POST(req: NextRequest) {
         serviceName: r.category.name,
         packageName: r.pkg.name,
         priceCents: r.dbRow.price_cents,
-        isQuote: true,
+        isQuote: r.pkg.pricing.type === "quote",
       })),
     }).catch((err) => console.error("sendBookingEmails threw unexpectedly:", err));
     return NextResponse.json({ redirectUrl: `/booking/success?group_id=${groupId}` });
@@ -306,13 +355,33 @@ export async function POST(req: NextRequest) {
 
   const stripe = stripeClient();
   const origin = req.nextUrl.origin;
+
+  // A partial gift card is applied as a one-off coupon so the line items still
+  // read at full price with the gift shown as a discount. The card itself is
+  // only decremented by the webhook, once this booking actually goes paid —
+  // an abandoned checkout never spends it.
+  let discounts: { coupon: string }[] | undefined;
+  if (gift) {
+    const coupon = await stripe.coupons.create({
+      amount_off: gift.appliedCents,
+      currency: "usd",
+      duration: "once",
+      name: "Gift card",
+    });
+    discounts = [{ coupon: coupon.id }];
+  }
+
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
     line_items: lineItems,
+    ...(discounts ? { discounts } : {}),
     success_url: `${origin}/booking/success?group_id=${groupId}&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/booking`,
-    metadata: { group_id: groupId },
+    metadata: {
+      group_id: groupId,
+      ...(gift ? { gift_code: gift.code, gift_applied_cents: String(gift.appliedCents) } : {}),
+    },
     // Stripe's default is 24h. An abandoned checkout otherwise blocks that
     // time slot for a full day even though no payment is coming — an hour
     // is plenty of time to finish paying but releases the slot quickly.

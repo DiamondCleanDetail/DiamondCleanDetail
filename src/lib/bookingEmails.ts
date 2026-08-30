@@ -145,7 +145,11 @@ function renderEmailHtml(opts: {
                           </table>
                         </td></tr>`
                       : `<tr><td style="border-top:1px solid ${colors.border}; padding-top:14px;">
-                          <p style="margin:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; color:${colors.muted};">No charge today — priced after assessment.</p>
+                          <p style="margin:0; font-family:Arial,Helvetica,sans-serif; font-size:13px; color:${colors.muted};">${
+                            booking.items.every((i) => i.isQuote)
+                              ? "No charge today — priced after assessment."
+                              : "No charge due today."
+                          }</p>
                         </td></tr>`
                   }
                 </table>

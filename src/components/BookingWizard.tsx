@@ -12,6 +12,7 @@ import {
   addOnsConflict,
   addOnPrice,
 } from "@/data/catalog";
+import { computeGiftApplication } from "@/lib/giftMath";
 import Image from "next/image";
 import TintVisualizer from "@/components/TintVisualizer";
 import TintFilmTypeSelector from "@/components/TintFilmTypeSelector";
@@ -154,6 +155,12 @@ export default function BookingWizard({
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  // Gift card applied to today's charge. `applied` holds the validated code and
+  // its balance; the amount actually used is derived against the live deposit.
+  const [giftInput, setGiftInput] = useState("");
+  const [giftApplied, setGiftApplied] = useState<{ code: string; balanceCents: number } | null>(null);
+  const [giftChecking, setGiftChecking] = useState(false);
+  const [giftError, setGiftError] = useState<string | null>(null);
   const [bookedRanges, setBookedRanges] = useState<BookedRange[]>([]);
 
   const hasResumedRef = useRef(false);
@@ -326,6 +333,48 @@ export default function BookingWizard({
   const hasQuoteItem = resolved.some((r) => r.pkg.pricing.type === "quote");
   const allQuoteItems = resolved.length > 0 && resolved.every((r) => r.pkg.pricing.type === "quote");
 
+  // Gift card applied to what's due today. formatPrice/totalDeposit work in
+  // dollars; balances and the applied amount are cents. The same rule the
+  // server uses decides how much of the card applies, so the preview matches
+  // the charge. Offered only when there's actually something to charge.
+  const canUseGift = !allQuoteItems && totalDeposit > 0;
+  const totalDepositCents = Math.round(totalDeposit * 100);
+  const giftAppliedCents = giftApplied
+    ? computeGiftApplication(totalDepositCents, giftApplied.balanceCents).appliedCents
+    : 0;
+  const dueNowCents = Math.max(0, totalDepositCents - giftAppliedCents);
+
+  async function applyGiftCard() {
+    const code = giftInput.trim();
+    if (!code) return;
+    setGiftChecking(true);
+    setGiftError(null);
+    try {
+      const res = await fetch("/api/booking/gift-card", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.valid) {
+        setGiftApplied(null);
+        setGiftError("That code isn't valid or has no balance left.");
+      } else {
+        setGiftApplied({ code, balanceCents: data.balanceCents });
+      }
+    } catch {
+      setGiftError("Couldn't check that code — please try again.");
+    } finally {
+      setGiftChecking(false);
+    }
+  }
+
+  function removeGiftCard() {
+    setGiftApplied(null);
+    setGiftInput("");
+    setGiftError(null);
+  }
+
   function toggleService(slug: string) {
     setSelections((prev) => {
       if (prev.some((s) => s.serviceSlug === slug)) {
@@ -437,6 +486,7 @@ export default function BookingWizard({
           email: email || undefined,
           date,
           time,
+          giftCode: giftApplied && canUseGift ? giftInput.trim() : undefined,
         }),
       });
       const data = await res.json();
@@ -941,11 +991,73 @@ export default function BookingWizard({
                 {allQuoteItems ? "Priced after assessment" : hasQuoteItem ? `${formatPrice(subtotal)} + quoted items` : formatPrice(subtotal)}
               </span>
             </div>
-            {!allQuoteItems && totalDeposit > 0 && (
-              <div className="flex justify-between gap-4">
-                <span className="text-muted shrink-0">Due now</span>
-                <span className="font-semibold chrome-text text-right">{formatPrice(totalDeposit)}</span>
-              </div>
+            {canUseGift && (
+              <>
+                {giftAppliedCents > 0 && (
+                  <div className="flex justify-between gap-4">
+                    <span className="text-muted shrink-0">
+                      Gift card{giftApplied ? ` (${giftApplied.code.toUpperCase()})` : ""}
+                    </span>
+                    <span className="text-right text-emerald-400">&minus;{formatPrice(giftAppliedCents / 100)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between gap-4">
+                  <span className="text-muted shrink-0">Due now</span>
+                  <span className="font-semibold chrome-text text-right">{formatPrice(dueNowCents / 100)}</span>
+                </div>
+                {giftApplied ? (
+                  <div className="flex items-center justify-between gap-3 pt-1 text-xs">
+                    <span className="text-muted">
+                      Gift card applied
+                      {giftApplied.balanceCents - giftAppliedCents > 0
+                        ? ` · ${formatPrice((giftApplied.balanceCents - giftAppliedCents) / 100)} left after`
+                        : ""}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={removeGiftCard}
+                      className="text-muted underline underline-offset-2 hover:text-foreground transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div className="pt-2">
+                    <label htmlFor="gift-code" className="text-xs text-muted">
+                      Have a gift card?
+                    </label>
+                    <div className="mt-1 flex gap-2">
+                      <input
+                        id="gift-code"
+                        type="text"
+                        value={giftInput}
+                        onChange={(e) => {
+                          setGiftInput(e.target.value);
+                          setGiftError(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            applyGiftCard();
+                          }
+                        }}
+                        placeholder="DCD-XXXX-XXXX"
+                        autoCapitalize="characters"
+                        className="flex-1 min-w-0 bg-surface border border-border rounded-lg px-3 py-2 text-sm uppercase placeholder:normal-case placeholder:text-muted focus:outline-none focus:border-foreground/40"
+                      />
+                      <button
+                        type="button"
+                        onClick={applyGiftCard}
+                        disabled={giftChecking || !giftInput.trim()}
+                        className="px-4 py-2 rounded-lg border border-border text-sm text-foreground hover:border-foreground/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {giftChecking ? "…" : "Apply"}
+                      </button>
+                    </div>
+                    {giftError && <p className="text-xs text-red-400 mt-1">{giftError}</p>}
+                  </div>
+                )}
+              </>
             )}
           </div>
           {resolved.some((r) => r.isTesla && r.category.hasTeslaVariant) && (
@@ -1004,7 +1116,9 @@ export default function BookingWizard({
               ? "Processing..."
               : allQuoteItems
                 ? "Request Quote"
-                : `Pay ${formatPrice(totalDeposit || subtotal || 0)} & Book`
+                : dueNowCents <= 0
+                  ? "Confirm Booking"
+                  : `Pay ${formatPrice(dueNowCents / 100)} & Book`
             : "Continue"}
         </button>
       </div>

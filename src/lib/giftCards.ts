@@ -24,3 +24,8 @@ export function generateGiftCode(): string {
 export function giftCodeFromSeed(seed: string): string {
   return encode(createHash("sha256").update(seed).digest());
 }
+
+// The redemption math moved to giftMath.ts so client components can import it
+// without pulling node:crypto into the browser bundle. Re-exported here so
+// existing server-side imports keep working.
+export { normalizeGiftCode, computeGiftApplication } from "@/lib/giftMath";

@@ -6,6 +6,7 @@ import { getCategory } from "@/data/catalog";
 import { sendBookingEmails } from "@/lib/bookingEmails";
 import { getProduct, isShippable } from "@/data/products";
 import { giftCodeFromSeed } from "@/lib/giftCards";
+import { recordIssuedGiftCard, redeemGift } from "@/lib/giftRedemption";
 import { sendShopEmails, type ShopLine, type IssuedGiftCard } from "@/lib/shopEmails";
 
 /** Fulfil a paid shop order: issue gift-card codes and email the buyer and
@@ -38,6 +39,12 @@ async function fulfilShopOrder(session: Stripe.Checkout.Session): Promise<void> 
   if (lines.length === 0) {
     console.error("Shop webhook: empty or unrecognised cart on", session.id);
     return;
+  }
+
+  // Persist each issued card so it can actually be redeemed at booking. Upsert
+  // -ignore keeps a redelivered event from resetting a balance already spent.
+  for (const gc of giftCards) {
+    await recordIssuedGiftCard({ code: gc.code, amountCents: gc.amountCents, stripeSessionId: session.id });
   }
 
   const subtotalCents = lines.reduce((sum, l) => sum + l.unitCents * l.qty, 0);
@@ -127,6 +134,25 @@ export async function POST(req: NextRequest) {
         console.error("Webhook failed to mark booking paid:", error.message);
       } else if (updatedRows && updatedRows.length > 0) {
         const first = updatedRows[0];
+
+        // Reaching here means this booking just went pending → paid for the
+        // first time (the .eq("status","pending") guard makes that transition
+        // happen once), so it's the one safe place to spend the gift card:
+        // a redelivered event updates zero rows and never gets here. If the
+        // decrement can't apply, the customer was already charged the reduced
+        // amount, so we log the shortfall rather than fail — the gift was
+        // prepaid when sold, so the exposure is small and worth a manual look.
+        const giftCode = session.metadata?.gift_code;
+        const giftAppliedCents = Number(session.metadata?.gift_applied_cents ?? 0);
+        if (giftCode && giftAppliedCents > 0) {
+          const res = await redeemGift(giftCode, giftAppliedCents);
+          if (!res.ok) {
+            console.error(
+              `Gift card ${giftCode} could not be decremented by ${giftAppliedCents} for paid booking ${groupId ?? bookingId} — balance may have been spent elsewhere. Review manually.`
+            );
+          }
+        }
+
         await sendBookingEmails({
           customerName: first.customer_name,
           customerEmail: first.customer_email,
