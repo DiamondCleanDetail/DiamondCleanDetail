@@ -25,6 +25,7 @@ Real jobs. These are the ones that carry the site.
 | `correction-swirls.webp` | Paint Correction | benefit — Removes swirl marks |
 | `correction-halfandhalf.webp` | Paint Correction | benefit — The right prep step |
 | `work/van-on-site.webp` | Mobile Detailing | benefit — We come to you |
+| `work/van-on-site.webp` | Fleet Detailing | benefit — On-site or drop-off (same file, reused) |
 | `light-restoration.webp` | Light Restoration | hero + card + what-it-is |
 | `work/aircraft-apron.webp` | Specialty Vehicles | gallery — the page's only real evidence |
 | everything under `/public/work/` | Our Work, all galleries | job photos |

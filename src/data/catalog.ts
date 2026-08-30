@@ -1186,7 +1186,14 @@ export const catalog: ServiceCategory[] = [
     benefitImages: [
       { src: "/services/fleet-lot.webp", alt: "Rows of identical white cars filling a holding lot" },
       { src: "/services/fleet-vans.webp", alt: "A line of white delivery vans parked nose-out" },
-      null,
+      // The same van shot the mobile detailing page uses for "we come to
+      // you". Reused deliberately: this card promises we work at your
+      // premises, and it is the only photograph we have of the setup
+      // actually arriving somewhere. Real work, unlike the two above it.
+      {
+        src: "/work/van-on-site.webp",
+        alt: "The fully stocked van set up on a customer's property, hose run out to the vehicle",
+      },
     ],
     valueProp:
       "Rideshare, rental, delivery, and corporate fleets all depend on vehicles that look and feel clean. We build a recurring detailing schedule around your fleet size and usage, with volume-based pricing and a single invoice instead of per-vehicle billing.",
