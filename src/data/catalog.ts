@@ -940,7 +940,14 @@ export const catalog: ServiceCategory[] = [
     valueProp:
       "Not every scratch needs a full correction. For an isolated scratch, key mark, or scuff, we assess the depth and severity — most clear-coat-level scratches can be polished out, while deeper scratches may need touch-up paint — and price it per scratch or panel.",
     benefitImages: [
-      null,
+      // The card's argument is "you don't need the whole car corrected", and
+      // that only lands if the paint around the mark is visibly fine — which
+      // is why the frame is mostly clean door rather than tight on the
+      // scratch.
+      {
+        src: "/services/scratch-isolated.webp",
+        alt: "A single light scratch on an otherwise flawless grey door, beside the handle",
+      },
       // "Fast turnaround" argued by scale: one pad on one small area, the rest
       // of the door untouched and dry. Stock, not our work.
       {

@@ -43,6 +43,7 @@ there is something to replace them with.
 | File | Page | Slot | Aspect | What would replace it |
 | --- | --- | --- | --- | --- |
 | `correction-gloss.webp` | Paint Correction | benefit — Maximizes gloss | 4:3 | A finished panel of ours reflecting something hard-edged |
+| `scratch-isolated.webp` | Scratch Removal | benefit — Priced for what you need | 4:3 | Ours, if a customer sends one in |
 | `scratch-single.webp` | Scratch Removal | what-it-is | 4:3 | One isolated scratch on otherwise clean paint |
 | `scratch-spot-repair.webp` | Scratch Removal | benefit — Fast turnaround | 4:3 | Our polisher on one small area, rest of the panel dry |
 | `scratch-too-deep.webp` | Scratch Removal | benefit — Honest assessment | 4:3 | A scratch we turned away, through to primer |
@@ -88,6 +89,7 @@ slots want and go soft on a phone.
 | --- | --- | --- |
 | `correction-halfandhalf.webp` | 447 px wide | ~800 px |
 | `scratch-too-deep.webp` | 1024 px wide | ~1400 px |
+| `scratch-isolated.webp` | 387 px wide | ~800 px |
 | `light-restoration-hero.webp` | 765 px wide | ~1600 px (full-bleed hero) |
 
 ---

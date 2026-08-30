@@ -215,19 +215,30 @@ export default function PPFVisualizer({
               {/* The price stays on a dark card, the way the tint page's payoff
                   card does: the chrome price and button are both light-on-dark
                   treatments and would have nothing to sit against on white. */}
-              <div className="mt-6 flex flex-wrap items-center gap-4 sm:gap-5 bg-neutral-900 rounded-xl px-5 py-4">
-                <div>
+              {/* Two things keep this card the same height on every tier.
+                  On sm and up: one row that never wraps, plus a min-height,
+                  plus a smaller figure for the one tier priced as a range
+                  ("$4,999 – $6,999" against "$2,199") so it still fits beside
+                  the button. Below sm there is not room for both on a line,
+                  so every tier stacks — some stacking and some not is what
+                  made the card jump size between tiers in the first place. */}
+              <div className="mt-6 sm:min-h-[92px] flex flex-col items-start gap-4 sm:flex-row sm:flex-nowrap sm:items-center sm:gap-5 bg-neutral-900 rounded-xl px-5 py-4">
+                <div className="min-w-0">
                   <p className="text-[10px] sm:text-xs uppercase tracking-widest text-white/60">
                     {override ? "Estimated Range" : "Starting From"}
                   </p>
-                  <p className="chrome-text text-2xl sm:text-3xl font-bold leading-tight">
+                  <p
+                    className={`chrome-text font-bold leading-tight whitespace-nowrap ${
+                      override ? "text-2xl" : "text-2xl sm:text-3xl"
+                    }`}
+                  >
                     {override?.price ?? priceLabel(pkg, "sedan").replace(/^From /, "")}
                   </p>
                 </div>
                 {showCta && (
                   <Link
                     href={`/booking?service=${categorySlug}&package=${pkg.slug}`}
-                    className="chrome-btn ml-auto inline-block px-7 py-3.5 rounded-lg font-bold text-base whitespace-nowrap"
+                    className="chrome-btn w-full sm:w-auto sm:ml-auto shrink-0 inline-block text-center px-7 py-3.5 rounded-lg font-bold text-base whitespace-nowrap"
                   >
                     {pkg.pricing.type === "quote" ? "Get a Quote →" : "Book This →"}
                   </Link>
