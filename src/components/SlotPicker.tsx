@@ -57,11 +57,15 @@ export default function SlotPicker({
 
   useEffect(() => {
     let cancelled = false;
-    setFailed(false);
     fetch(`/api/booking/availability?dates=${key}`)
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error("bad response"))))
       .then((data) => {
-        if (!cancelled) setByDate(data.byDate ?? {});
+        if (cancelled) return;
+        setByDate(data.byDate ?? {});
+        // Cleared here rather than at the top of the effect: setting state
+        // synchronously in an effect body cascades a render, and the flag
+        // only means anything once a response has actually arrived.
+        setFailed(false);
       })
       .catch(() => {
         // Show the days with every slot open rather than an empty picker: the
