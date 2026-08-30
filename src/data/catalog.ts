@@ -1220,6 +1220,13 @@ export const catalog: ServiceCategory[] = [
       { title: "We assess on site", description: "For larger or more complex jobs, we take a look before finalizing price." },
       { title: "Detail day", description: "Exterior wash/polish and interior detailing using material-appropriate products." },
     ],
+    // The first real evidence on this page. Everything else here is stock,
+    // which on a page claiming aircraft work was the weakest position on the
+    // site: a capability asserted with nothing behind it. Caption describes
+    // what the photograph actually shows rather than the work itself.
+    galleryImages: [
+      { src: "/work/aircraft-apron.webp", caption: "Our van on the apron alongside a client's aircraft" },
+    ],
     isQuoteOnly: true,
     packages: [
       {

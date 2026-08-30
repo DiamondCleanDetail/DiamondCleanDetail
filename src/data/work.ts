@@ -325,6 +325,15 @@ export const workItems: WorkItem[] = [
     images: ["/work/bmw-x5-interior-ba.webp"],
   },
   {
+    // Filed under the existing catch-all brand rather than a new "Aircraft"
+    // one: the marque strip is car badges, and a lone wordmark reading
+    // "Aircraft" between two roundels would look like a mistake.
+    slug: "aircraft-detail",
+    title: "Aircraft Detail",
+    brand: "More Vehicles",
+    images: ["/work/aircraft-apron.webp"],
+  },
+  {
     slug: "francs-1",
     title: "The Diamond Detail",
     brand: "More Vehicles",

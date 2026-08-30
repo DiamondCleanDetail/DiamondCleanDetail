@@ -26,6 +26,7 @@ Real jobs. These are the ones that carry the site.
 | `correction-halfandhalf.webp` | Paint Correction | benefit — The right prep step |
 | `work/van-on-site.webp` | Mobile Detailing | benefit — We come to you |
 | `light-restoration.webp` | Light Restoration | hero + card + what-it-is |
+| `work/aircraft-apron.webp` | Specialty Vehicles | gallery — the page's only real evidence |
 | everything under `/public/work/` | Our Work, all galleries | job photos |
 | `/public/video/*.mp4` | service page heroes and process clips | |
 
@@ -59,7 +60,7 @@ there is something to replace them with.
 | `ppf-what-it-is-stock.webp` | PPF | what-it-is | 1:1 | A car of ours mid-install |
 | `ppf-self-healing-placeholder-stock.webp` | PPF | benefit — Self-healing | 4:3 | A heat-gun healing demo on our own film |
 | `ppf-resale-placeholder-stock.webp` | PPF | benefit — Resale value | 4:3 | A wrapped car of ours |
-| `specialty-vehicles-hero.png` | RV / Boat / Aircraft | hero + card | wide | **The most important one.** That page claims a capability with no evidence behind it. If no such job exists yet, soften the page instead. |
+| `specialty-vehicles-hero.png` | RV / Boat / Aircraft | hero + card | wide | Less urgent now the gallery has a real aircraft job behind it, but the hero itself is still stock |
 
 ---
 
