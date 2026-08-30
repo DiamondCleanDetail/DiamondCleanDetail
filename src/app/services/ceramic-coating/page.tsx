@@ -152,6 +152,72 @@ export default function CeramicCoatingPage() {
 
       <DiamondDivider />
 
+      {/* What a coating is actually up against in Denver. Deliberately says
+          what it does NOT do: a coating is chemical protection, not armour,
+          and letting someone think it stops a rock chip is how you end up
+          arguing on a driveway. The honest version also sells PPF. */}
+      <section className="mx-auto max-w-6xl px-6 py-12 sm:py-20">
+        <FadeIn>
+          <SectionHeading
+            eyebrow="A Mile Higher"
+            title="What It Stands"
+            accent="Up To"
+            className="mb-8 sm:mb-12"
+          />
+        </FadeIn>
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 items-center">
+          <FadeIn>
+            <div className="relative aspect-[3/2] w-full rounded-xl overflow-hidden bg-surface-2">
+              <Image
+                src="/services/ceramic-weather.webp"
+                alt="Four skies side by side — bright sun, cloud, storm, lightning"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <div>
+              <p className="text-base sm:text-lg leading-relaxed">
+                Denver sits a mile up, so the UV here is harsher than the numbers
+                suggest, and the year runs from hail season straight into months of
+                road salt and grit. A coating is the layer that takes all of it
+                instead of your clear coat.
+              </p>
+              <ul className="mt-6 space-y-3">
+                {[
+                  ["Sun", "Blocks the UV that oxidises paint and fades it flat."],
+                  ["Water", "Sheds rain and snowmelt before it can dry into spots."],
+                  ["Salt & grit", "Winter road treatment sits on the coating, not the paint."],
+                  ["Sap & droppings", "Acidic and quick to etch bare clear coat — far slower to bite through a coating, and they wipe off."],
+                ].map(([k, v]) => (
+                  <li key={k} className="flex gap-3 text-sm sm:text-base">
+                    <span className="text-accent shrink-0">&#10003;</span>
+                    <span>
+                      <span className="font-semibold">{k}</span>{" "}
+                      <span className="text-muted">&mdash; {v}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm text-muted mt-6 leading-relaxed">
+                What it is not is armour. A coating is chemical protection, measured in
+                microns &mdash; it will not stop a rock chip or a hailstone. That job
+                belongs to{" "}
+                <Link href="/services/paint-protection-film" className="underline underline-offset-4 hover:text-foreground transition-colors">
+                  paint protection film
+                </Link>
+                , and the two are often done together: film on the impact zones, coating
+                over everything.
+              </p>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+      <DiamondDivider />
+
       {/* Wheel and glass, kept apart from the paint tiers. They are add-ons,
           not a fourth and fifth tier, and stacking all six in one column was
           what made that read as a wall. */}

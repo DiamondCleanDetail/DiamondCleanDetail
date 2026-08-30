@@ -670,11 +670,16 @@ export default function BookingWizard({
             </div>
           )}
           {current.category.visualizer === "ppf" && (
-            <div className="mb-6">
+            /* Rounded and clipped, matching the tint block above it: on the
+               service page this is a full-bleed band, but here it is one card
+               among several and square corners made it read as a rendering
+               fault rather than a choice. */
+            <div className="mb-6 rounded-2xl overflow-hidden">
               <PPFVisualizer
                 packages={current.category.packages}
                 categorySlug={current.category.slug}
                 showCta={false}
+                compact
                 // Controlled: the visualizer's tier tabs are the package
                 // choice, not a preview beside it. Uncontrolled, clicking
                 // "Shield" here looked exactly like choosing Shield while

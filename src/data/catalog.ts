@@ -1014,6 +1014,12 @@ export const catalog: ServiceCategory[] = [
     tagline: "Volume detailing for businesses - and households - with more than one vehicle.",
     heroImage: "/services/fleet-hero.jpg",
     cardImage: "/services/fleet-hero.jpg",
+    valuePropImage: "/services/fleet-vans.webp",
+    benefitImages: [
+      { src: "/services/fleet-lot.webp", alt: "Rows of identical white cars filling a holding lot" },
+      { src: "/services/fleet-vans.webp", alt: "A line of white delivery vans parked nose-out" },
+      null,
+    ],
     valueProp:
       "Rideshare, rental, delivery, and corporate fleets all depend on vehicles that look and feel clean. We build a recurring detailing schedule around your fleet size and usage, with volume-based pricing and a single invoice instead of per-vehicle billing.",
     benefits: [

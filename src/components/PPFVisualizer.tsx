@@ -27,12 +27,18 @@ export default function PPFVisualizer({
   packages,
   categorySlug,
   showCta = true,
+  compact = false,
   value,
   onChange,
 }: {
   packages: Package[];
   categorySlug: string;
   showCta?: boolean;
+  /** Inside the booking wizard this is one card in a stack, not a full-bleed
+   * band, so it loses the generous top and bottom air the service page gives
+   * it — that air is what makes the hard edges read as a deliberate break,
+   * and a card has its own edges already. */
+  compact?: boolean;
   /** Controlled tier. The booking wizard passes these so the visualizer's
    * tier tabs ARE the package choice. Uncontrolled (the service page), the
    * tabs only drive the preview and the CTA links carry the choice instead.
@@ -113,8 +119,8 @@ export default function PPFVisualizer({
        black the body dissolved into its own background and only the film read
        clearly. The break doubles as the signal that this block is a tool
        rather than more page to read. */
-    <div className="w-full py-14 sm:py-20 bg-white text-neutral-900">
-      <div className="mx-auto max-w-3xl px-6 text-center mb-10">
+    <div className={`w-full bg-white text-neutral-900 ${compact ? "py-8 sm:py-10" : "py-14 sm:py-20"}`}>
+      <div className={`mx-auto max-w-3xl px-6 text-center ${compact ? "mb-6" : "mb-10"}`}>
         <h3 className="font-semibold text-lg sm:text-xl">Preview Your Coverage</h3>
         <p className="text-xs sm:text-sm text-neutral-500 mt-2">
           Choose a tier to see exactly which panels are protected.
