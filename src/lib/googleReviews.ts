@@ -1,5 +1,7 @@
 import {
   testimonials as curatedTestimonials,
+  yelpTestimonials,
+  googleTestimonials,
   reviewsAverage as curatedAverage,
   reviewsCount as curatedCount,
   type Testimonial,
@@ -90,6 +92,7 @@ function cleanReview(r: PlacesReview): Testimonial | null {
     quote:
       quote.length > MAX_QUOTE ? `${quote.slice(0, MAX_QUOTE - 1).trimEnd()}…` : quote,
     rating,
+    source: "Google" as const,
   };
 }
 
@@ -130,7 +133,16 @@ export async function getReviews(): Promise<ReviewsData> {
     if (average === null || count === null) return FALLBACK;
 
     return {
-      testimonials: (reviews.length ? reviews : curatedTestimonials) as Testimonial[],
+      // Live Google quotes, then the Yelp ones appended. Without this the
+      // moment a key is configured every Yelp review silently disappears —
+      // the API only knows about the Google listing.
+      testimonials: [
+        // Live Google quotes when the listing gave us any, the curated Google
+        // ones when it didn't — Google returns at most five and picks them
+        // itself, so an empty list is a real possibility.
+        ...((reviews.length ? reviews : googleTestimonials) as Testimonial[]),
+        ...yelpTestimonials,
+      ],
       average: Math.round(average * 10) / 10,
       count,
       source: "google",

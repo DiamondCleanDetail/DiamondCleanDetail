@@ -9,6 +9,17 @@ import { socialLinks } from "@/data/social";
 const googleReviewsUrl =
   socialLinks.find((s) => s.name === "Google")?.url ?? null;
 
+/** Which listing a review came from. Small and quiet — it is provenance, not
+ * a badge — but present, because the heading above these cards counts Google
+ * reviews and an unlabelled Yelp quote underneath it would read as one. */
+function SourceTag({ source }: { source: "Google" | "Yelp" }) {
+  return (
+    <span className="text-[10px] uppercase tracking-widest text-muted/70 shrink-0">
+      {source}
+    </span>
+  );
+}
+
 function Stars({ rating }: { rating: number }) {
   return (
     <div className="text-accent text-sm" aria-label={`${rating} out of 5 stars`}>
@@ -86,8 +97,9 @@ export default async function Testimonials() {
           >
             <Stars rating={t.rating} />
             <p className="text-sm mt-3 flex-1">&ldquo;{t.quote}&rdquo;</p>
-            <p className="text-sm text-muted mt-4">
+            <p className="text-sm text-muted mt-4 flex items-baseline justify-between gap-3">
               <span className="text-foreground font-medium">{t.name}</span>
+              <SourceTag source={t.source} />
             </p>
           </div>
         ))}
@@ -101,8 +113,9 @@ export default async function Testimonials() {
             <div className="card-lift h-full bg-surface border border-border rounded-xl p-5 flex flex-col">
               <Stars rating={t.rating} />
               <p className="text-sm mt-3 flex-1">&ldquo;{t.quote}&rdquo;</p>
-              <p className="text-sm text-muted mt-4">
+              <p className="text-sm text-muted mt-4 flex items-baseline justify-between gap-3">
                 <span className="text-foreground font-medium">{t.name}</span>
+                <SourceTag source={t.source} />
               </p>
             </div>
           </StaggerItem>

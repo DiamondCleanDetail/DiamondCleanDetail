@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { getReviews } from "@/lib/googleReviews";
-import { testimonials as curated } from "@/data/testimonials";
+import { testimonials as curated, yelpTestimonials } from "@/data/testimonials";
 
 const KEY = "GOOGLE_PLACES_API_KEY";
 const ID = "GOOGLE_PLACE_ID";
@@ -70,9 +70,15 @@ test("a live listing replaces the rating, the count and the quotes", async () =>
   assert.equal(res.count, 23);
   // Rounded for display, not floored — 4.85 must not become 4.8.
   assert.equal(res.average, 4.9);
-  assert.deepEqual(res.testimonials, [
-    { name: "Sam R", quote: "Did a great job on my car.", rating: 5 },
+  // The live quote replaces the curated Google ones and nothing else — the
+  // Yelp reviews come from a listing this API has never heard of, so they
+  // have to survive a successful fetch untouched.
+  const google = res.testimonials.filter((t) => t.source === "Google");
+  const yelp = res.testimonials.filter((t) => t.source === "Yelp");
+  assert.deepEqual(google, [
+    { name: "Sam R", quote: "Did a great job on my car.", rating: 5, source: "Google" },
   ]);
+  assert.deepEqual(yelp, yelpTestimonials);
 });
 
 test("a bad response falls back rather than showing a broken rating", async () => {
@@ -139,7 +145,7 @@ test("review text is flattened and capped so one review can't wreck the grid", a
   assert.ok(res.testimonials[1].quote.endsWith("…"));
 });
 
-test("no more than five quotes are ever shown", async () => {
+test("no more than five Google quotes are ever shown, however many come back", async () => {
   const res = await withStub(
     { [KEY]: "k", [ID]: "p" },
     ok({
@@ -153,5 +159,8 @@ test("no more than five quotes are ever shown", async () => {
     })
   );
 
-  assert.equal(res.testimonials.length, 5);
+  // The cap is Google's, not the page's: Google returns at most five and we
+  // take at most five, but the Yelp reviews are ours and are not capped.
+  assert.equal(res.testimonials.filter((t) => t.source === "Google").length, 5);
+  assert.equal(res.testimonials.filter((t) => t.source === "Yelp").length, yelpTestimonials.length);
 });
