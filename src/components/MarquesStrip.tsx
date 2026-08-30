@@ -38,6 +38,10 @@ const logos: Record<string, { file: string; aspect: number; scale: number }> = {
   Lamborghini: { file: "lamborghini.svg", aspect: 0.86, scale: 1.25 },
   "Land Rover": { file: "land-rover.png", aspect: 1.9, scale: 1.0 },
   Lexus: { file: "lexus.svg", aspect: 5.9, scale: 0.54 },
+  // Square viewBox like BMW's roundel, and measured at 19,570 ink pixels
+  // against BMW's 18,456 at the same render size — so it sits a touch
+  // smaller to land on the same ink area.
+  Mazda: { file: "mazda.svg", aspect: 1.0, scale: 1.21 },
   "Mercedes-Benz": { file: "mercedes-benz.svg", aspect: 1.0, scale: 1.25 },
   Porsche: { file: "porsche.svg", aspect: 0.78, scale: 1.25 },
 };

@@ -305,6 +305,26 @@ export const workItems: WorkItem[] = [
     images: ["/work/tesla-model-y-1.webp"],
   },
   {
+    slug: "mazda-cx5-detail",
+    title: "Mazda CX-5",
+    brand: "Mazda",
+    images: ["/work/mazda-cx5-1.webp"],
+  },
+  {
+    slug: "honda-crv-detail",
+    title: "Honda CR-V",
+    brand: "Honda",
+    images: ["/work/honda-crv-1.webp"],
+  },
+  {
+    // The labels are burned into the image, so the title says what it is
+    // rather than claiming a package the photo cannot evidence.
+    slug: "bmw-x5-interior-before-after",
+    title: "BMW X5 — Interior, Before & After",
+    brand: "BMW",
+    images: ["/work/bmw-x5-interior-ba.webp"],
+  },
+  {
     slug: "francs-1",
     title: "The Diamond Detail",
     brand: "More Vehicles",
