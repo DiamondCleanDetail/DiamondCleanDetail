@@ -397,6 +397,18 @@ export const catalog: ServiceCategory[] = [
     },
     valueProp:
       "Every vehicle picks up fine swirl marks and light scratches from years of washing. Paint correction uses machine polishers and cutting/finishing compounds to level out that top layer of clear coat, bringing back true clarity and gloss before any wax, sealant, or ceramic coating goes on.",
+    // Farhan's own shot, and the only one on the site that shows the defect
+    // rather than the result: corrected paint on the left holding a clean
+    // round highlight, untouched paint on the right throwing the same light
+    // into a spiderweb. Most people have never seen their own swirls.
+    benefitImages: [
+      {
+        src: "/services/correction-swirls.webp",
+        alt: "The same light on two panels: a clean round reflection on corrected paint, and a spiderweb of fine scratches around it on uncorrected paint",
+      },
+      null,
+      null,
+    ],
     benefits: [
       { title: "Removes swirl marks", description: "Machine polishing levels out the fine scratches that dull a paint job over time." },
       { title: "Maximizes gloss", description: "Correcting the clear coat is what makes paint look genuinely wet and deep, not just clean." },
