@@ -927,6 +927,11 @@ export const catalog: ServiceCategory[] = [
         // Farhan wants to offer sunroof tint on other cars.
         slug: "pano-roof",
         name: "Panoramic Roof",
+        // In the windshield group on Farhan's say-so: roof and windshield are
+        // one-or-the-other, not a pair. This one field makes the page, the
+        // wizard and the API all enforce it, since every surface asks
+        // addOnsConflict rather than keeping its own rule.
+        exclusiveGroup: "windshield",
         teslaOnly: true,
         description:
           "Ceramic film across the glass roof — cuts the heat load Tesla's factory glass lets through.",

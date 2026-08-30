@@ -55,10 +55,15 @@ export default function TintCoverageSelector({
   const coverageVariants = category.packages
     .map((p) => ({ key: p.slug, src: coverageDiagram(p.slug, diagramVehicle) }))
     .filter((v): v is { key: string; src: string } => Boolean(v.src));
-  const windshieldSlug = windshieldAddOns.includes("full-windshield")
-    ? "full-windshield"
-    : "windshield-strip";
-  const windshieldVariants = ["windshield-strip", "full-windshield"]
+  const windshieldSlug = windshieldAddOns.includes("pano-roof")
+    ? "pano-roof"
+    : windshieldAddOns.includes("full-windshield")
+      ? "full-windshield"
+      : "windshield-strip";
+  // The roof only has a Tesla image, so the src filter drops it from the
+  // stack on every other car — same guard that keeps a missing diagram from
+  // rendering as a broken-image glyph.
+  const windshieldVariants = ["windshield-strip", "full-windshield", "pano-roof"]
     .map((slug) => ({ key: slug, src: coverageDiagram(slug, diagramVehicle) }))
     .filter((v): v is { key: string; src: string } => Boolean(v.src));
 
@@ -163,10 +168,7 @@ export default function TintCoverageSelector({
                   of what the options cover, but dimmed — at full strength the
                   highlighted glass read as an active selection sitting next
                   to a "None" that claimed otherwise. */}
-              {coverageDiagram(
-                windshieldAddOns.includes("full-windshield") ? "full-windshield" : "windshield-strip",
-                diagramVehicle
-              ) ? (
+              {coverageDiagram(windshieldSlug, diagramVehicle) ? (
                 <div
                   className={`relative w-full transition-opacity ${
                     windshieldAddOns.some((slug) =>
@@ -183,8 +185,12 @@ export default function TintCoverageSelector({
                     variants={windshieldVariants}
                     active={windshieldSlug}
                     alt={`${
-                      windshieldSlug === "full-windshield" ? "Full windshield" : "Windshield strip"
-                    } coverage on a ${vehicleSizeLabels[vehicleSize]}`}
+                      windshieldSlug === "pano-roof"
+                        ? "Panoramic roof"
+                        : windshieldSlug === "full-windshield"
+                          ? "Full windshield"
+                          : "Windshield strip"
+                    } coverage on a ${isTesla ? "Tesla" : vehicleSizeLabels[vehicleSize]}`}
                     sizes="(max-width: 640px) 100vw, 50vw"
                     className="object-contain object-bottom"
                   />
@@ -216,7 +222,7 @@ export default function TintCoverageSelector({
               <div
                 className="grid lg:grid-cols-2 gap-3"
                 role="radiogroup"
-                aria-label="Windshield tint"
+                aria-label="Windshield or roof tint"
               >
                 {[
                   {
@@ -227,11 +233,11 @@ export default function TintCoverageSelector({
                     photo: null as { src: string; alt: string } | null,
                   },
                   ...(category.addOns ?? [])
-                    // Only the windshield pair belongs in this radio group.
-                    // Independent extras (the Tesla roof) render below as
-                    // checkboxes — folding them in here would have made the
-                    // roof mutually exclusive with the windshield, and
-                    // roof-plus-windshield is a perfectly good order.
+                    // Everything in the windshield exclusive group — which,
+                    // per Farhan, includes the Tesla roof: roof and windshield
+                    // are one-or-the-other, so the roof sits in this radio set
+                    // with its preview in the shared slot rather than below as
+                    // a combinable checkbox.
                     .filter((a) => a.exclusiveGroup === "windshield" && (!a.teslaOnly || isTesla))
                     .map((a) => ({
                     slug: a.slug as string | null,
@@ -261,7 +267,15 @@ export default function TintCoverageSelector({
                               src: "/services/windshield-cracked-dash.webp",
                               alt: "A dashboard cracked by years of sun through the windshield",
                             }
-                          : null,
+                          : a.slug === "pano-roof" && a.image
+                            ? {
+                                // The roof's problem IS its extent — people
+                                // picture a sunroof-sized square, and the
+                                // top-down shot corrects that on sight.
+                                src: a.image,
+                                alt: "The full glass roof of a Tesla seen from above",
+                              }
+                            : null,
                   })),
                 ].map((a) => {
                   const windshieldChosen = windshieldAddOns.some((slug) =>

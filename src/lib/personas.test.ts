@@ -76,8 +76,12 @@ const personas: Persona[] = [
     lines: [{ service: "window-tinting", pkg: "full-vehicle", film: "diamond-ceramic-rx", addOns: ["pano-roof"] }] },
   { who: "Model X, full car and full windshield", vehicleSize: "truck", vehicleInfo: "2022 Tesla Model X",
     lines: [{ service: "window-tinting", pkg: "full-vehicle", film: "diamond-ceramic-rx", addOns: ["full-windshield"] }] },
-  { who: "Model Y, strip and roof together", vehicleSize: "suv", vehicleInfo: "2024 Tesla Model Y",
-    lines: [{ service: "window-tinting", pkg: "full-vehicle", film: "diamond-smoke", addOns: ["windshield-strip", "pano-roof"] }] },
+  // Strip-plus-roof used to be this persona's order, until Farhan ruled the
+  // roof and the windshield one-or-the-other — the pair now shares an
+  // exclusive group, and the conflict test below is what enforces that no
+  // persona can hold both.
+  { who: "Model Y, smoke film with the roof", vehicleSize: "suv", vehicleInfo: "2024 Tesla Model Y",
+    lines: [{ service: "window-tinting", pkg: "full-vehicle", film: "diamond-smoke", addOns: ["pano-roof"] }] },
 
   // ---- PPF, every tier plus the small pieces -----------------------------
   { who: "Entry PPF only", vehicleSize: "sedan", vehicleInfo: "2021 Audi A4",

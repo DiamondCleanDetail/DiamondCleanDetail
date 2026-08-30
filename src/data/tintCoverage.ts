@@ -58,6 +58,13 @@ const diagrams: Record<string, Partial<Record<CoverageVehicle, string>>> = {
     truck: "/tint-coverage/full-windshield-truck.png",
     tesla: "/tint-coverage/full-windshield-tesla.png",
   },
+  // A photo rather than a render, and Tesla-only — no other car sells the
+  // roof. Registered here so it swaps through the same preview slot as the
+  // windshield options it is mutually exclusive with, instead of living in
+  // its own section as if it combined with them.
+  "pano-roof": {
+    tesla: "/services/tint-addon-pano-roof.webp",
+  },
 };
 
 export function coverageDiagram(packageSlug: string, vehicle: CoverageVehicle): string | null {
