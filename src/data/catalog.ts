@@ -170,6 +170,12 @@ export type ServiceCategory = {
    * clip is one thing worth explaining, not a reel to sit through — the
    * media and the reason for it then read as a single point. */
   processMediaNote?: { title: string; body: string };
+  /** Replaces the booking wizard's car year/make/model picker with a plain
+   * description box, for services not performed on a car. A boat owner asked
+   * to pick a model year of Acura is being told we didn't think about them —
+   * and these services are all quote-priced, so the size buttons the picker
+   * exists to set do nothing for them anyway. */
+  vehicleFreeform?: { label: string; placeholder: string };
   /** Horizontally scrollable gallery of past jobs of this service type, shown below the final booking CTA. Omit or leave empty to render a "coming soon" placeholder. */
   galleryImages?: { src: string; caption: string }[];
   /** "What is this service" explainer paragraph. */
@@ -1199,6 +1205,10 @@ export const catalog: ServiceCategory[] = [
   },
   {
     slug: "fleet-detailing",
+    vehicleFreeform: {
+      label: "Tell us about your fleet",
+      placeholder: "e.g. 6 delivery vans and 2 box trucks, based in Aurora — want them done monthly",
+    },
     name: "Fleet Detailing",
     shortName: "Fleet",
     summary: "Multi-vehicle and recurring detailing, at volume pricing.",
@@ -1247,6 +1257,10 @@ export const catalog: ServiceCategory[] = [
   },
   {
     slug: "specialty-vehicles",
+    vehicleFreeform: {
+      label: "Tell us what needs detailing",
+      placeholder: "e.g. 32 ft Class A motorhome, kept in Thornton — interior and exterior",
+    },
     name: "RV, Boat & Aircraft Detailing",
     shortName: "RV / Boat / Aircraft",
     summary: "Large & specialty vehicle detailing, quoted per job.",

@@ -281,6 +281,17 @@ export default function BookingWizard({
   }, [phase]);
 
   const current = resolved[configureIndex];
+
+  /** Set when every selected service is one done to something other than a
+   * car — a boat, an RV, a fleet. Every one of them, not any: mixing a car
+   * service in means there IS a car to identify, and the picker stays. The
+   * first selection's prompt wins on the rare fleet-plus-boat booking. */
+  const freeformVehicle = useMemo(() => {
+    if (resolved.length === 0) return null;
+    return resolved.every((r) => r.category.vehicleFreeform)
+      ? resolved[0].category.vehicleFreeform ?? null
+      : null;
+  }, [resolved]);
   const totalDuration = resolved.reduce((sum, r) => sum + (r.pkg.durationMinutes ?? 60), 0) || 60;
   // Named for what it means to the customer, not for the calendar: the
   // closed days are a fact of Farhan's current availability, not of
@@ -770,15 +781,40 @@ export default function BookingWizard({
       {/* Vehicle */}
       {phase === "vehicle" && (
         <div className="bg-surface border border-border rounded-xl p-6">
-          <p className="text-sm text-muted mb-4">
-            One vehicle for this whole booking — we&apos;ll figure out pricing for each service automatically.
-          </p>
-          <VehiclePicker
-            vehicleSize={vehicleSize}
-            setVehicleSize={setVehicleSize}
-            vehicleInfo={vehicleInfo}
-            setVehicleInfo={setVehicleInfo}
-          />
+          {freeformVehicle ? (
+            /* No year/make/model dropdowns for a boat, an RV or a fleet — a
+               boat owner asked to pick a model year of Acura is being told we
+               didn't think about them. These services are quote-priced, so
+               the size buttons the picker exists to set do nothing here; a
+               description is what actually helps price the job. */
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                {freeformVehicle.label}
+              </label>
+              <p className="text-xs text-muted mb-3">
+                A sentence is plenty — it&apos;s what we&apos;ll use to work up your quote.
+              </p>
+              <textarea
+                value={vehicleInfo}
+                onChange={(e) => setVehicleInfo(e.target.value)}
+                placeholder={freeformVehicle.placeholder}
+                rows={3}
+                className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm resize-none placeholder:text-muted/60"
+              />
+            </div>
+          ) : (
+            <>
+              <p className="text-sm text-muted mb-4">
+                One vehicle for this whole booking — we&apos;ll figure out pricing for each service automatically.
+              </p>
+              <VehiclePicker
+                vehicleSize={vehicleSize}
+                setVehicleSize={setVehicleSize}
+                vehicleInfo={vehicleInfo}
+                setVehicleInfo={setVehicleInfo}
+              />
+            </>
+          )}
         </div>
       )}
 
@@ -839,7 +875,7 @@ export default function BookingWizard({
             <div>
               <p className="text-xs uppercase tracking-widest text-muted">Vehicle</p>
               <p className="text-sm mt-0.5">
-                {vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})
+                {vehicleInfo || "—"}{!freeformVehicle && <> ({vehicleSizeLabels[vehicleSize]})</>}
               </p>
             </div>
             <button
@@ -890,7 +926,7 @@ export default function BookingWizard({
             <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4 pt-1">
               <span className="text-muted shrink-0">Vehicle</span>
               <span className="sm:text-right">
-                {vehicleInfo || "—"} ({vehicleSizeLabels[vehicleSize]})
+                {vehicleInfo || "—"}{!freeformVehicle && <> ({vehicleSizeLabels[vehicleSize]})</>}
               </span>
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-4">
