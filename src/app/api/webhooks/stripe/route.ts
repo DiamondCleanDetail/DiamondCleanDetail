@@ -4,6 +4,77 @@ import { stripeClient } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { getCategory } from "@/data/catalog";
 import { sendBookingEmails } from "@/lib/bookingEmails";
+import { getProduct, isShippable } from "@/data/products";
+import { giftCodeFromSeed } from "@/lib/giftCards";
+import { sendShopEmails, type ShopLine, type IssuedGiftCard } from "@/lib/shopEmails";
+
+/** Fulfil a paid shop order: issue gift-card codes and email the buyer and
+ * the owner. The order isn't stored in the database — it lives in Stripe and
+ * in the two emails — so codes are derived from the session id to stay stable
+ * if Stripe redelivers the event. */
+async function fulfilShopOrder(session: Stripe.Checkout.Session): Promise<void> {
+  const cart = session.metadata?.cart ?? "";
+  const lines: ShopLine[] = [];
+  const giftCards: IssuedGiftCard[] = [];
+
+  cart
+    .split(",")
+    .map((pair) => pair.split(":"))
+    .forEach(([slug, qtyRaw], lineIdx) => {
+      const product = getProduct(slug);
+      const qty = Math.floor(Number(qtyRaw));
+      if (!product || !Number.isFinite(qty) || qty < 1) return;
+      lines.push({ name: product.name, qty, unitCents: product.priceCents, kind: product.kind });
+      if (product.kind === "gift-card") {
+        for (let i = 0; i < qty; i++) {
+          giftCards.push({
+            code: giftCodeFromSeed(`${session.id}:${lineIdx}:${i}`),
+            amountCents: product.priceCents,
+          });
+        }
+      }
+    });
+
+  if (lines.length === 0) {
+    console.error("Shop webhook: empty or unrecognised cart on", session.id);
+    return;
+  }
+
+  const subtotalCents = lines.reduce((sum, l) => sum + l.unitCents * l.qty, 0);
+  const shippingCents = session.shipping_cost?.amount_total ?? 0;
+  const totalCents = session.amount_total ?? subtotalCents + shippingCents;
+
+  // Shipping details moved to collected_information in recent API versions;
+  // fall back through the older locations so an address isn't silently lost.
+  const s = session as unknown as {
+    collected_information?: { shipping_details?: { name?: string; address?: Record<string, string> } };
+    shipping_details?: { name?: string; address?: Record<string, string> };
+  };
+  const ship = s.collected_information?.shipping_details ?? s.shipping_details ?? null;
+  const addr = ship?.address ?? null;
+
+  await sendShopEmails({
+    customerName: session.customer_details?.name ?? ship?.name ?? null,
+    customerEmail: session.customer_details?.email ?? null,
+    items: lines,
+    giftCards,
+    shipping: addr
+      ? {
+          name: ship?.name ?? null,
+          line1: addr.line1 ?? null,
+          line2: addr.line2 ?? null,
+          city: addr.city ?? null,
+          state: addr.state ?? null,
+          postalCode: addr.postal_code ?? null,
+          country: addr.country ?? null,
+        }
+      : null,
+    subtotalCents,
+    shippingCents,
+    totalCents,
+    reference: session.id,
+  }).catch((err) => console.error("sendShopEmails threw unexpectedly:", err));
+}
 
 export async function POST(req: NextRequest) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -30,6 +101,16 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
+
+    // Shop orders and bookings both come through here; a shop order carries no
+    // booking rows to update, so it's handled on its own and returns early.
+    if (session.metadata?.kind === "shop") {
+      if (session.payment_status === "paid") {
+        await fulfilShopOrder(session);
+      }
+      return NextResponse.json({ received: true });
+    }
+
     const bookingId = session.metadata?.booking_id;
     const groupId = session.metadata?.group_id;
 
