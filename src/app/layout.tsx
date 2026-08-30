@@ -58,7 +58,7 @@ const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "AutoDetailing",
   name: "Diamond Clean Detail",
-  image: `${siteUrl}/brand/logo.png`,
+  image: `${siteUrl}/brand/logo-dark.png`,
   url: siteUrl,
   telephone: "+1-720-703-2795",
   email: "info@diamondcleandetail.com",

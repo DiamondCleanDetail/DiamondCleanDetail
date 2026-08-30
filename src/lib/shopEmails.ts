@@ -131,7 +131,7 @@ function shell(opts: { eyebrow: string; title: string; intro: string; body: stri
         <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px; width:100%; background:${colors.surface}; border:1px solid ${colors.border}; border-radius:16px; overflow:hidden;">
           <tr>
             <td style="padding:32px 32px 24px; text-align:center; border-bottom:1px solid ${colors.border};">
-              <img src="${siteUrl}/brand/logo.png" width="36" height="36" alt="" style="display:block; margin:0 auto 14px;" />
+              <img src="${siteUrl}/brand/logo-dark.png" width="36" height="36" alt="" style="display:block; margin:0 auto 14px;" />
               <img src="${siteUrl}/brand/wordmark-dark.png" width="206" height="21" alt="Diamond Clean Detail" style="display:block; margin:0 auto; max-width:206px;" />
             </td>
           </tr>
