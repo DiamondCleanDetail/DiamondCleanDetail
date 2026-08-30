@@ -44,6 +44,23 @@ export default function ServiceHero({
 
   return (
     <section className="relative overflow-hidden min-h-[55vh] sm:min-h-[65vh] flex items-end sm:items-center">
+      {/* Media and its scrims fade out together as one masked unit, the same
+          way the homepage hero does.
+
+          Before this the media ran at full strength to the section's last
+          pixel and the only thing hiding it was a gradient whose final stop
+          happened to be the page background. That stop is opaque only at
+          exactly 100%, so the frame stayed faintly visible right up to the
+          edge and then stopped dead — a hard seam across every service hero.
+          Masking dissolves the media itself, so what is underneath is the
+          page background rather than a colour-matched impersonation of it. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          maskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 92%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 92%)",
+        }}
+      >
       {video ? (
         <video
           ref={videoRef}
@@ -83,10 +100,14 @@ export default function ServiceHero({
       {hasMedia && (
         <>
           <div className="absolute inset-0 bg-black/65" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-background" />
+          {/* to-transparent, not to-background: the mask now handles the
+              dissolve, and a gradient still ramping to an opaque background
+              inside it would darken the lower half twice. */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
         </>
       )}
+      </div>
 
       <div className="relative mx-auto max-w-6xl px-6 py-10 sm:py-24 w-full">
         <Link href="/services" className="text-sm text-muted hover:text-foreground transition-colors">
