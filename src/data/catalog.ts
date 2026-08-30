@@ -929,6 +929,22 @@ export const catalog: ServiceCategory[] = [
     tagline: "Targeted repair for the scratch that bugs you.",
     valueProp:
       "Not every scratch needs a full correction. For an isolated scratch, key mark, or scuff, we assess the depth and severity — most clear-coat-level scratches can be polished out, while deeper scratches may need touch-up paint — and price it per scratch or panel.",
+    benefitImages: [
+      null,
+      // "Fast turnaround" argued by scale: one pad on one small area, the rest
+      // of the door untouched and dry. Stock, not our work.
+      {
+        src: "/services/scratch-spot-repair.webp",
+        alt: "A polisher working a small area of a red door, the surrounding panel untouched",
+      },
+      // The case we would turn away, which is the only way "we'll tell you
+      // upfront" reads as a practice rather than a slogan — this one has cut
+      // through the paint and creased the metal. Stock, not our work.
+      {
+        src: "/services/scratch-too-deep.webp",
+        alt: "A deep gouge through the paint of a white door, the panel creased around it — past what polishing can fix",
+      },
+    ],
     benefits: [
       { title: "Priced for what you need", description: "No paying for a full-vehicle correction to fix one scratch." },
       { title: "Fast turnaround", description: "Spot repairs are typically much quicker than a full correction." },
@@ -962,6 +978,17 @@ export const catalog: ServiceCategory[] = [
     cardImage: "/work/ferrari-488-1.webp",
     valueProp:
       "Leather seats dry out, crack, and fade over years of sun exposure and use. Routine cleaning and conditioning keeps healthy leather supple and protected, while full restoration repairs cracking, fading, and staining on leather that's already showing its age.",
+    benefitImages: [
+      null,
+      null,
+      // "Feels like new" is a texture claim, so the shot has to carry texture:
+      // the embossed headrest, the stitch line and the perforation all read
+      // here. Cropped from a portrait original around the seat itself.
+      {
+        src: "/services/leather-finished.webp",
+        alt: "A tan leather sports seat, stitching and perforation crisp against the dark interior",
+      },
+    ],
     benefits: [
       { title: "Prevents cracking", description: "UV-protective conditioner keeps leather from drying out and cracking in the sun." },
       { title: "Restores faded color", description: "Full restoration can recolor and repair leather that's faded or worn through." },
