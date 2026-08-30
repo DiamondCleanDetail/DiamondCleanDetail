@@ -1,4 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { clerkAppearance } from "@/lib/clerkAppearance";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -91,6 +92,13 @@ const localBusinessSchema = {
   ],
 };
 
+// Google Analytics 4. Dormant until NEXT_PUBLIC_GA_ID is set (in Vercel for
+// production, optionally .env.local to test) — with no ID the component isn't
+// rendered and no Google script loads, exactly like the Google-reviews block.
+// Set it only in the environments you want counted; leaving it off localhost
+// keeps your own dev traffic out of the numbers.
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -132,6 +140,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </MotionProvider>
         </ClerkProvider>
       </body>
+      {gaId && <GoogleAnalytics gaId={gaId} />}
     </html>
   );
 }
