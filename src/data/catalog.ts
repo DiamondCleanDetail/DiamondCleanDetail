@@ -406,17 +406,22 @@ export const catalog: ServiceCategory[] = [
         src: "/services/correction-swirls.webp",
         alt: "The same light on two panels: a clean round reflection on corrected paint, and a spiderweb of fine scratches around it on uncorrected paint",
       },
-      // Paired with gloss rather than with swirls, even though it is a
-      // half-and-half: the card above already owns the swirl story with a
-      // tighter, darker shot, and what this one actually shows is the
-      // corrected half holding the sun as a cleaner, deeper reflection.
-      // Sunlight outdoors also keeps the two cards from looking like the
-      // same photograph twice.
+      // Gloss is not a property you can photograph directly — it only shows
+      // as how sharp a reflection the paint can hold. Hard-edged highlights
+      // bending cleanly over a body crease say "wet and deep" in a way no
+      // amount of clean paint does. Stock, not our work.
+      {
+        src: "/services/correction-gloss.webp",
+        alt: "Hard-edged highlights reflected in deep red paint, holding their shape as they bend over the panel crease",
+      },
+      // The half-and-half moved here from gloss once the shot above arrived.
+      // It reads as "this is the surface correction leaves behind" — which is
+      // exactly the surface a coating or film is supposed to go onto, and so
+      // it argues the prep case better than it argued the gloss one.
       {
         src: "/services/correction-halfandhalf.webp",
         alt: "Direct sun on one panel, corrected on one side of the seam and untouched on the other — the corrected half holds a tighter, deeper reflection",
       },
-      null,
     ],
     benefits: [
       { title: "Removes swirl marks", description: "Machine polishing levels out the fine scratches that dull a paint job over time." },
@@ -913,6 +918,11 @@ export const catalog: ServiceCategory[] = [
     shortName: "Scratch Removal",
     heroImage: "/services/scratch-removal-hero.webp",
     cardImage: "/services/scratch-removal-hero.webp",
+    // The whole argument of this page is "you don't need the whole car
+    // corrected for this", which only lands if the paint around the scratch
+    // is visibly fine. Stock, not our work.
+    valuePropImage: "/services/scratch-single.webp",
+    valuePropImageIsPhoto: true,
     summary: "Spot repair for scratches and light paint damage.",
     description:
       "Targeted machine polishing or touch-up to reduce or remove scratches and scuffs. Severity is assessed on a quick photo or in-person before pricing.",
