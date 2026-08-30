@@ -406,7 +406,16 @@ export const catalog: ServiceCategory[] = [
         src: "/services/correction-swirls.webp",
         alt: "The same light on two panels: a clean round reflection on corrected paint, and a spiderweb of fine scratches around it on uncorrected paint",
       },
-      null,
+      // Paired with gloss rather than with swirls, even though it is a
+      // half-and-half: the card above already owns the swirl story with a
+      // tighter, darker shot, and what this one actually shows is the
+      // corrected half holding the sun as a cleaner, deeper reflection.
+      // Sunlight outdoors also keeps the two cards from looking like the
+      // same photograph twice.
+      {
+        src: "/services/correction-halfandhalf.webp",
+        alt: "Direct sun on one panel, corrected on one side of the seam and untouched on the other — the corrected half holds a tighter, deeper reflection",
+      },
       null,
     ],
     benefits: [
