@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
+import { motion } from "framer-motion";
 
 export type Review = {
   rating: number;
@@ -14,6 +14,21 @@ export type Review = {
  * grid, enough to establish a wall of praise without turning the homepage
  * into a page of nothing but reviews. */
 const INITIAL_COUNT = 6;
+
+// The grid's own stagger, driven by a controlled `animate` (see below) rather
+// than StaggerGrid's whileInView. whileInView fires once and disconnects, so
+// cards revealed by "Show more" afterwards mounted at opacity:0 and were never
+// told to appear — the blank space under the first six. A controlled animate
+// re-propagates "show" to every child, including the ones added on expand.
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.2, 0.8, 0.2, 1] as const },
+  },
+};
 
 export function Stars({ rating }: { rating: number }) {
   return (
@@ -54,6 +69,10 @@ export default function TestimonialsList({
   testimonials: Review[];
 }) {
   const [expanded, setExpanded] = useState(false);
+  // Flips true once the grid scrolls into view, then stays true. Driving the
+  // container's `animate` off this (instead of whileInView) is what lets the
+  // revealed cards animate in too.
+  const [entered, setEntered] = useState(false);
 
   // Mobile is a horizontal swiper, so it never adds vertical scroll — it can
   // keep every review. The "too much scrolling" the toggle fixes is the
@@ -82,13 +101,21 @@ export default function TestimonialsList({
       </div>
       <p className="sm:hidden text-xs text-muted mt-3 text-center">Swipe for more &rarr;</p>
 
-      <StaggerGrid className="hidden sm:grid sm:grid-cols-3 gap-4">
+      <motion.div
+        data-motion
+        className="hidden sm:grid sm:grid-cols-3 gap-4"
+        variants={container}
+        initial="hidden"
+        animate={entered ? "show" : "hidden"}
+        onViewportEnter={() => setEntered(true)}
+        viewport={{ once: true, margin: "-60px" }}
+      >
         {shown.map((t, i) => (
-          <StaggerItem key={i}>
+          <motion.div data-motion key={i} variants={item}>
             <Card review={t} />
-          </StaggerItem>
+          </motion.div>
         ))}
-      </StaggerGrid>
+      </motion.div>
 
       {hasMore && (
         <div className="hidden sm:flex justify-center mt-6">
