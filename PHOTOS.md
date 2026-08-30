@@ -60,6 +60,9 @@ there is something to replace them with.
 | `ppf-what-it-is-stock.webp` | PPF | what-it-is | 1:1 | A car of ours mid-install |
 | `ppf-self-healing-placeholder-stock.webp` | PPF | benefit — Self-healing | 4:3 | A heat-gun healing demo on our own film |
 | `ppf-resale-placeholder-stock.webp` | PPF | benefit — Resale value | 4:3 | A wrapped car of ours |
+| `light-night-beam.webp` | Light Restoration | benefit — Brighter at night | 4:3 | A car of ours after restoration, shot at night |
+| `light-clear-result.webp` | Light Restoration | benefit — Cheaper than replacing | 4:3 | A lens we cleared |
+| `light-sealing.webp` | Light Restoration | benefit — Sealed, not just polished | 4:3 | Us applying the sealant |
 | `specialty-vehicles-hero.png` | RV / Boat / Aircraft | hero + card | wide | Less urgent now the gallery has a real aircraft job behind it, but the hero itself is still stock |
 
 ---

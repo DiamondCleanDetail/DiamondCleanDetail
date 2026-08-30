@@ -1002,6 +1002,21 @@ export const catalog: ServiceCategory[] = [
     valuePropImageIsPhoto: true,
     valueProp:
       "Lens plastic hazes from the outside in. Years of sun and road grit break down the factory coating, and the clear polycarbonate underneath goes yellow and cloudy. Sanding and polishing that layer back takes the haze off and returns the lens to clear — then it gets sealed, because bare polycarbonate with no coating will simply oxidise again.",
+    // All three stock, like everything else on this page bar the taillight.
+    benefitImages: [
+      {
+        src: "/services/light-night-beam.webp",
+        alt: "A headlight throwing a hard, defined beam into the dark",
+      },
+      {
+        src: "/services/light-clear-result.webp",
+        alt: "A fully clear headlight lens on a silver car, the reflector and projector sharp behind it",
+      },
+      {
+        src: "/services/light-sealing.webp",
+        alt: "A hand working product across a clear headlight lens",
+      },
+    ],
     benefits: [
       {
         title: "Brighter at night",
