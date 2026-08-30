@@ -113,11 +113,40 @@ export default function CeramicCoatingPage() {
             )}
           </FadeIn>
         </div>
-        <FadeIn delay={0.15}>
-          <p className="text-sm sm:text-base text-muted mt-6 sm:mt-8 max-w-3xl mx-auto text-center leading-relaxed">
-            {category.valueProp}
-          </p>
-        </FadeIn>
+        {/* The mechanism, beside the copy that describes it. The clips above
+            show what a coating does; this is the only thing on the page that
+            shows why — bare clear coat is porous, and a coating is the flat
+            layer that closes it. The paragraph used to sit centred under the
+            two tiles with nothing beside it. */}
+        <div className="mt-8 sm:mt-12 grid lg:grid-cols-2 gap-8 sm:gap-10 items-center">
+          <FadeIn>
+            {/* On a light card on purpose: the diagram is drawn on near-white
+                and would otherwise float as a bright square on the dark page. */}
+            <div className="bg-white rounded-2xl p-4 sm:p-6">
+              <div className="relative aspect-square w-full max-w-[380px] mx-auto">
+                <Image
+                  src="/services/ceramic-coated-vs-uncoated.webp"
+                  alt="Cross-section comparison: on bare paint, dirt settles into open pores; under a ceramic coating it sits on a flat surface and wipes away"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 380px"
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.1}>
+            <div>
+              <p className="text-base sm:text-lg leading-relaxed">{category.valueProp}</p>
+              <p className="text-sm text-muted mt-4 leading-relaxed">
+                Close up, bare clear coat isn&apos;t smooth &mdash; it&apos;s porous, and
+                road film, brake dust and traffic grime settle down into it, which is why a
+                neglected car gets harder to clean every year. A coating fills and caps
+                that surface, so the same dirt has nowhere to key into and comes off with a
+                rinse instead of a scrub.
+              </p>
+            </div>
+          </FadeIn>
+        </div>
 
         {/* The three benefits, compressed into one row of real photos. On the
             template these were three tall cards with "photo coming soon" in
