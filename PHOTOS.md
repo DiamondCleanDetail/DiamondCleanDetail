@@ -24,12 +24,14 @@ Real jobs. These are the ones that carry the site.
 | --- | --- | --- |
 | `correction-swirls.webp` | Paint Correction | benefit — Removes swirl marks |
 | `correction-halfandhalf.webp` | Paint Correction | benefit — The right prep step |
+| `work/van-on-site.webp` | Mobile Detailing | benefit — We come to you |
 | everything under `/public/work/` | Our Work, all galleries | job photos |
 | `/public/video/*.mp4` | service page heroes and process clips | |
 
-Note that the two correction shots are also the two most convincing images
-on the site. That is not a coincidence, and it is the argument for replacing
-the rest as soon as there is something to replace them with.
+These are also the most convincing images on the site — the van shot in
+particular does more for the core promise than any stock photo could. That is
+not a coincidence, and it is the argument for replacing the rest as soon as
+there is something to replace them with.
 
 ---
 

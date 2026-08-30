@@ -210,7 +210,14 @@ export const catalog: ServiceCategory[] = [
     // Matched to the benefits below: on-location van, a swirl-free dark panel,
     // and a finish still glossy after the fact.
     benefitImages: [
-      { src: "/work/morgan-1.webp", alt: "A detailer working on a blue SUV parked on a residential driveway" },
+      // The whole business in one frame: the van open on a customer's
+      // driveway, kit racked and lit, hose already run out to their car. No
+      // other photo we have argues "we come to you" — it shows the thing
+      // rather than a car that happens to be outdoors.
+      {
+        src: "/work/van-on-site.webp",
+        alt: "The Diamond Clean Detail van open on a customer's driveway at dusk, shelves of product lit inside and a hose run out to the car",
+      },
       { src: "/work/range-rover-black-1.webp", alt: "The hand-washed flank of a black Range Rover, free of swirl marks" },
       { src: "/work/porsche-911-orange-1.webp", alt: "Sunlight reflecting cleanly off the finished paint of an orange Porsche 911" },
     ],
