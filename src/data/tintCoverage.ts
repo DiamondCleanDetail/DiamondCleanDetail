@@ -23,16 +23,26 @@ import type { VehicleSize } from "@/data/catalog";
  */
 export const COVERAGE_CANVAS = { width: 2000, height: 1240 };
 
-const diagrams: Record<string, Partial<Record<VehicleSize, string>>> = {
+/** A Tesla renders as its own vehicle, not as whichever size bucket it fell
+ * into: its pricing is by Tesla coverage rather than by size, and showing the
+ * glass on a Model 3 while quoting Tesla prices is what makes those prices
+ * make sense. Composed onto the same canvas and ground line as the other
+ * three, so switching between a Tesla and anything else swaps the car rather
+ * than jumping the layout. */
+export type CoverageVehicle = VehicleSize | "tesla";
+
+const diagrams: Record<string, Partial<Record<CoverageVehicle, string>>> = {
   "front-two": {
     sedan: "/tint-coverage/front-two-sedan.png",
     suv: "/tint-coverage/front-two-suv.png",
     truck: "/tint-coverage/front-two-truck.png",
+    tesla: "/tint-coverage/front-two-tesla.png",
   },
   "full-vehicle": {
     sedan: "/tint-coverage/full-sedan.png",
     suv: "/tint-coverage/full-suv.png",
     truck: "/tint-coverage/full-truck.png",
+    tesla: "/tint-coverage/full-tesla.png",
   },
   // Keyed by the add-on slug rather than a package slug — windshield work is
   // an add-on now, but this lookup doesn't care which kind of slug it's fed.
@@ -40,14 +50,16 @@ const diagrams: Record<string, Partial<Record<VehicleSize, string>>> = {
     sedan: "/tint-coverage/windshield-strip-sedan.png",
     suv: "/tint-coverage/windshield-strip-suv.png",
     truck: "/tint-coverage/windshield-strip-truck.png",
+    tesla: "/tint-coverage/windshield-strip-tesla.png",
   },
   "full-windshield": {
     sedan: "/tint-coverage/full-windshield-sedan.png",
     suv: "/tint-coverage/full-windshield-suv.png",
     truck: "/tint-coverage/full-windshield-truck.png",
+    tesla: "/tint-coverage/full-windshield-tesla.png",
   },
 };
 
-export function coverageDiagram(packageSlug: string, size: VehicleSize): string | null {
-  return diagrams[packageSlug]?.[size] ?? null;
+export function coverageDiagram(packageSlug: string, vehicle: CoverageVehicle): string | null {
+  return diagrams[packageSlug]?.[vehicle] ?? null;
 }

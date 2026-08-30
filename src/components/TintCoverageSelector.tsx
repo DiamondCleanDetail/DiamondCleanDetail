@@ -11,6 +11,7 @@ const category = getCategory("window-tinting")!;
 
 export default function TintCoverageSelector({
   vehicleSize,
+  packages = category.packages,
   pkg,
   setPkg,
   isTesla = false,
@@ -20,6 +21,10 @@ export default function TintCoverageSelector({
   setWindshieldAddOns = () => {},
 }: {
   vehicleSize: VehicleSize;
+  /** The coverage options this car can actually buy. The tint page narrows
+   * this for Teslas — front-doors-only isn't sold on a Model 3, and a tab
+   * that quotes a price the checkout won't honour is worse than no tab. */
+  packages?: Package[];
   pkg: Package;
   setPkg: (p: Package) => void;
   isTesla?: boolean;
@@ -40,17 +45,21 @@ export default function TintCoverageSelector({
       : null;
   const price =
     teslaPrice?.price ?? resolveLinePrice(pkg, vehicleSize, { filmSlug }) ?? 0;
-  const diagram = coverageDiagram(pkg.slug, vehicleSize);
+  // A Tesla shows its own renders — the glass being priced is that car's
+  // glass, and quoting Tesla coverage prices over a picture of a BMW is how
+  // the numbers stop making sense.
+  const diagramVehicle = isTesla ? ("tesla" as const) : vehicleSize;
+  const diagram = coverageDiagram(pkg.slug, diagramVehicle);
   // Both coverage diagrams and both windshield ones stay mounted, so choosing
   // between them is a style change rather than a fetch.
   const coverageVariants = category.packages
-    .map((p) => ({ key: p.slug, src: coverageDiagram(p.slug, vehicleSize) }))
+    .map((p) => ({ key: p.slug, src: coverageDiagram(p.slug, diagramVehicle) }))
     .filter((v): v is { key: string; src: string } => Boolean(v.src));
   const windshieldSlug = windshieldAddOns.includes("full-windshield")
     ? "full-windshield"
     : "windshield-strip";
   const windshieldVariants = ["windshield-strip", "full-windshield"]
-    .map((slug) => ({ key: slug, src: coverageDiagram(slug, vehicleSize) }))
+    .map((slug) => ({ key: slug, src: coverageDiagram(slug, diagramVehicle) }))
     .filter((v): v is { key: string; src: string } => Boolean(v.src));
 
   return (
@@ -58,12 +67,20 @@ export default function TintCoverageSelector({
       <div className="mx-auto max-w-6xl px-6">
         {/* Coverage package tabs */}
         <SegmentedTabs
-          items={category.packages.map((p) => ({ value: p.slug, label: p.name }))}
+          items={packages.map((p) => ({ value: p.slug, label: p.name }))}
           value={pkg.slug}
-          onChange={(slug) => setPkg(category.packages.find((p) => p.slug === slug) ?? pkg)}
+          onChange={(slug) => setPkg(packages.find((p) => p.slug === slug) ?? pkg)}
           layoutId="coverage-package-highlight"
           className="w-full"
         />
+        {/* Said plainly rather than hidden: the missing tab isn't broken, it
+            isn't sold. Without this line the narrowing reads as a bug. */}
+        {packages.length < category.packages.length && (
+          <p className="text-xs text-neutral-500 mt-3 text-center">
+            Front-windows-only isn&apos;t offered on this Tesla model &mdash; it&apos;s
+            tinted as a full car.
+          </p>
+        )}
 
         {/* Preview + details */}
         <div className="mt-10 sm:mt-14 grid sm:grid-cols-2 gap-8 sm:gap-10 items-center">
@@ -84,7 +101,7 @@ export default function TintCoverageSelector({
                 variants={coverageVariants}
                 active={pkg.slug}
                 priorityKey={pkg.slug}
-                alt={`${pkg.name} tint coverage on a ${vehicleSizeLabels[vehicleSize]}`}
+                alt={`${pkg.name} tint coverage on a ${isTesla ? "Tesla" : vehicleSizeLabels[vehicleSize]}`}
                 sizes="(max-width: 640px) 100vw, 50vw"
                 className="object-contain object-bottom"
               />
@@ -148,7 +165,7 @@ export default function TintCoverageSelector({
                   to a "None" that claimed otherwise. */}
               {coverageDiagram(
                 windshieldAddOns.includes("full-windshield") ? "full-windshield" : "windshield-strip",
-                vehicleSize
+                diagramVehicle
               ) ? (
                 <div
                   className={`relative w-full transition-opacity ${

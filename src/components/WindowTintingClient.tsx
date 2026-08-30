@@ -58,11 +58,26 @@ export default function WindowTintingClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTesla]);
 
+  // Not every coverage is sold on every Tesla — front-doors-only doesn't
+  // exist for a Model 3 on the adopted price sheet. With the tab still
+  // offered, the price fell back to the sedan figure and this page quoted
+  // $189 for a job the checkout prices from $449. So the tabs are filtered
+  // to what that model can actually buy, and the selection is *derived* onto
+  // an available package rather than mutated — no effect, nothing to fight
+  // the user's clicks.
+  const teslaModel = isTesla ? teslaModelFromVehicleInfo(vehicleInfo) : null;
+  const availablePackages = category.packages.filter(
+    (p) => !isTesla || teslaPriceForPackage(p.slug, filmType.slug, teslaModel) !== null
+  );
+  const effectivePkg = availablePackages.some((p) => p.slug === pkg.slug)
+    ? pkg
+    : (availablePackages[0] ?? pkg);
+
   // A Tesla is priced on coverage x film, so the headline figure has to come
   // from the Tesla table too — otherwise this page quotes the size-based
   // price and the checkout charges a different one.
   const teslaPrice = isTesla
-    ? teslaPriceForPackage(pkg.slug, filmType.slug, teslaModelFromVehicleInfo(vehicleInfo))
+    ? teslaPriceForPackage(effectivePkg.slug, filmType.slug, teslaModel)
     : null;
   const addOnsTotal = (category.addOns ?? [])
     .filter((a) => windshieldAddOns.includes(a.slug) && (!a.teslaOnly || isTesla))
@@ -80,9 +95,9 @@ export default function WindowTintingClient() {
   // charges with — the number on this card is the number Stripe takes.
   const price =
     (teslaPrice?.price ??
-      resolveLinePrice(pkg, vehicleSize, { filmSlug: filmType.slug }) ??
+      resolveLinePrice(effectivePkg, vehicleSize, { filmSlug: filmType.slug }) ??
       0) + addOnsTotal;
-  const bookingHref = `/booking?service=${category.slug}&package=${pkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}&vehicleSize=${vehicleSize}&vehicleInfo=${encodeURIComponent(vehicleInfo)}${windshieldAddOns.length ? `&addons=${windshieldAddOns.join(",")}` : ""}`;
+  const bookingHref = `/booking?service=${category.slug}&package=${effectivePkg.slug}&tint=${level.value}&film=${filmType.slug}&tesla=${isTesla ? "1" : "0"}&vehicleSize=${vehicleSize}&vehicleInfo=${encodeURIComponent(vehicleInfo)}${windshieldAddOns.length ? `&addons=${windshieldAddOns.join(",")}` : ""}`;
 
   // Composed once and used by both the summary card and the bar that carries
   // the total while you scroll, so the two can't describe the same build
@@ -90,7 +105,7 @@ export default function WindowTintingClient() {
   const chosenAddOnNames = (category.addOns ?? [])
     .filter((a) => windshieldAddOns.includes(a.slug))
     .map((a) => a.name);
-  const buildHeadline = `${level.label} tint · ${pkg.name}${
+  const buildHeadline = `${level.label} tint · ${effectivePkg.name}${
     chosenAddOnNames.length ? ` + ${chosenAddOnNames.join(" + ")}` : ""
   }`;
 
@@ -158,7 +173,8 @@ export default function WindowTintingClient() {
         >
           <TintCoverageSelector
             vehicleSize={vehicleSize}
-            pkg={pkg}
+            packages={availablePackages}
+            pkg={effectivePkg}
             setPkg={setPkg}
             isTesla={isTesla}
             filmSlug={filmType.slug}
@@ -245,7 +261,7 @@ export default function WindowTintingClient() {
                 ) : (
                   <>
                     <p className="text-2xl sm:text-4xl font-bold text-white mt-6 text-balance">
-                      {level.label} tint &middot; {pkg.name}
+                      {level.label} tint &middot; {effectivePkg.name}
                       {windshieldAddOns.length > 0 &&
                         ` + ${(category.addOns ?? [])
                           .filter((a) => windshieldAddOns.includes(a.slug))
