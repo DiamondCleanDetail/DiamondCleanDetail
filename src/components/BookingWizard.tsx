@@ -24,15 +24,13 @@ import { tintLevels } from "@/data/tintLevels";
 import { filmTypes } from "@/data/filmTypes";
 import { teslaCoverages, teslaCoveragesFor, teslaModelFromVehicleInfo } from "@/data/teslaTint";
 import {
-  todayIso,
-  isBookableDay,
-  bookableDaysLabel,
   availableSlotsFor,
-  leadTimeLabel,
   type BookedRange,
 } from "@/lib/scheduling";
 import { serviceArea } from "@/data/serviceArea";
 import { guarantee, policies } from "@/data/policies";
+import Emphasise from "@/components/Emphasise";
+import SlotPicker from "@/components/SlotPicker";
 
 type Phase = "select" | "configure" | "vehicle" | "datetime" | "details" | "pay";
 
@@ -287,7 +285,6 @@ export default function BookingWizard({
   // Named for what it means to the customer, not for the calendar: the
   // closed days are a fact of Farhan's current availability, not of
   // weekends. See BOOKABLE_DAYS in scheduling.ts.
-  const unavailableDay = Boolean(date) && !isBookableDay(date);
   const availableSlots = useMemo(
     () => availableSlotsFor(totalDuration, bookedRanges, date, now),
     [bookedRanges, totalDuration, date, now]
@@ -787,56 +784,16 @@ export default function BookingWizard({
 
       {/* Date & Time */}
       {phase === "datetime" && (
-        <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Date</label>
-            {/* Stated up front rather than as an error after picking a
-                closed day — nobody should discover the restriction four
-                steps into the funnel. */}
-            <p className="text-xs text-muted mb-2">
-              Appointments run {bookableDaysLabel()} — weekdays are fully booked.
-            </p>
-            <input
-              type="date"
-              value={date}
-              min={todayIso()}
-              onChange={(e) => {
-                setDate(e.target.value);
-                setTime("");
-              }}
-              className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm"
-            />
-            {unavailableDay && (
-              <p className="text-xs text-red-400 mt-1">
-                We&apos;re fully booked that day — appointments are {bookableDaysLabel()}.
-              </p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Time</label>
-            <select
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              disabled={!date || unavailableDay}
-              className="w-full bg-surface-2 border border-border rounded-lg px-3 py-2 text-sm disabled:text-muted disabled:cursor-not-allowed"
-            >
-              <option value="" disabled>
-                {date ? "Select a time" : "Pick a date first"}
-              </option>
-              {availableSlots.map((slot) => (
-                <option key={slot} value={slot}>
-                  {slot}
-                </option>
-              ))}
-            </select>
-            {date && !unavailableDay && availableSlots.length === 0 && (
-              <p className="text-xs text-muted mt-1">
-                {date === todayIso()
-                  ? `We need at least ${leadTimeLabel()}' notice to get to you, so there's nothing left today — please pick another date.`
-                  : `No times left that day for ${selections.length > 1 ? "this combined booking" : "this service"} — try another date.`}
-              </p>
-            )}
-          </div>
+        <div className="bg-surface border border-border rounded-xl p-6">
+          <SlotPicker
+            duration={totalDuration}
+            date={date}
+            time={time}
+            onPick={(d, t) => {
+              setDate(d);
+              setTime(t);
+            }}
+          />
         </div>
       )}
 
@@ -979,8 +936,12 @@ export default function BookingWizard({
             <p className="text-xs font-semibold uppercase tracking-widest text-foreground">
               {guarantee.name}
             </p>
-            <p className="text-xs text-muted mt-2 leading-relaxed">{guarantee.promise}</p>
-            <p className="text-xs text-muted mt-2 leading-relaxed">{policies.weather.a}</p>
+            <p className="text-xs text-muted mt-2 leading-relaxed">
+              <Emphasise text={guarantee.promise} phrases={guarantee.emphasise} />
+            </p>
+            <p className="text-xs text-muted mt-2 leading-relaxed">
+              <Emphasise text={policies.weather.a} phrases={policies.weather.emphasise} />
+            </p>
           </div>
           {submitError && <p className="text-sm text-red-400">{submitError}</p>}
         </div>

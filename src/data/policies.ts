@@ -16,12 +16,17 @@ export const guarantee = {
   promise:
     "If you're not completely satisfied with your service, contact us within 24 hours and we'll work with you to make it right.",
   window: "24 hours",
+  /** Phrases the payment step bolds. The wording above is Farhan's and is not
+   * ours to shorten; emphasis is the only way to make a paragraph of small
+   * grey type scannable without changing what it says. */
+  emphasise: ["contact us within 24 hours", "make it right"] as const,
 };
 
 export const policies = {
   weather: {
     q: "What happens if the weather stops my appointment?",
     a: "Colorado weather being what it is, this comes up. If conditions mean we can't do the job properly, we'll get in touch and find you another date. If rescheduling doesn't work for you, you get your deposit back in full — no argument.",
+    emphasise: ["find you another date", "your deposit back in full — no argument"] as const,
   },
   onArrivalPricing: {
     q: "Is the price I see online the price I pay?",

@@ -197,3 +197,45 @@ export function availableSlotsFor(
     });
   });
 }
+
+/** The next `count` dates the business actually takes appointments on,
+ * starting from today.
+ *
+ * The booking form used to hand people a bare date input and let them
+ * discover, one guess at a time, that weekdays are unavailable. Listing the
+ * real dates removes the guessing — and it can only ever offer days that pass
+ * `isBookableDay`, so the picker and the API cannot disagree about which days
+ * exist. */
+export function upcomingBookableDates(
+  count: number,
+  now: Date = new Date()
+): string[] {
+  const dates: string[] = [];
+  const start = todayIso(now);
+  const cursor = new Date(
+    Date.UTC(+start.slice(0, 4), +start.slice(5, 7) - 1, +start.slice(8, 10), 12)
+  );
+
+  // A hard ceiling on iterations rather than trusting the loop to terminate:
+  // if BOOKABLE_DAYS were ever emptied by mistake this would otherwise spin
+  // forever, and it would do it inside a render.
+  for (let i = 0; i < count * 14 + 60 && dates.length < count; i++) {
+    const iso = cursor.toISOString().slice(0, 10);
+    if (isBookableDay(iso)) dates.push(iso);
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return dates;
+}
+
+/** "Sat 6 Sep" — enough to place a date without the year getting in the way. */
+export function shortDateLabel(iso: string): string {
+  const d = new Date(
+    Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10), 12)
+  );
+  return d.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
