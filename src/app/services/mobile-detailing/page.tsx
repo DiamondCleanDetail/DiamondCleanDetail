@@ -247,27 +247,12 @@ export default function MobileDetailingPage() {
         </FadeIn>
       </section>
 
-      <DiamondDivider />
-
-      {/* How it works — short, three steps. */}
-      <section className="mx-auto max-w-5xl px-6 py-12 sm:py-20">
-        <FadeIn>
-          <SectionHeading title="How It" accent="Works" className="mb-8 sm:mb-12" />
-        </FadeIn>
-        <StaggerGrid className="grid sm:grid-cols-3 gap-4 sm:gap-5">
-          {category.process.slice(0, 3).map((step, i) => (
-            <StaggerItem key={step.title}>
-              <div className="h-full bg-surface border border-border rounded-xl p-6">
-                <span className="chrome-text text-3xl font-black">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="font-semibold mt-3">{step.title}</h3>
-                <p className="text-sm text-muted mt-2">{step.description}</p>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerGrid>
-      </section>
+      {/* "How It Works" used to sit here and was cut: its three steps said
+          what "Why It's Worth It" already says a screen earlier — setting up
+          on site restates "we come to you", washing and protecting restates
+          "hand-applied care" — and two near-identical three-card rows on one
+          page read as padding. The category's `process` is untouched, since
+          every other service page still renders it. */}
 
       <DiamondDivider />
 
