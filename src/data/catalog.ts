@@ -974,6 +974,67 @@ export const catalog: ServiceCategory[] = [
     ],
   },
   {
+    /**
+     * PROVISIONAL — needs Farhan's sign-off before this counts as offered.
+     *
+     * Added on the strength of his own photo of a masked taillight being
+     * worked, so the work plainly happens; what has never been confirmed is
+     * whether he wants to sell it as a service, and at what price. Quote-only
+     * for exactly that reason: nothing here commits him to a number, and the
+     * copy claims only what the photograph shows.
+     *
+     * If he says no, delete this object — the page, the card and the related
+     * links all come from it and nothing else references the slug.
+     */
+    slug: "light-restoration",
+    name: "Headlight & Taillight Restoration",
+    shortName: "Light Restoration",
+    summary: "Clouded, yellowed lenses polished back to clear.",
+    description:
+      "Machine polishing to clear the oxidation and UV hazing that turns headlight and taillight lenses yellow and foggy, finished with a protective sealant.",
+    tagline: "Clear lenses again, without replacing them.",
+    heroImage: "/services/light-restoration-hero.webp",
+    cardImage: "/services/light-restoration.webp",
+    valuePropImage: "/services/light-restoration.webp",
+    valuePropImageIsPhoto: true,
+    valueProp:
+      "Lens plastic hazes from the outside in. Years of sun and road grit break down the factory coating, and the clear polycarbonate underneath goes yellow and cloudy. Sanding and polishing that layer back takes the haze off and returns the lens to clear — then it gets sealed, because bare polycarbonate with no coating will simply oxidise again.",
+    benefits: [
+      {
+        title: "Brighter at night",
+        description: "A hazed lens scatters light instead of projecting it, so the beam goes short and dim long before the bulb does.",
+      },
+      {
+        title: "Far cheaper than replacing",
+        description: "Restoring a lens costs a fraction of a new assembly, and on many cars the housing isn't sold separately from the whole unit.",
+      },
+      {
+        title: "Sealed, not just polished",
+        description: "Polishing alone leaves bare plastic that clouds again within months. The sealant is what makes the result last.",
+      },
+    ],
+    process: [
+      { title: "Assess the lens", description: "Surface haze polishes out; cracking or internal moisture doesn't, and we'll say so before starting." },
+      { title: "Mask and refine", description: "The surrounding paint is masked, then the lens is sanded through grits and machine polished back to clear." },
+      { title: "Seal it", description: "A UV-protective sealant goes on so the plastic isn't left exposed the way the factory coating left it." },
+    ],
+    relatedSlugs: ["paint-correction", "scratch-removal", "mobile-detailing"],
+    isQuoteOnly: true,
+    packages: [
+      {
+        slug: "light-restoration-quote",
+        name: "Light Restoration",
+        tagline: "Priced after a look at the lenses.",
+        features: [
+          "Headlights, taillights or both",
+          "Multi-stage sand and polish",
+          "UV-protective sealant",
+        ],
+        pricing: { type: "quote" },
+      },
+    ],
+  },
+  {
     slug: "leather-restoration",
     name: "Leather Restoration & Polishing",
     shortName: "Leather Restoration",

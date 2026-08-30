@@ -25,6 +25,7 @@ Real jobs. These are the ones that carry the site.
 | `correction-swirls.webp` | Paint Correction | benefit — Removes swirl marks |
 | `correction-halfandhalf.webp` | Paint Correction | benefit — The right prep step |
 | `work/van-on-site.webp` | Mobile Detailing | benefit — We come to you |
+| `light-restoration.webp` | Light Restoration | hero + card + what-it-is |
 | everything under `/public/work/` | Our Work, all galleries | job photos |
 | `/public/video/*.mp4` | service page heroes and process clips | |
 
@@ -81,6 +82,7 @@ slots want and go soft on a phone.
 | --- | --- | --- |
 | `correction-halfandhalf.webp` | 447 px wide | ~800 px |
 | `scratch-too-deep.webp` | 1024 px wide | ~1400 px |
+| `light-restoration-hero.webp` | 765 px wide | ~1600 px (full-bleed hero) |
 
 ---
 
