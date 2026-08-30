@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Show, SignInButton, UserButton } from "@clerk/nextjs";
+import { Show, SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import { isOwnerEmail } from "@/lib/siteAccess";
 import { navGroups } from "@/data/navGroups";
 import { serviceArea } from "@/data/serviceArea";
 import ServicesDropdown from "@/components/ServicesDropdown";
@@ -36,10 +37,23 @@ function CalendarIcon() {
   );
 }
 
+/** 16px shield, matching the calendar icon's weight. */
+function ShieldIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
+    </svg>
+  );
+}
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Whether to offer the admin link. Convenience only — /admin re-checks the
+  // signed-in email server-side, so a forced-true here still opens nothing.
+  const { user } = useUser();
+  const isOwner = isOwnerEmail(user?.primaryEmailAddress?.emailAddress);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -123,6 +137,13 @@ export default function Navbar() {
                   labelIcon={<CalendarIcon />}
                   href="/account"
                 />
+                {isOwner && (
+                  <UserButton.Link
+                    label="Admin dashboard"
+                    labelIcon={<ShieldIcon />}
+                    href="/admin"
+                  />
+                )}
               </UserButton.MenuItems>
             </UserButton>
           </Show>
@@ -202,11 +223,16 @@ export default function Navbar() {
             </SignInButton>
           </Show>
           <Show when="signed-in">
-            <div className="py-2 flex items-center gap-3">
+            <div className="py-2 flex items-center gap-3 flex-wrap">
               <UserButton />
               <Link href="/account" onClick={() => setOpen(false)} className="text-sm">
                 Your bookings
               </Link>
+              {isOwner && (
+                <Link href="/admin" onClick={() => setOpen(false)} className="text-sm">
+                  Admin
+                </Link>
+              )}
             </div>
           </Show>
         </nav>
