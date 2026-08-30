@@ -990,11 +990,14 @@ export const catalog: ServiceCategory[] = [
         src: "/services/leather-wheel.webp",
         alt: "A microfibre cloth working conditioner into a leather steering wheel",
       },
-      // Deliberately still empty. Nothing we have shows recolouring, and a
-      // photo of already-rich leather under a heading that says "restores
-      // faded color" implies a before state that never existed. This one
-      // wants a real half-restored seat.
-      null,
+      // The half-restored seat this card was waiting for. Tape down the
+      // middle, one side done and one not, so the colour difference is the
+      // same seat under the same light rather than two photographs a viewer
+      // has to take on trust.
+      {
+        src: "/services/leather-restored-half.webp",
+        alt: "A cream leather seat masked down the middle: the restored half back to an even colour, the untouched half still dulled and soiled",
+      },
       // The card is about deep cleaning lifting embedded dirt, so the shot is
       // the cleaning itself rather than the finished result.
       {
