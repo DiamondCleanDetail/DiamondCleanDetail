@@ -176,6 +176,25 @@ function renderEmailHtml(opts: {
 /** Sends the customer confirmation and the owner new-booking alert. Never
  * throws — a booking that already charged the customer's card must not
  * fail just because an email didn't go out. Errors are logged instead. */
+/**
+ * Resend reports most failures — an unverified domain, a rejected recipient,
+ * a revoked key — in the response body rather than by throwing, so the bare
+ * `.catch()` these sends used to rely on saw none of them. Without this a
+ * booking could confirm on screen, take the deposit, and send nothing to
+ * anyone, with the logs staying perfectly clean.
+ */
+function report(
+  label: string,
+  res: { error?: unknown; data?: { id?: string } | null } | void
+) {
+  if (!res) return;
+  if (res.error) {
+    console.error(`Resend rejected the ${label}:`, res.error);
+    return;
+  }
+  console.log(`Sent ${label} (${res.data?.id ?? "no id"})`);
+}
+
 export async function sendBookingEmails(booking: ConfirmedBooking): Promise<void> {
   const resend = resendClient();
   if (!resend) {
@@ -204,6 +223,7 @@ export async function sendBookingEmails(booking: ConfirmedBooking): Promise<void
       }),
       text: `New Booking\n\n${plainSummary}`,
     })
+    .then((res) => report("owner booking alert", res))
     .catch((err) => console.error("Failed to send owner booking alert:", err));
 
   const customerSend = booking.customerEmail
@@ -221,6 +241,7 @@ export async function sendBookingEmails(booking: ConfirmedBooking): Promise<void
           }),
           text: `You're booked!\n\nThanks, ${booking.customerName} — here's a summary of your appointment.\n\n${plainSummary}\n\nQuestions? Call or text ${serviceArea.phone}.`,
         })
+        .then((res) => report("customer confirmation", res))
         .catch((err) => console.error("Failed to send customer confirmation email:", err))
     : Promise.resolve();
 
