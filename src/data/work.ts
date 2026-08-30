@@ -269,6 +269,42 @@ export const workItems: WorkItem[] = [
     images: ["/work/green-car-1.webp", "/work/green-car-2.webp", "/work/green-car-3.webp"],
   },
   {
+    // Jobs added from Farhan's own photos. Titles name the vehicle and
+    // nothing else: only the ceramic X5 below has a confirmed service behind
+    // it, and borrowing a package name for the rest would be inventing one.
+    slug: "bmw-x5-ceramic-coating",
+    title: "Ceramic Coating — BMW X5",
+    brand: "BMW",
+    images: ["/work/bmw-x5-ceramic.webp"],
+  },
+  {
+    slug: "bmw-x5-detail",
+    title: "BMW X5",
+    brand: "BMW",
+    images: ["/work/bmw-x5-driveway.webp"],
+  },
+  {
+    // TODO: Tahoe or Suburban — they are identical from the front, and this
+    // photo is a front three-quarter. Worth confirming before anyone reads
+    // it as carelessness.
+    slug: "chevrolet-tahoe-detail",
+    title: "Chevrolet Tahoe",
+    brand: "Chevrolet",
+    images: ["/work/chevrolet-tahoe-1.webp"],
+  },
+  {
+    slug: "corvette-c8-detail",
+    title: "Chevrolet Corvette C8",
+    brand: "Chevrolet",
+    images: ["/work/corvette-c8-1.webp"],
+  },
+  {
+    slug: "tesla-model-y-detail",
+    title: "Tesla Model Y",
+    brand: "Tesla",
+    images: ["/work/tesla-model-y-1.webp"],
+  },
+  {
     slug: "francs-1",
     title: "The Diamond Detail",
     brand: "More Vehicles",

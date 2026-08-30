@@ -559,6 +559,9 @@ export const catalog: ServiceCategory[] = [
       { src: "/work/mercedes-amg-gt-1.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
       { src: "/work/mercedes-amg-gt-2.webp", caption: "The Diamond Detail Pro — Mercedes-AMG GT" },
       { src: "/work/lamborghini-huracan-2.webp", caption: "The Diamond Detail Pro — Lamborghini Huracán" },
+      // The only one here confirmed as a coating job rather than inferred
+      // from the package the car was booked under. Caption says so plainly.
+      { src: "/work/bmw-x5-ceramic.webp", caption: "Ceramic coating — BMW X5" },
     ],
     packages: [
       {
