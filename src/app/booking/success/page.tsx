@@ -26,14 +26,23 @@ export default async function BookingSuccessPage({
   const db = supabaseAdmin();
 
   if (sessionId) {
-    const stripe = stripeClient();
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    if (session.payment_status === "paid") {
-      if (groupId) {
-        await db.from("bookings").update({ status: "paid" }).eq("group_id", groupId).eq("status", "pending");
-      } else if (bookingId) {
-        await db.from("bookings").update({ status: "paid" }).eq("id", bookingId).eq("status", "pending");
+    // Wrapped because this reconciliation is a fallback for the webhook, not
+    // the source of truth: a hand-edited or expired session_id makes retrieve
+    // throw, and letting that 500 the page would deny a real customer their
+    // confirmation over a bad query param. If it fails, the booking still
+    // reads from the database below and the webhook still marks it paid.
+    try {
+      const stripe = stripeClient();
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      if (session.payment_status === "paid") {
+        if (groupId) {
+          await db.from("bookings").update({ status: "paid" }).eq("group_id", groupId).eq("status", "pending");
+        } else if (bookingId) {
+          await db.from("bookings").update({ status: "paid" }).eq("id", bookingId).eq("status", "pending");
+        }
       }
+    } catch (err) {
+      console.error("Stripe session reconciliation failed on success page:", err);
     }
   }
 
