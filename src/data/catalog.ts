@@ -1069,12 +1069,14 @@ export const catalog: ServiceCategory[] = [
     valuePropImage: "/services/leather-cabin.webp",
     valuePropImageIsPhoto: true,
     benefitImages: [
-      // The wheel is the most handled and most sun-exposed leather in any
-      // car, so it dries and cracks first — which makes conditioning one the
-      // right picture for a card about preventing exactly that.
+      // The same sun-cracked dashboard the full-windshield tint option uses,
+      // recropped to 4:3 from the original rather than reusing that page's
+      // 2.2:1 banner. It shows the failure the card exists to prevent, which
+      // a picture of conditioner going on cannot: everyone recognises this,
+      // and nobody looks at a clean wheel and thinks about UV.
       {
-        src: "/services/leather-wheel.webp",
-        alt: "A microfibre cloth working conditioner into a leather steering wheel",
+        src: "/services/leather-cracked-dash.webp",
+        alt: "A dashboard split by a network of cracks after years of sun through the windshield",
       },
       // The half-restored seat this card was waiting for. Tape down the
       // middle, one side done and one not, so the colour difference is the

@@ -48,7 +48,8 @@ there is something to replace them with.
 | `scratch-too-deep.webp` | Scratch Removal | benefit — Honest assessment | 4:3 | A scratch we turned away, through to primer |
 | `scratch-removal-hero.webp` | Scratch Removal | hero + card | 3:2 | Any scuffed panel we were called out to |
 | `leather-cabin.webp` | Leather Restoration | what-it-is | 4:3 | A leather interior we finished, shot wide |
-| `leather-wheel.webp` | Leather Restoration | benefit — Prevents cracking | 4:3 | Conditioner going into a customer's wheel |
+| `leather-cracked-dash.webp` | Leather Restoration | benefit — Prevents cracking | 4:3 | A sun-cracked interior of a car we were called to |
+| `leather-wheel.webp` | *(unused)* | kept for a future slot — conditioner going into a wheel | 4:3 | — |
 | `leather-seat-clean.webp` | Leather Restoration | benefit — Feels like new | 4:3 | Us deep-cleaning a seat |
 | `leather-restored-half.webp` | Leather Restoration | benefit — Restores faded color | 4:3 | Our own taped half-restored seat |
 | `leather-finished.webp` | Leather Restoration | card | 4:3 | A finished interior of ours |
