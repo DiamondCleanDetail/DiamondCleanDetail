@@ -110,8 +110,8 @@ export default function AboutPage() {
           <div className="grid sm:grid-cols-[minmax(0,1fr)_minmax(0,300px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] gap-8 sm:gap-12 items-center">
             <div className="sm:order-2 relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-border">
               <Image
-                src="/work/morgan-1.webp"
-                alt="A Diamond Clean Detail job in progress on a residential driveway"
+                src="/services/our-fleet.webp"
+                alt="The Diamond Clean Detail fleet — three fully stocked mobile detailing vans at dusk"
                 fill
                 className="object-cover"
                 sizes="(min-width: 1024px) 420px, (min-width: 640px) 300px, 100vw"

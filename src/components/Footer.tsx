@@ -52,6 +52,18 @@ export default function Footer() {
           Privacy
         </Link>
       </div>
+      {/* Designer credit — deliberately the quietest line on the page. */}
+      <div className="mx-auto max-w-6xl px-6 pb-6 text-center text-[11px] text-muted/70">
+        Website built by{" "}
+        <a
+          href="https://aybrasselldesign.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline underline-offset-2 hover:text-foreground transition-colors"
+        >
+          aybrasselldesign.com
+        </a>
+      </div>
     </footer>
   );
 }
