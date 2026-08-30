@@ -141,6 +141,13 @@ export type ServiceCategory = {
   heroImageMobile?: string;
   /** Optional explainer image shown beside the "What It Is" copy, e.g. "/services/ceramic-coating-diagram.jpg". */
   valuePropImage?: string;
+  /** Set when valuePropImage is a photograph rather than a diagram.
+   *
+   * The default slot is a square box with object-contain, which is right for
+   * a diagram — you must see all of it, and letterboxing is the price. A
+   * landscape photo in that box is mostly empty background with a strip of
+   * picture through the middle. This gives it a 4:3 frame it can fill. */
+  valuePropImageIsPhoto?: boolean;
   /** A clip shown beside the "What It Is" copy instead of valuePropImage.
    * For a service whose explanation is really a demonstration — watching the
    * polisher work says more about correction than any still can. */
@@ -1015,6 +1022,7 @@ export const catalog: ServiceCategory[] = [
     heroImage: "/services/fleet-hero.jpg",
     cardImage: "/services/fleet-hero.jpg",
     valuePropImage: "/services/fleet-vans.webp",
+    valuePropImageIsPhoto: true,
     benefitImages: [
       { src: "/services/fleet-lot.webp", alt: "Rows of identical white cars filling a holding lot" },
       { src: "/services/fleet-vans.webp", alt: "A line of white delivery vans parked nose-out" },
