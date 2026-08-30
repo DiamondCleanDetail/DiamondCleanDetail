@@ -52,6 +52,12 @@ export type Package = {
   /** Stated plainly on the card. Prevents the worst outcome in this trade:
    * someone expecting correction from a clean, or a coating from a polish. */
   excludes?: string[];
+  /** 1-based rung on this category's good/better/best ladder, rendered as
+   * that many diamonds above the package name. Left unset where the packages
+   * are alternatives rather than a ladder — coverage options, cadences, or
+   * different vehicles — since ranking those would claim one is the better
+   * buy when they are simply different. */
+  tier?: number;
   /** Shows a "Most Popular" badge and highlighted border on the package card. */
   featured?: boolean;
   /** Groups packages under a subheading on the pricing list, e.g. "Wheel Coating" —
@@ -330,6 +336,7 @@ export const catalog: ServiceCategory[] = [
       },
       {
         slug: "the-diamond-detail",
+        tier: 1,
         name: "The Diamond Detail",
         tagline: "A comprehensive deep clean, conditioning, and protection for all surfaces.",
         features: [
@@ -345,6 +352,7 @@ export const catalog: ServiceCategory[] = [
       },
       {
         slug: "the-diamond-detail-plus",
+        tier: 2,
         name: "The Diamond Detail Plus",
         tagline: "Multi-stage paint correction with a premium wax or sealant finish.",
         features: [
@@ -361,6 +369,7 @@ export const catalog: ServiceCategory[] = [
       },
       {
         slug: "the-diamond-detail-pro",
+        tier: 3,
         name: "The Diamond Detail Pro",
         tagline: "Full paint correction and professional-grade ceramic coating.",
         features: [
@@ -444,6 +453,7 @@ export const catalog: ServiceCategory[] = [
     packages: [
       {
         slug: "single-stage",
+        tier: 1,
         name: "Stage 1 — Enhancement",
         tagline: "A one-step polish that lifts gloss and clears light swirls.",
         defectRemoval: "30–50%",
@@ -456,6 +466,7 @@ export const catalog: ServiceCategory[] = [
       },
       {
         slug: "two-stage",
+        tier: 2,
         name: "Stage 2 — Correction",
         tagline: "Compound and polish for paint that's taken real wear.",
         defectRemoval: "50–70%",
@@ -474,6 +485,7 @@ export const catalog: ServiceCategory[] = [
       },
       {
         slug: "multi-stage",
+        tier: 3,
         name: "Stage 3 — Full Correction",
         tagline: "Every pass we have, for paint that's been neglected.",
         defectRemoval: "70–90%",
@@ -566,6 +578,7 @@ export const catalog: ServiceCategory[] = [
     packages: [
       {
         slug: "1-year-coating",
+        tier: 1,
         name: "1-Year Ceramic Coating",
         tagline: "Entry-level long-term protection.",
         features: ["Paint decontamination & prep", "1-year ceramic coating", "Hydrophobic finish"],
@@ -575,6 +588,7 @@ export const catalog: ServiceCategory[] = [
       },
       {
         slug: "3-year-coating",
+        tier: 2,
         name: "3-Year Ceramic Coating",
         tagline: "Our most popular coating package.",
         features: [
@@ -591,6 +605,7 @@ export const catalog: ServiceCategory[] = [
       },
       {
         slug: "5-year-coating",
+        tier: 3,
         name: "5-Year Ceramic Coating",
         tagline: "Maximum durability.",
         features: [
@@ -1113,6 +1128,7 @@ export const catalog: ServiceCategory[] = [
     packages: [
       {
         slug: "leather-clean-condition",
+        tier: 1,
         name: "Clean & Condition",
         tagline: "Routine leather care.",
         features: ["Deep leather cleaning", "UV-protective conditioning"],
@@ -1121,6 +1137,7 @@ export const catalog: ServiceCategory[] = [
       },
       {
         slug: "leather-restoration",
+        tier: 2,
         name: "Full Restoration",
         tagline: "For cracked, faded, or stained leather.",
         features: ["Deep cleaning & conditioning", "Crack & fade repair", "Color matching where needed"],

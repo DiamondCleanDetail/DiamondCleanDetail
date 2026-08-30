@@ -9,6 +9,7 @@ import ProcessSlideshow from "@/components/ProcessSlideshow";
 import ServiceGallery from "@/components/ServiceGallery";
 import ServiceHero from "@/components/ServiceHero";
 import FadeIn from "@/components/FadeIn";
+import PackageTier from "@/components/PackageTier";
 import FaqAccordion from "@/components/FaqAccordion";
 import StatCallouts from "@/components/StatCallouts";
 import { StaggerGrid, StaggerItem } from "@/components/StaggerGrid";
@@ -58,6 +59,10 @@ export default async function ServiceCategoryPage({
 
   const hasGroupedPackages = category.packages.some((p) => Boolean(p.group));
 
+  /** How many rungs this category's ladder has, for the tier label. Counted
+   * rather than assumed, since only some categories rank their packages. */
+  const tierTotal = category.packages.filter((p) => p.tier).length;
+
   const related = category.relatedSlugs
     ?.map((s) => getCategory(s))
     .filter((c): c is NonNullable<typeof c> => Boolean(c));
@@ -83,6 +88,102 @@ export default async function ServiceCategoryPage({
             </div>
           </FadeIn>
         </section>
+      )}
+
+      {/* Packages — the PPF visualizer above already covers tiers, pricing, and CTAs */}
+      {category.visualizer !== "ppf" && (
+      <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
+        <FadeIn>
+          <SectionHeading title="Packages &amp;" accent="Pricing" className="mb-8 sm:mb-10" />
+        </FadeIn>
+        {/* Tiers sit side by side so they read as a comparison. Grouped sets
+            (e.g. ceramic's wheel/glass coatings) stay stacked, since their
+            subheadings only make sense in a single column. */}
+        <div
+          className={
+            !hasGroupedPackages && category.packages.length <= 3
+              ? `grid gap-4 sm:gap-5 items-stretch ${
+                  category.packages.length === 3
+                    ? "md:grid-cols-3"
+                    : category.packages.length === 2
+                      ? "sm:grid-cols-2"
+                      : ""
+                }`
+              : "grid gap-4 sm:gap-5"
+          }
+        >
+          {/* Wrapper is a flex column, not plain h-full: it may also hold a
+              group heading ("Glass Coating"), and an h-full card inside it
+              overflowed past the wrapper and collided with that heading. */}
+          {category.packages.map((pkg, i) => (
+            <div key={pkg.slug} className="h-full flex flex-col">
+              {pkg.group && pkg.group !== category.packages[i - 1]?.group && (
+                <h3 className="text-sm font-semibold uppercase tracking-widest text-muted mb-3 mt-2 first:mt-0">
+                  {pkg.group}
+                </h3>
+              )}
+            <div
+              className={`card-lift relative flex-1 flex flex-col bg-surface border rounded-xl p-5 sm:p-6 ${
+                pkg.featured ? "border-accent" : "border-border"
+              }`}
+            >
+              {pkg.featured && (
+                <span className="absolute -top-3 left-5 chrome-chip text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                  Most Popular
+                </span>
+              )}
+              {/* Stacked top-to-bottom: details, then price and CTA, so the card
+                  reads as one column instead of splitting left/right. */}
+              <div className="flex flex-col flex-1">
+                {pkg.tier && (
+                  <PackageTier tier={pkg.tier} total={tierTotal} className="mb-2" />
+                )}
+                <h3 className="text-lg font-semibold">{pkg.name}</h3>
+                <p className="text-sm text-muted mt-1">{pkg.tagline}</p>
+                <ul className="mt-3 space-y-1">
+                  {pkg.features.map((f) => (
+                    <li key={f} className="text-sm text-muted flex gap-2">
+                      <span className="text-accent">&#10003;</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <PackageDetails pkg={pkg} />
+                {(pkg.durationMinutes || pkg.depositPercent) && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {pkg.durationMinutes && (
+                      <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
+                        &#9201;{" "}
+                        {pkg.durationMinutes >= 120
+                          ? `~${Math.round(pkg.durationMinutes / 60)} hr`
+                          : `~${pkg.durationMinutes} min`}{" "}
+                        on site
+                      </span>
+                    )}
+                    {pkg.depositPercent && (
+                      <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
+                        {pkg.depositPercent}% deposit
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <div className="mt-auto pt-5 border-t border-border flex flex-col gap-3">
+                  <PackagePrices pkg={pkg} />
+                  <Link
+                    href={`/booking?service=${category.slug}&package=${pkg.slug}`}
+                    className="chrome-btn w-full text-center px-5 py-3 rounded-lg font-bold"
+                  >
+                    {pkg.pricing.type === "quote" ? "Request Quote" : "Book This"}
+                  </Link>
+                </div>
+              </div>
+            </div>
+            </div>
+          ))}
+        </div>
+        <HelpNudge className="max-w-2xl mx-auto" />
+      </section>
       )}
 
       {/* Value proposition */}
@@ -289,98 +390,6 @@ export default async function ServiceCategoryPage({
         </div>
       </section>
 
-      {/* Packages — the PPF visualizer above already covers tiers, pricing, and CTAs */}
-      {category.visualizer !== "ppf" && (
-      <section className="mx-auto max-w-6xl px-6 pb-10 sm:pb-16">
-        <FadeIn>
-          <SectionHeading title="Packages &amp;" accent="Pricing" className="mb-8 sm:mb-10" />
-        </FadeIn>
-        {/* Tiers sit side by side so they read as a comparison. Grouped sets
-            (e.g. ceramic's wheel/glass coatings) stay stacked, since their
-            subheadings only make sense in a single column. */}
-        <div
-          className={
-            !hasGroupedPackages && category.packages.length <= 3
-              ? `grid gap-4 sm:gap-5 items-stretch ${
-                  category.packages.length === 3
-                    ? "md:grid-cols-3"
-                    : category.packages.length === 2
-                      ? "sm:grid-cols-2"
-                      : ""
-                }`
-              : "grid gap-4 sm:gap-5"
-          }
-        >
-          {/* Wrapper is a flex column, not plain h-full: it may also hold a
-              group heading ("Glass Coating"), and an h-full card inside it
-              overflowed past the wrapper and collided with that heading. */}
-          {category.packages.map((pkg, i) => (
-            <div key={pkg.slug} className="h-full flex flex-col">
-              {pkg.group && pkg.group !== category.packages[i - 1]?.group && (
-                <h3 className="text-sm font-semibold uppercase tracking-widest text-muted mb-3 mt-2 first:mt-0">
-                  {pkg.group}
-                </h3>
-              )}
-            <div
-              className={`card-lift relative flex-1 flex flex-col bg-surface border rounded-xl p-5 sm:p-6 ${
-                pkg.featured ? "border-accent" : "border-border"
-              }`}
-            >
-              {pkg.featured && (
-                <span className="absolute -top-3 left-5 chrome-chip text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-                  Most Popular
-                </span>
-              )}
-              {/* Stacked top-to-bottom: details, then price and CTA, so the card
-                  reads as one column instead of splitting left/right. */}
-              <div className="flex flex-col flex-1">
-                <h3 className="text-lg font-semibold">{pkg.name}</h3>
-                <p className="text-sm text-muted mt-1">{pkg.tagline}</p>
-                <ul className="mt-3 space-y-1">
-                  {pkg.features.map((f) => (
-                    <li key={f} className="text-sm text-muted flex gap-2">
-                      <span className="text-accent">&#10003;</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <PackageDetails pkg={pkg} />
-                {(pkg.durationMinutes || pkg.depositPercent) && (
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {pkg.durationMinutes && (
-                      <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
-                        &#9201;{" "}
-                        {pkg.durationMinutes >= 120
-                          ? `~${Math.round(pkg.durationMinutes / 60)} hr`
-                          : `~${pkg.durationMinutes} min`}{" "}
-                        on site
-                      </span>
-                    )}
-                    {pkg.depositPercent && (
-                      <span className="text-xs font-medium text-muted bg-surface-2 border border-border rounded-full px-3 py-1.5">
-                        {pkg.depositPercent}% deposit
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                <div className="mt-auto pt-5 border-t border-border flex flex-col gap-3">
-                  <PackagePrices pkg={pkg} />
-                  <Link
-                    href={`/booking?service=${category.slug}&package=${pkg.slug}`}
-                    className="chrome-btn w-full text-center px-5 py-3 rounded-lg font-bold"
-                  >
-                    {pkg.pricing.type === "quote" ? "Request Quote" : "Book This"}
-                  </Link>
-                </div>
-              </div>
-            </div>
-            </div>
-          ))}
-        </div>
-        <HelpNudge className="max-w-2xl mx-auto" />
-      </section>
-      )}
 
       {/* Related services — divider lives inside the conditional so a category
           with no related services doesn't render two dividers back to back. */}

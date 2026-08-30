@@ -8,6 +8,7 @@ import ServiceGallery from "@/components/ServiceGallery";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 import ProcessSlideshow from "@/components/ProcessSlideshow";
 import FadeIn from "@/components/FadeIn";
+import PackageTier from "@/components/PackageTier";
 import FaqAccordion from "@/components/FaqAccordion";
 import SectionHeading from "@/components/SectionHeading";
 import CtaCard from "@/components/CtaCard";
@@ -378,6 +379,7 @@ function TierCard({
             )}
           </div>
         )}
+        {pkg.tier && <PackageTier tier={pkg.tier} total={3} className="mb-2" />}
         <h3 className="text-lg font-semibold">{pkg.name}</h3>
         <p className="text-sm text-muted mt-1.5">{pkg.tagline}</p>
 
