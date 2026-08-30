@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, type KeyboardEvent } from "react";
 import { filmTypes, type FilmType } from "@/data/filmTypes";
+import { DIAMOND_PATH } from "@/components/PackageTier";
 
 /**
  * Choosing a film.
@@ -92,14 +93,23 @@ export default function TintFilmTypeSelector({
                     actually buy. */}
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 bg-neutral-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-neutral-700">
+                    {/* The same diamond glyph the detailing and coating pages
+                        use for their tier rank — three slots, filled up to
+                        this film's rank so the ladder still reads as "x of
+                        three" at a constant width. */}
                     <span aria-hidden className="flex items-center gap-0.5">
                       {[1, 2, 3].map((pip) => (
-                        <span
+                        <svg
                           key={pip}
-                          className={`h-1 w-1 rounded-full ${
-                            pip <= f.tierRank ? "bg-neutral-800" : "bg-neutral-300"
+                          viewBox="0 0 24 24"
+                          className={`h-3.5 w-3.5 ${
+                            pip <= f.tierRank ? "text-neutral-800" : "text-neutral-300"
                           }`}
-                        />
+                          aria-hidden="true"
+                          focusable="false"
+                        >
+                          <path d={DIAMOND_PATH} fill="currentColor" />
+                        </svg>
                       ))}
                     </span>
                     {f.tier}
