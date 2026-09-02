@@ -26,7 +26,6 @@ const links = [
   { href: "/booking", label: "Book Now" },
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About" },
-  { href: "/test", label: "Test" },
 ];
 
 /** 16px calendar, sized to sit level with Clerk's own menu icons. */
