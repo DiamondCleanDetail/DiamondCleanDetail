@@ -137,7 +137,7 @@ export default function MarquesStrip() {
       <FadeIn>
         <div className="mx-auto max-w-6xl px-6">
           <p className="text-center text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted mb-6">
-            Trusted With
+            Cars We&apos;ve Worked On
           </p>
         </div>
         {/* Deliberately outside the page's max-width and padding: the strip
